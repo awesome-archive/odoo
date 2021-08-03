@@ -688,7 +688,7 @@ var BasicController = AbstractController.extend(FieldManagerMixin, {
      * @param {OdooEvent} ev
      */
     _onFieldChanged: function (ev) {
-        if (this.mode === 'readonly') {
+        if (this.mode === 'readonly' && !('force_save' in ev.data)) {
             ev.data.force_save = true;
         }
         FieldManagerMixin._onFieldChanged.apply(this, arguments);
@@ -735,6 +735,7 @@ var BasicController = AbstractController.extend(FieldManagerMixin, {
      * @param {string} ev.data.handleField
      */
     _onResequenceRecords: function (ev) {
+        ev.stopPropagation(); // prevent other controllers from handling this request
         var self = this;
 
         this.trigger_up('mutexify', {
@@ -823,12 +824,13 @@ var BasicController = AbstractController.extend(FieldManagerMixin, {
             await this._confirmChange(ev.data.id, updatedFields, ev);
         }
         var record = this.model.get(ev.data.id, { raw: true });
+        var res_id = record.res_id || record.res_ids[0];
         var result = await this._rpc({
             route: '/web/dataset/call_button',
             params: {
                 model: 'ir.translation',
                 method: 'translate_fields',
-                args: [record.model, record.res_id, ev.data.fieldName],
+                args: [record.model, res_id, ev.data.fieldName],
                 kwargs: { context: record.getContext() },
             }
         });
@@ -836,7 +838,7 @@ var BasicController = AbstractController.extend(FieldManagerMixin, {
         this.translationDialog = new TranslationDialog(this, {
             domain: result.domain,
             searchName: result.context.search_default_name,
-            fieldName: record.fieldsInfo[record.viewType][ev.data.fieldName].name,
+            fieldName: ev.data.fieldName,
             userLanguageValue: ev.target.value || '',
             dataPointID: record.id,
             isComingFromTranslationAlert: ev.data.isComingFromTranslationAlert,

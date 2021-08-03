@@ -144,7 +144,7 @@ class GoogleService(models.TransientModel):
         except requests.HTTPError as error:
             if error.response.status_code == 400:  # invalid grant
                 with registry(request.session.db).cursor() as cur:
-                    self.env(cur)['res.users'].browse(self.env.uid).write({'google_%s_rtoken' % service: False})
+                    self.env(cur)['res.users'].browse(self.env.uid).sudo().write({'google_%s_rtoken' % service: False})
             error_key = error.response.json().get("error", "nc")
             _logger.exception("Bad google request : %s !", error_key)
             error_msg = _("Something went wrong during your token generation. Maybe your Authorization Code is invalid or already expired [%s]") % error_key
@@ -188,7 +188,7 @@ class GoogleService(models.TransientModel):
                 response = ""
             else:
                 _logger.exception("Bad google request : %s !", error.response.content)
-                if error.response.status_code in (400, 401, 410):
+                if error.response.status_code in (400, 401, 403, 410):
                     raise error
                 raise self.env['res.config.settings'].get_config_warning(_("Something went wrong with your request to google"))
         return (status, response, ask_time)

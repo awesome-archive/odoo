@@ -910,11 +910,11 @@ class TestStockValuation(SavepointCase):
         stock_return_picking_action = stock_return_picking.create_returns()
         return_pick = self.env['stock.picking'].browse(stock_return_picking_action['res_id'])
         return_pick.move_lines[0].move_line_ids[0].qty_done = 1.0
-        return_pick.action_done()
+        return_pick.with_user(self.inventory_user).action_done()
 
         self.assertEqual(self.product1.standard_price, 16)
 
-        self.assertEqual(return_pick.move_lines.stock_valuation_layer_ids.unit_cost, 16)
+        self.assertAlmostEqual(return_pick.move_lines.stock_valuation_layer_ids.unit_cost, 11.2)
 
     def test_fifo_negative_1(self):
         """ Send products that you do not have. Value the first outgoing move to the standard
@@ -2000,7 +2000,7 @@ class TestStockValuation(SavepointCase):
         move5.move_line_ids.qty_done = 30.0
         move5._action_done()
 
-        self.assertEqual(move5.stock_valuation_layer_ids.value, -477.6)
+        self.assertEqual(move5.stock_valuation_layer_ids.value, -477.5)
 
         # Receives 10 units but assign them to an owner, the valuation should not be impacted.
         move6 = self.env['stock.move'].create({
@@ -2019,6 +2019,24 @@ class TestStockValuation(SavepointCase):
         move6._action_done()
 
         self.assertEqual(move6.stock_valuation_layer_ids.value, 0)
+
+        # Sale 50 units @ $19.50 per unit (no stock anymore)
+        move7 = self.env['stock.move'].create({
+            'name': '50 units @ $19.50 per unit',
+            'location_id': self.stock_location.id,
+            'location_dest_id': self.customer_location.id,
+            'product_id': self.product1.id,
+            'product_uom': self.uom_unit.id,
+            'product_uom_qty': 50.0,
+        })
+        move7._action_confirm()
+        move7._action_assign()
+        move7.move_line_ids.qty_done = 50.0
+        move7._action_done()
+
+        self.assertEqual(move7.stock_valuation_layer_ids.value, -796.0)
+        self.assertAlmostEqual(self.product1.quantity_svl, 0.0)
+        self.assertAlmostEqual(self.product1.value_svl, 0.0)
 
     def test_average_perpetual_2(self):
         self.product1.categ_id.property_cost_method = 'average'
@@ -2079,14 +2097,18 @@ class TestStockValuation(SavepointCase):
         move4._action_assign()
         move4.move_line_ids.qty_done = 10.0
         move4._action_done()
+        # note: 5 units were sent estimated at 12.5 (negative stock)
         self.assertEqual(self.product1.standard_price, 12.5)
         self.assertEqual(self.product1.quantity_svl, -5)
         self.assertEqual(self.product1.value_svl, -62.5)
 
         move2.move_line_ids.qty_done = 20
+        # incrementing the receipt triggered the vacuum, the negative stock is corrected
+        self.assertEqual(self.product1.stock_valuation_layer_ids[-1].value, -12.5)
 
         self.assertEqual(self.product1.quantity_svl, 5)
-        self.assertEqual(self.product1.value_svl, 87.5)
+        self.assertEqual(self.product1.value_svl, 75)
+        self.assertEqual(self.product1.standard_price, 15)
 
     def test_average_perpetual_3(self):
         self.product1.categ_id.property_cost_method = 'average'
@@ -2342,6 +2364,73 @@ class TestStockValuation(SavepointCase):
 
         self.assertAlmostEqual(self.product1.standard_price, 10.0)
 
+    def test_average_perpetual_8(self):
+        """ When a product has an available quantity of -5, edit an incoming shipment and increase
+        the received quantity by 5 units.
+        """
+        self.product1.categ_id.property_cost_method = 'average'
+        # receive 10
+        move1 = self.env['stock.move'].create({
+            'name': 'IN 5@10',
+            'location_id': self.supplier_location.id,
+            'location_dest_id': self.stock_location.id,
+            'product_id': self.product1.id,
+            'product_uom': self.uom_unit.id,
+            'product_uom_qty': 10,
+            'price_unit': 10,
+        })
+        move1._action_confirm()
+        move1.quantity_done = 10
+        move1._action_done()
+
+        # deliver 15
+        move2 = self.env['stock.move'].create({
+            'name': 'Deliver 10 units',
+            'location_id': self.stock_location.id,
+            'location_dest_id': self.customer_location.id,
+            'product_id': self.product1.id,
+            'product_uom': self.uom_unit.id,
+            'product_uom_qty': 15.0,
+        })
+        move2._action_confirm()
+        move2._action_assign()
+        move2.move_line_ids.qty_done = 15.0
+        move2._action_done()
+
+        # increase the receipt to 15
+        move1.move_line_ids.qty_done = 15
+
+    def test_average_stock_user(self):
+        """ deliver an average product as a stock user. """
+        self.product1.categ_id.property_cost_method = 'average'
+        # receive 10
+        move1 = self.env['stock.move'].create({
+            'name': 'IN 5@10',
+            'location_id': self.supplier_location.id,
+            'location_dest_id': self.stock_location.id,
+            'product_id': self.product1.id,
+            'product_uom': self.uom_unit.id,
+            'product_uom_qty': 10,
+            'price_unit': 10,
+        })
+        move1._action_confirm()
+        move1.quantity_done = 10
+        move1._action_done()
+
+        # sell 15
+        move2 = self.env['stock.move'].create({
+            'name': 'Deliver 10 units',
+            'location_id': self.stock_location.id,
+            'location_dest_id': self.customer_location.id,
+            'product_id': self.product1.id,
+            'product_uom': self.uom_unit.id,
+            'product_uom_qty': 15.0,
+        })
+        move2._action_confirm()
+        move2._action_assign()
+        move2.move_line_ids.qty_done = 15.0
+        move2.with_user(self.inventory_user)._action_done()
+
     def test_average_negative_1(self):
         """ Test edit in the past. Receive 10, send 20, edit the second move to only send 10.
         """
@@ -2584,11 +2673,17 @@ class TestStockValuation(SavepointCase):
         move5._action_assign()
         move5.move_line_ids.qty_done = 20.0
         move5._action_done()
-
         self.assertEqual(move5.stock_valuation_layer_ids.value, 400.0)
-        self.assertEqual(self.product1.standard_price, 35)
 
-        self.assertEqual(self.product1.qty_available, 5)
+        # Move 4 is now fixed, it initially sent 30@15 but the 5 last units were negative and estimated
+        # at 15 (1125). The new receipt made these 5 units sent at 20 (1500), so a 450 value is added
+        # to move4.
+        self.assertEqual(move4.stock_valuation_layer_ids[0].value, -450)
+
+        # So we have 5@20 in stock.
+        self.assertEqual(self.product1.quantity_svl, 5)
+        self.assertEqual(self.product1.value_svl, 100)
+        self.assertEqual(self.product1.standard_price, 20)
 
         # send 5 products to empty the inventory, the average price should not go to 0
         move6 = self.env['stock.move'].create({
@@ -2603,8 +2698,8 @@ class TestStockValuation(SavepointCase):
         move6.quantity_done = 5.0
         move6._action_done()
 
-        self.assertEqual(move6.stock_valuation_layer_ids.value, -175.0)
-        self.assertEqual(self.product1.standard_price, 35)
+        self.assertEqual(move6.stock_valuation_layer_ids.value, -100.0)
+        self.assertEqual(self.product1.standard_price, 20)
 
         # in 10 @ 10, the new average price should be 10
         move7 = self.env['stock.move'].create({
@@ -2699,7 +2794,7 @@ class TestStockValuation(SavepointCase):
         self.product1.categ_id.property_cost_method = 'standard'
         self.product1.categ_id.property_valuation = 'manual_periodic'
 
-        self.product1.with_user(self.inventory_user)._change_standard_price(10)
+        self.product1._change_standard_price(10)
 
         move1 = self.env['stock.move'].with_user(self.inventory_user).create({
             'name': 'IN 10 units',
@@ -2719,7 +2814,7 @@ class TestStockValuation(SavepointCase):
         self.product1.categ_id.property_cost_method = 'standard'
         self.product1.categ_id.property_valuation = 'real_time'
 
-        self.product1.with_user(self.inventory_user)._change_standard_price(10)
+        self.product1._change_standard_price(10)
 
         move1 = self.env['stock.move'].with_user(self.inventory_user).create({
             'name': 'IN 10 units',

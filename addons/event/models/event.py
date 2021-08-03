@@ -27,15 +27,18 @@ class EventType(models.Model):
     @api.model
     def _get_default_event_type_mail_ids(self):
         return [(0, 0, {
+            'notification_type': 'mail',
             'interval_unit': 'now',
             'interval_type': 'after_sub',
             'template_id': self.env.ref('event.event_subscription').id,
         }), (0, 0, {
+            'notification_type': 'mail',
             'interval_nbr': 1,
             'interval_unit': 'days',
             'interval_type': 'before_event',
             'template_id': self.env.ref('event.event_reminder').id,
         }), (0, 0, {
+            'notification_type': 'mail',
             'interval_nbr': 10,
             'interval_unit': 'days',
             'interval_type': 'before_event',
@@ -141,7 +144,7 @@ class EventEvent(models.Model):
         store=True, readonly=True, compute='_compute_seats')
     seats_expected = fields.Integer(
         string='Number of Expected Attendees',
-        readonly=True, compute='_compute_seats')
+        compute_sudo=True, readonly=True, compute='_compute_seats_expected')
 
     # Registration fields
     registration_ids = fields.One2many(
@@ -211,6 +214,10 @@ class EventEvent(models.Model):
         for event in self:
             if event.seats_max > 0:
                 event.seats_available = event.seats_max - (event.seats_reserved + event.seats_used)
+
+    @api.depends('seats_unconfirmed', 'seats_reserved', 'seats_used')
+    def _compute_seats_expected(self):
+        for event in self:
             event.seats_expected = event.seats_unconfirmed + event.seats_reserved + event.seats_used
 
     @api.model
@@ -241,7 +248,9 @@ class EventEvent(models.Model):
             # Need to localize because it could begin late and finish early in
             # another timezone
             event = event.with_context(tz=event.date_tz)
-            event.is_one_day = (event.date_begin.date() == event.date_end.date())
+            begin_tz = fields.Datetime.context_timestamp(event, event.date_begin)
+            end_tz = fields.Datetime.context_timestamp(event, event.date_end)
+            event.is_one_day = (begin_tz.date() == end_tz.date())
 
     @api.onchange('is_online')
     def _onchange_is_online(self):
@@ -268,11 +277,11 @@ class EventEvent(models.Model):
             self.is_online = self.event_type_id.is_online
 
             if self.event_type_id.event_type_mail_ids:
-                self.event_mail_ids = [(5, 0, 0)] + [(0, 0, {
-                    'template_id': line.template_id,
-                    'interval_nbr': line.interval_nbr,
-                    'interval_unit': line.interval_unit,
-                    'interval_type': line.interval_type})
+                self.event_mail_ids = [(5, 0, 0)] + [
+                    (0, 0, {
+                        attribute_name: line[attribute_name] if not isinstance(line[attribute_name], models.BaseModel) else line[attribute_name].id
+                        for attribute_name in self.env['event.type.mail']._get_event_mail_fields_whitelist()
+                        })
                     for line in self.event_type_id.event_type_mail_ids]
 
     @api.constrains('seats_min', 'seats_max', 'seats_availability')
@@ -426,6 +435,14 @@ class EventRegistration(models.Model):
         return registration
 
     @api.model
+    def check_access_rights(self, operation, raise_exception=True):
+        if not self.env.is_admin() and not self.user_has_groups('event.group_event_user'):
+            if raise_exception:
+                raise AccessError(_('Only event users or managers are allowed to create or update registrations.'))
+            return False
+        return super(EventRegistration, self).check_access_rights(operation, raise_exception)
+
+    @api.model
     def _prepare_attendee_values(self, registration):
         """ Method preparing the values to create new attendees based on a
         sales order line. It takes some registration data (dict-based) that are
@@ -441,7 +458,11 @@ class EventRegistration(models.Model):
             'partner_id': partner_id.id,
             'event_id': event_id and event_id.id or False,
         }
-        data.update({key: value for key, value in registration.items() if key in self._fields})
+        data.update({
+            key: value for key, value in registration.items()
+            if key in self._fields and key not in data and not self._fields[key].default
+        })
+
         return data
 
     def do_draft(self):

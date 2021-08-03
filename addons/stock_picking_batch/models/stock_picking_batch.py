@@ -20,7 +20,7 @@ class StockPickingBatch(models.Model):
         help='Person responsible for this batch transfer')
     company_id = fields.Many2one(
         'res.company', string="Company", required=True, readonly=True,
-        index=True)
+        index=True, default=lambda self: self.env.company)
     picking_ids = fields.One2many(
         'stock.picking', 'batch_id', string='Transfers',
         domain="[('company_id', '=', company_id), ('state', 'not in', ('done', 'cancel'))]",
@@ -75,7 +75,7 @@ class StockPickingBatch(models.Model):
                 picking_type = picking.picking_type_id
                 if (picking_type.use_create_lots or picking_type.use_existing_lots):
                     for ml in picking.move_line_ids:
-                        if ml.product_id.tracking != 'none':
+                        if ml.product_id.tracking != 'none' and not ml.lot_id and not ml.lot_name:
                             raise UserError(_('Some products require lots/serial numbers.'))
                 # Check if we need to set some qty done.
                 picking_without_qty_done |= picking
@@ -83,7 +83,6 @@ class StockPickingBatch(models.Model):
                 picking_to_backorder |= picking
             else:
                 picking.action_done()
-        self.write({'state': 'done'})
         if picking_without_qty_done:
             view = self.env.ref('stock.view_immediate_transfer')
             wiz = self.env['stock.immediate.transfer'].create({
@@ -103,6 +102,8 @@ class StockPickingBatch(models.Model):
             }
         if picking_to_backorder:
             return picking_to_backorder.action_generate_backorder_wizard()
+        # Change the state only if there is no other action (= wizard) waiting.
+        self.write({'state': 'done'})
         return True
 
     def _track_subtype(self, init_values):

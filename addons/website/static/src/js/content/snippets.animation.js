@@ -502,6 +502,7 @@ registry.slider = publicWidget.Widget.extend({
 
 registry.parallax = Animation.extend({
     selector: '.parallax',
+    disabledInEditableMode: false,
     effects: [{
         startEvents: 'scroll',
         update: '_onWindowScroll',
@@ -554,11 +555,13 @@ registry.parallax = Animation.extend({
 
         // Reset offset if parallax effect will not be performed and leave
         this.$target.toggleClass('s_parallax_is_fixed', this.speed === 1);
-        if (this.speed === 0 || this.speed === 1) {
+        var noParallaxSpeed = (this.speed === 0 || this.speed === 1);
+        this.$target.toggleClass('s_parallax_no_overflow_hidden', noParallaxSpeed);
+        if (noParallaxSpeed) {
             this.$bg.css({
                 transform: '',
                 top: '',
-                bottom: ''
+                bottom: '',
             });
             return;
         }
@@ -701,8 +704,14 @@ registry.backgroundVideo = publicWidget.Widget.extend({
             this.videoSrc = this.videoSrc + "&enablejsapi=1";
 
             if (!window.YT) {
+                var oldOnYoutubeIframeAPIReady = window.onYouTubeIframeAPIReady;
                 proms.push(new Promise(resolve => {
-                    window.onYouTubeIframeAPIReady = () => resolve();
+                    window.onYouTubeIframeAPIReady = () => {
+                        if (oldOnYoutubeIframeAPIReady) {
+                            oldOnYoutubeIframeAPIReady();
+                        }
+                        return resolve();
+                    };
                 }));
                 $('<script/>', {
                     src: 'https://www.youtube.com/iframe_api',
@@ -710,7 +719,15 @@ registry.backgroundVideo = publicWidget.Widget.extend({
             }
         }
 
-        $(window).on('resize.' + this.iframeID, _.throttle(() => this._adjustIframe(), 50));
+        var throttledUpdate = _.throttle(() => this._adjustIframe(), 50);
+
+        var $dropdownMenu = this.$el.closest('.dropdown-menu');
+        if ($dropdownMenu.length) {
+            this.$dropdownParent = $dropdownMenu.parent();
+            this.$dropdownParent.on('shown.bs.dropdown.backgroundVideo', throttledUpdate);
+        }
+
+        $(window).on('resize.' + this.iframeID, throttledUpdate);
 
         return Promise.all(proms).then(() => this._appendBgVideo());
     },
@@ -719,6 +736,10 @@ registry.backgroundVideo = publicWidget.Widget.extend({
      */
     destroy: function () {
         this._super.apply(this, arguments);
+
+        if (this.$dropdownParent) {
+            this.$dropdownParent.off('.backgroundVideo');
+        }
 
         $(window).off('resize.' + this.iframeID);
 
@@ -738,6 +759,12 @@ registry.backgroundVideo = publicWidget.Widget.extend({
      * @private
      */
     _adjustIframe: function () {
+        if (!this.$iframe) {
+            return;
+        }
+
+        this.$iframe.removeClass('show');
+
         // Adjust the iframe
         var wrapperWidth = this.$target.innerWidth();
         var wrapperHeight = this.$target.innerHeight();
@@ -755,6 +782,9 @@ registry.backgroundVideo = publicWidget.Widget.extend({
             style['top'] = '0';
         }
         this.$iframe.css(style);
+
+        void this.$iframe[0].offsetWidth; // Force style addition
+        this.$iframe.addClass('show');
     },
     /**
      * Append background video related elements to the target.
@@ -938,7 +968,8 @@ registry.gallerySlider = publicWidget.Widget.extend({
         }
 
         function update() {
-            index = $lis.index($lis.filter('.active')) || 0;
+            const active = $lis.filter('.active');
+            index = active.length ? $lis.index(active) : 0;
             page = Math.floor(index / realNbPerPage);
             hide();
         }
@@ -1080,6 +1111,7 @@ registry.facebookPage = publicWidget.Widget.extend({
         var src = $.param.querystring('https://www.facebook.com/plugins/page.php', params);
         this.$iframe = $('<iframe/>', {
             src: src,
+            class: 'o_temp_auto_element',
             width: params.width,
             height: params.height,
             css: {

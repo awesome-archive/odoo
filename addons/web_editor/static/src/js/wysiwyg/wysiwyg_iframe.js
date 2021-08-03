@@ -26,6 +26,7 @@ Wysiwyg.include({
         if (this.options.inIframe) {
             this._onUpdateIframeId = 'onLoad_' + this.id;
         }
+        this.__extraAssetsForIframe = [];
     },
     /**
      * Load assets to inject into iframe.
@@ -36,8 +37,6 @@ Wysiwyg.include({
         if (!this.options.inIframe) {
             return this._super();
         }
-        var debug = odoo.debug;
-        odoo.debug = false;
 
         var defAsset;
         if (this.options.iframeCssAssets) {
@@ -50,8 +49,6 @@ Wysiwyg.include({
         }
 
         promiseWysiwyg = promiseWysiwyg || ajax.loadAsset('web_editor.wysiwyg_iframe_editor_assets');
-        odoo.debug = debug;
-
         this.defAsset = Promise.all([promiseWysiwyg, defAsset]);
 
         this.$target = this.$el;
@@ -116,7 +113,7 @@ Wysiwyg.include({
                 }
 
                 var iframeContent = qweb.render('wysiwyg.iframeContent', {
-                    assets: assets,
+                    assets: assets.concat(self.__extraAssetsForIframe),
                     updateIframeId: self._onUpdateIframeId,
                     avoidDoubleLoad: _avoidDoubleLoad
                 });

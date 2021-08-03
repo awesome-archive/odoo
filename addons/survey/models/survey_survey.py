@@ -298,6 +298,13 @@ class Survey(models.Model):
 
         questions = self.env['survey.question']
 
+        # First append questions without page
+        for question in self.question_ids:
+            if not question.page_id:
+                questions |= question
+
+        # Then, questions in sections
+
         for page in self.page_ids:
             if self.questions_selection == 'all':
                 questions |= page.question_ids
@@ -306,9 +313,6 @@ class Survey(models.Model):
                     questions = questions.concat(*random.sample(page.question_ids, page.random_questions_count))
                 else:
                     questions |= page.question_ids
-
-        if not questions:
-            questions = self.question_ids
 
         return questions
 
@@ -418,9 +422,16 @@ class Survey(models.Model):
 
     def action_send_survey(self):
         """ Open a window to compose an email, pre-filled with the survey message """
-        # Ensure that this survey has at least one page with at least one question.
-        if (not self.page_ids and self.questions_layout == 'page_per_section') or not self.question_ids:
+        # Ensure that this survey has at least one question.
+        if not self.question_ids:
             raise UserError(_('You cannot send an invitation for a survey that has no questions.'))
+
+        # Ensure that this survey has at least one section with question(s), if question layout is 'One page per section'.
+        if self.questions_layout == 'page_per_section':
+            if not self.page_ids:
+                raise UserError(_('You cannot send an invitation for a "One page per section" survey if the survey has no sections.'))
+            if not self.page_ids.mapped('question_ids'):
+                raise UserError(_('You cannot send an invitation for a "One page per section" survey if the survey only contains empty sections.'))
 
         if self.state == 'closed':
             raise UserError(_("You cannot send invitations for closed surveys."))
@@ -649,11 +660,15 @@ class Survey(models.Model):
         for question in scored_questions:
             question_answer_correct = question.labels_ids.filtered(lambda answer: answer.is_correct)
             for user_answer in user_answers:
+                if question not in user_answer.question_ids:
+                    # the question may be in the survey, but not be selected by the random selection
+                    continue
+
                 user_answer_lines_question = user_answer.user_input_line_ids.filtered(lambda line: line.question_id == question)
                 user_answer_correct = user_answer_lines_question.filtered(lambda line: line.answer_is_correct and not line.skipped).mapped('value_suggested')
                 user_answer_incorrect = user_answer_lines_question.filtered(lambda line: not line.answer_is_correct and not line.skipped)
 
-                if user_answer_correct == question_answer_correct:
+                if question_answer_correct and user_answer_correct == question_answer_correct:
                     res[user_answer]['correct'] += 1
                 elif user_answer_correct and user_answer_correct < question_answer_correct:
                     res[user_answer]['partial'] += 1

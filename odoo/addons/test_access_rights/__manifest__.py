@@ -5,6 +5,8 @@
     'category': 'Tests',
     'data': [
         'ir.model.access.csv',
+        'security.xml',
         'data.xml',
     ],
+    'license': 'LGPL-3',
 }

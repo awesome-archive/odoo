@@ -60,12 +60,22 @@ import threading
 from inspect import currentframe
 
 
-def flush_env(cr):
-    """ Retrieve and flush an environment corresponding to the given cursor """
+def flush_env(cr, *, clear=True):
+    """ Retrieve and flush an environment corresponding to the given cursor.
+        Also clear the environment if ``clear`` is true.
+    """
+    env_to_flush = None
     for env in list(Environment.envs):
-        if env.cr is cr:
-            env['base'].flush()
-            break
+        # don't flush() on another cursor or with a RequestUID
+        if env.cr is cr and (isinstance(env.uid, int) or env.uid is None):
+            env_to_flush = env
+            if env.uid is not None:
+                break               # prefer an environment with a real uid
+
+    if env_to_flush is not None:
+        env_to_flush['base'].flush()
+        if clear:
+            env_to_flush.clear()    # clear remaining new records to compute
 
 def clear_env(cr):
     """ Retrieve and clear an environment corresponding to the given cursor """
@@ -240,7 +250,7 @@ class Cursor(object):
             res = self._obj.execute(query, params)
         except Exception as e:
             if self._default_log_exceptions if log_exceptions is None else log_exceptions:
-                _logger.error("bad query: %s\nERROR: %s", self._obj.query.decode() or query, e)
+                _logger.error("bad query: %s\nERROR: %s", tools.ustr(self._obj.query or query), e)
             raise
 
         # simple query count is always computed
@@ -329,6 +339,11 @@ class Cursor(object):
 
         # Clean the underlying connection.
         self._cnx.rollback()
+
+        # Call rollback hooks. This list is empty if commit()
+        # has been called just before closing the cursor.
+        for func in self._pop_event_handlers()['rollback']:
+            func()
 
         if leak:
             self._cnx.leaked = True
@@ -424,12 +439,12 @@ class Cursor(object):
         """context manager entering in a new savepoint"""
         name = uuid.uuid1().hex
         if flush:
-            flush_env(self)
+            flush_env(self, clear=False)
         self.execute('SAVEPOINT "%s"' % name)
         try:
             yield
             if flush:
-                flush_env(self)
+                flush_env(self, clear=False)
         except Exception:
             if flush:
                 clear_env(self)

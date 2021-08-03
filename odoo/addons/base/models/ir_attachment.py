@@ -152,7 +152,10 @@ class IrAttachment(models.Model):
         cr = self._cr
         cr.commit()
 
-        # prevent all concurrent updates on ir_attachment while collecting!
+        # prevent all concurrent updates on ir_attachment while collecting,
+        # but only attempt to grab the lock for a little bit, otherwise it'd
+        # start blocking other transactions. (will be retried later anyway)
+        cr.execute("SET LOCAL lock_timeout TO '10s'")
         cr.execute("LOCK ir_attachment IN SHARE MODE")
 
         # retrieve the file names from the checklist
@@ -244,7 +247,9 @@ class IrAttachment(models.Model):
 
     def _check_contents(self, values):
         mimetype = values['mimetype'] = self._compute_mimetype(values)
-        xml_like = 'ht' in mimetype or 'xml' in mimetype # hta, html, xhtml, etc.
+        xml_like = 'ht' in mimetype or ( # hta, html, xhtml, etc.
+                'xml' in mimetype and    # other xml (svg, text/xml, etc)
+                not 'openxmlformats' in mimetype)  # exception for Office formats
         user = self.env.context.get('binary_field_real_user', self.env.user)
         force_text = (xml_like and (not user._is_system() or
             self.env.context.get('attachments_mime_plainxml')))
@@ -369,8 +374,9 @@ class IrAttachment(models.Model):
                 require_employee = True
             # For related models, check if we can write to the model, as unlinking
             # and creating attachments can be seen as an update to the model
-            records.check_access_rights('write' if mode in ('create', 'unlink') else mode)
-            records.check_access_rule(mode)
+            access_mode = 'write' if mode in ('create', 'unlink') else mode
+            records.check_access_rights(access_mode)
+            records.check_access_rule(access_mode)
 
         if require_employee:
             if not (self.env.is_admin() or self.env.user.has_group('base.group_user')):
@@ -399,13 +405,15 @@ class IrAttachment(models.Model):
     def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
         # add res_field=False in domain if not present; the arg[0] trick below
         # works for domain items and '&'/'|'/'!' operators too
+        discard_binary_fields_attachments = False
         if not any(arg[0] in ('id', 'res_field') for arg in args):
+            discard_binary_fields_attachments = True
             args.insert(0, ('res_field', '=', False))
 
         ids = super(IrAttachment, self)._search(args, offset=offset, limit=limit, order=order,
                                                 count=False, access_rights_uid=access_rights_uid)
 
-        if self.env.is_system():
+        if self.env.is_superuser():
             # rules do not apply for the superuser
             return len(ids) if count else ids
 
@@ -430,8 +438,8 @@ class IrAttachment(models.Model):
                 continue
             # model_attachments = {res_model: {res_id: set(ids)}}
             model_attachments[row['res_model']][row['res_id']].add(row['id'])
-            # Should not retrieve binary fields attachments
-            if row['res_field']:
+            # Should not retrieve binary fields attachments if not explicitly required
+            if discard_binary_fields_attachments and row['res_field']:
                 binary_fields_attachments.add(row['id'])
 
         if binary_fields_attachments:
@@ -456,19 +464,22 @@ class IrAttachment(models.Model):
         result = [id for id in orig_ids if id in ids]
 
         # If the original search reached the limit, it is important the
-        # filtered record set does so too. When a JS view recieve a
-        # record set whose length is bellow the limit, it thinks it
-        # reached the last page.
-        if len(orig_ids) == limit and len(result) < len(orig_ids):
-            result.extend(self._search(args, offset=offset + len(orig_ids),
+        # filtered record set does so too. When a JS view receive a
+        # record set whose length is below the limit, it thinks it
+        # reached the last page. To avoid an infinite recursion due to the
+        # permission checks the sub-call need to be aware of the number of
+        # expected records to retrieve
+        if len(orig_ids) == limit and len(result) < self._context.get('need', limit):
+            need = self._context.get('need', limit) - len(result)
+            result.extend(self.with_context(need=need)._search(args, offset=offset + len(orig_ids),
                                        limit=limit, order=order, count=count,
                                        access_rights_uid=access_rights_uid)[:limit - len(result)])
 
         return len(result) if count else list(result)
 
-    def read(self, fields=None, load='_classic_read'):
+    def _read(self, fields):
         self.check('read')
-        return super(IrAttachment, self).read(fields, load=load)
+        return super(IrAttachment, self)._read(fields)
 
     def write(self, vals):
         self.check('write', values=vals)
@@ -516,7 +527,7 @@ class IrAttachment(models.Model):
             record_tuple_set.add(record_tuple)
         for record_tuple in record_tuple_set:
             (res_model, res_id) = record_tuple
-            self.check('write', values={'res_model':res_model, 'res_id':res_id})
+            self.check('create', values={'res_model':res_model, 'res_id':res_id})
         return super(IrAttachment, self).create(vals_list)
 
     def _post_add_create(self):

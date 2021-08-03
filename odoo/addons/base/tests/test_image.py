@@ -3,6 +3,7 @@
 
 import base64
 import binascii
+
 from PIL import Image, ImageDraw, PngImagePlugin
 
 from odoo import tools
@@ -20,6 +21,23 @@ class TestImage(TransactionCase):
         self.base64_1x1_png = b'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNgYGAAAAAEAAH2FzhVAAAAAElFTkSuQmCC'
         self.base64_svg = base64.b64encode(b'<svg></svg>')
         self.base64_1920x1080_jpeg = tools.image_to_base64(Image.new('RGB', (1920, 1080)), 'JPEG')
+        # The following image contains a tag `Lens Info` with a value of `3.99mm f/1.8`
+        # This particular tag 0xa432 makes the `exif_transpose` method fail in 5.4.1 < Pillow < 7.2.0
+        self.base64_exif_jpg = b"""/9j/4AAQSkZJRgABAQAAAQABAAD/4QDQRXhpZgAATU0AKgAAAAgABgESAAMAAAABAAYAAAEaAAUA
+                                  AAABAAAAVgEbAAUAAAABAAAAXgEoAAMAAAABAAEAAAITAAMAAAABAAEAAIdpAAQAAAABAAAAZgAA
+                                  AAAAAAABAAAAAQAAAAEAAAABAAWQAAAHAAAABDAyMzGRAQAHAAAABAECAwCgAAAHAAAABDAxMDCg
+                                  AQADAAAAAf//AACkMgAFAAAABAAAAKgAAAAAAAABjwAAAGQAAAGPAAAAZAAAAAkAAAAFAAAACQAA
+                                  AAX/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAx
+                                  NDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIy
+                                  MjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAADAAYDASIAAhEBAxEB/8QAHwAAAQUBAQEB
+                                  AQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1Fh
+                                  ByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZ
+                                  WmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXG
+                                  x8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAEC
+                                  AwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHB
+                                  CSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0
+                                  dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX
+                                  2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD3+iiigD//2Q=="""
 
         # Draw a red square in the middle of the image, this will be used to
         # verify crop is working. The border is going to be `self.bg_color` and
@@ -66,6 +84,36 @@ class TestImage(TransactionCase):
         image = Image.new('RGB', (1, 1))
         image_base64 = tools.image_to_base64(image, 'PNG')
         self.assertEqual(image_base64, self.base64_1x1_png)
+
+    def test_02_image_fix_orientation(self):
+        """Test that the orientation of images is correct."""
+
+        # Colors that can be distinguished among themselves even with jpeg loss.
+        blue = (0, 0, 255)
+        yellow = (255, 255, 0)
+        green = (0, 255, 0)
+        pink = (255, 0, 255)
+        # Image large enough so jpeg loss is not a huge factor in the corners.
+        size = 50
+        expected = (blue, yellow, green, pink)
+
+        # They are all supposed to be same image: (blue, yellow, green, pink) in
+        # that order, but each encoded with a different orientation.
+        self._orientation_test(1, (blue, yellow, green, pink), size, expected)  # top/left
+        self._orientation_test(2, (yellow, blue, pink, green), size, expected)  # top/right
+        self._orientation_test(3, (pink, green, yellow, blue), size, expected)  # bottom/right
+        self._orientation_test(4, (green, pink, blue, yellow), size, expected)  # bottom/left
+        self._orientation_test(5, (blue, green, yellow, pink), size, expected)  # left/top
+        self._orientation_test(6, (yellow, pink, blue, green), size, expected)  # right/top
+        self._orientation_test(7, (pink, yellow, green, blue), size, expected)  # right/bottom
+        self._orientation_test(8, (green, blue, pink, yellow), size, expected)  # left/bottom
+
+    def test_03_image_fix_orientation_exif(self):
+        """Test that a jpg image with exif orientation tag gets rotated"""
+        image = tools.base64_to_image(self.base64_exif_jpg)
+        self.assertEqual(image.size, (6,3))
+        image = tools.image_fix_orientation(image)
+        self.assertEqual(image.size, (3,6))
 
     def test_10_image_process_base64_source(self):
         """Test the base64_source parameter of image_process."""
@@ -236,3 +284,33 @@ class TestImage(TransactionCase):
     def test_20_image_data_uri(self):
         """Test that image_data_uri is working as expected."""
         self.assertEqual(tools.image_data_uri(self.base64_1x1_png), 'data:image/png;base64,' + self.base64_1x1_png.decode('ascii'))
+
+    def _assertAlmostEqualSequence(self, rgb1, rgb2, delta=10):
+        self.assertEqual(len(rgb1), len(rgb2))
+        for index, t in enumerate(zip(rgb1, rgb2)):
+            self.assertAlmostEqual(t[0], t[1], delta=delta, msg="%s vs %s at %d" % (rgb1, rgb2, index))
+
+    def _get_exif_colored_square_b64(self, orientation, colors, size):
+        image = Image.new('RGB', (size, size), color=self.bg_color)
+        draw = ImageDraw.Draw(image)
+        # Paint the colors on the 4 corners, to be able to test which colors
+        # move on which corners.
+        draw.rectangle(xy=[(0, 0), (size // 2, size // 2)], fill=colors[0])        # top/left
+        draw.rectangle(xy=[(size // 2, 0), (size, size // 2)], fill=colors[1])     # top/right
+        draw.rectangle(xy=[(0, size // 2), (size // 2, size)], fill=colors[2])     # bottom/left
+        draw.rectangle(xy=[(size // 2, size // 2), (size, size)], fill=colors[3])  # bottom/right
+        # Set the proper exif tag based on orientation params.
+        exif = b'Exif\x00\x00II*\x00\x08\x00\x00\x00\x01\x00\x12\x01\x03\x00\x01\x00\x00\x00' + bytes([orientation]) + b'\x00\x00\x00\x00\x00\x00\x00'
+        # The image image is saved with the exif tag.
+        return tools.image_to_base64(image, 'JPEG', exif=exif)
+
+    def _orientation_test(self, orientation, colors, size, expected):
+        # Generate the test image based on orientation and order of colors.
+        b64_image = self._get_exif_colored_square_b64(orientation, colors, size)
+        # The image is read again now that it has orientation added.
+        fixed_image = tools.image_fix_orientation(tools.base64_to_image(b64_image))
+        # Ensure colors are in the right order (blue, yellow, green, pink).
+        self._assertAlmostEqualSequence(fixed_image.getpixel((0, 0)), expected[0])                # top/left
+        self._assertAlmostEqualSequence(fixed_image.getpixel((size - 1, 0)), expected[1])         # top/right
+        self._assertAlmostEqualSequence(fixed_image.getpixel((0, size - 1)), expected[2])         # bottom/left
+        self._assertAlmostEqualSequence(fixed_image.getpixel((size - 1, size - 1)), expected[3])  # bottom/right

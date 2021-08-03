@@ -128,7 +128,7 @@ class TestSaleStock(TestSale):
         })
         act = adv_wiz.with_context(open_invoices=True).create_invoices()
         inv = self.env['account.move'].browse(act['res_id'])
-        self.assertEqual(inv.amount_untaxed, self.so.amount_untaxed * 5.0 / 100.0, 'Sale Stock: deposit invoice is wrong')
+        self.assertEqual(inv.amount_total, self.so.amount_total * 5.0 / 100.0, 'Sale Stock: deposit invoice is wrong')
         self.assertEqual(self.so.invoice_status, 'to invoice', 'Sale Stock: so should be to invoice after invoicing deposit')
         # invoice on order: everything should be invoiced
         self.so._create_invoices(final=True)
@@ -327,6 +327,14 @@ class TestSaleStock(TestSale):
                 self.assertEqual(backorder_move.product_qty, 1)
             elif backorder_move.product_id.id == item2.id:
                 self.assertEqual(backorder_move.product_qty, 2)
+
+        # add a new sale order lines
+        self.so.write({
+            'order_line': [
+                (0, 0, {'name': item1.name, 'product_id': item1.id, 'product_uom_qty': 1, 'product_uom': item1.uom_id.id, 'price_unit': item1.list_price}),
+            ]
+        })
+        self.assertEqual(sum(backorder.move_lines.filtered(lambda m: m.product_id.id == item1.id).mapped('product_qty')), 2)
 
     def test_05_create_picking_update_saleorderline(self):
         """ Same test than test_04 but only with enough products in stock so that the reservation
@@ -637,6 +645,9 @@ class TestSaleStock(TestSale):
         self.assertEqual(line.warehouse_id, warehouse1)
         self.assertEqual(line.qty_to_deliver, 1)
         so.warehouse_id = warehouse2
+        # invalidate product cache to ensure qty_available is recomputed
+        # bc warehouse isn't in the depends_context of qty_available
+        line.product_id.invalidate_cache()
         self.assertEqual(line.virtual_available_at_date, 5)
         self.assertEqual(line.free_qty_today, 5)
         self.assertEqual(line.qty_available_today, 5)
@@ -726,3 +737,31 @@ class TestSaleStock(TestSale):
         return_picking.button_validate()
         # Checks the delivery amount (must still be 10).
         self.assertEqual(sale_order.order_line.qty_delivered, 10)
+
+    def test_13_cancel_delivery(self):
+        """ Suppose the option "Lock Confirmed Sales" enabled and a product with the invoicing
+        policy set to "Delivered quantities". When cancelling the delivery of such a product, the
+        invoice status of the associated SO should be 'Nothing to Invoice'
+        """
+        group_auto_done = self.env['ir.model.data'].xmlid_to_object('sale.group_auto_done_setting')
+        self.env.user.groups_id = [(4, group_auto_done.id)]
+
+        product = self.products['prod_del']
+        so = self.env['sale.order'].create({
+            'partner_id': self.partner.id,
+            'partner_invoice_id': self.partner.id,
+            'partner_shipping_id': self.partner.id,
+            'order_line': [(0, 0, {
+                'name': product.name,
+                'product_id': product.id,
+                'product_uom_qty': 2,
+                'product_uom': product.uom_id.id,
+                'price_unit': product.list_price
+            })],
+            'pricelist_id': self.env.ref('product.list0').id,
+        })
+        so.action_confirm()
+        self.assertEqual(so.state, 'done')
+        so.picking_ids.action_cancel()
+
+        self.assertEqual(so.invoice_status, 'no')

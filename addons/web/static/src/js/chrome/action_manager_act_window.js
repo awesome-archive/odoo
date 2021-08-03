@@ -58,11 +58,8 @@ ActionManager.include({
      * @param {string} [state.view_type]
      */
     loadState: function (state) {
-        var callersArguments = arguments;
         var _super = this._super.bind(this);
-        var self = this;
         var action;
-        var def;
         var options = {
             clear_breadcrumbs: true,
             pushState: false,
@@ -87,7 +84,7 @@ ActionManager.include({
                     // jQuery's BBQ plugin does some parsing on values that are valid integers
                     // which means that if there's only one item, it will do parseInt() on it,
                     // otherwise it will keep the comma seperated list as string
-                    context.active_ids = state.active_ids.split(',').map(function (id) {
+                    context.active_ids = state.active_ids.toString().split(',').map(function (id) {
                         return parseInt(id, 10) || id;
                     });
                 } else if (state.active_id) {
@@ -117,20 +114,12 @@ ActionManager.include({
                 action = lastAction;
                 options.viewType = state.view_type;
             }
-        } else if (state.sa) {
-            def = this._rpc({
-                route: '/web/session/get_session_action',
-                params: {key: state.sa},
-            }).then(function (sessionAction) {
-                action = sessionAction;
-            });
         }
-        return Promise.all([def]).then(function () {
-            if (action) {
-                return self.doAction(action, options);
-            }
-            return _super.apply(self, callersArguments);
-        });
+        if (action) {
+            return this.doAction(action, options);
+        }
+        return _super.apply(this, arguments);
+
     },
 
     //--------------------------------------------------------------------------
@@ -700,6 +689,9 @@ ActionManager.include({
                 };
             }
             var options = {on_close: ev.data.on_closed};
+            if (config.device.isMobile && actionData.mobile) {
+                options = Object.assign({}, options, actionData.mobile);
+            }
             action.flags = _.extend({}, action.flags, {searchPanelDefaultNoFilter: true});
             return self.doAction(action, options).then(ev.data.on_success, ev.data.on_fail);
         });

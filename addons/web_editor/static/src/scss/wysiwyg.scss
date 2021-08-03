@@ -18,6 +18,20 @@ $o-we-zindex: $o-we-overlay-zindex + 1 !default;
     --o-we-snippets-color: #{$o-we-color};
 }
 
+.o_we_command_protector {
+    font-weight: 400 !important;
+
+    b, strong {
+        font-weight: 700 !important;
+    }
+    * {
+        font-weight: inherit !important;
+    }
+    .btn {
+        text-align: unset !important;
+    }
+}
+
 // EDITOR TOP BAR AND POPOVER
 .note-popover .popover {
     max-width: 350px;
@@ -92,6 +106,7 @@ $o-we-zindex: $o-we-overlay-zindex + 1 !default;
         border-right: 1px solid transparent;
         color: var(--o-we-color);
         font-size: $o-we-font-size !important;
+        border-bottom-color: transparent; // See caret design below
 
         &.active {
             background-color: var(--o-we-bg-color-dark);
@@ -104,6 +119,17 @@ $o-we-zindex: $o-we-overlay-zindex + 1 !default;
 
         &:focus, &:active, &:focus:active {
             @extend %we-active-button;
+        }
+
+        // This element should have been removed but still exists in 13.0 by
+        // mistake. This takes advantage of it to restore the color preview
+        // feature which disappeared and cannot be fixed as in 12.0.
+        // TODO fix the right way in 14.0.
+        > .caret {
+            display: block;
+            @include o-position-absolute(auto, 0, 0, 0);
+            border-bottom: 3px solid transparent;
+            border-bottom-color: inherit;
         }
     }
     .btn-group.show {
@@ -248,6 +274,10 @@ body .modal {
                     }
                 }
 
+                .o_file_name {
+                    @include o-text-overflow;
+                }
+
                 &:hover {
                     .o_existing_attachment_optimize, .o_existing_attachment_remove {
                         opacity: 1;
@@ -257,12 +287,12 @@ body .modal {
                         box-shadow: 0px 0px 2px 2px $card-border-color;
                     }
                 }
+            }
 
-                &.o_we_attachment_selected {
-                    &.o_we_attachment_highlight, .o_we_attachment_highlight {
-                        border-color: $o-brand-primary;
-                        box-shadow: 0px 0px 2px 2px $o-brand-primary;
-                    }
+            .o_we_attachment_selected {
+                &.o_we_attachment_highlight, .o_we_attachment_highlight, &.font-icons-icon {
+                    border-color: $o-brand-primary;
+                    box-shadow: 0px 0px 2px 2px $o-brand-primary;
                 }
             }
 
@@ -275,12 +305,6 @@ body .modal {
                     height: 50px;
                     padding: 15px;
                     cursor: pointer;
-
-                    &.o_selected {
-                        cursor: auto;
-                        background-color: $o-we-bg-color-dark;
-                        box-shadow: 0px 0px 0px 1px $o-we-color-success;
-                    }
                 }
             }
 
@@ -432,6 +456,22 @@ img.o_we_custom_image.mx-auto {
             .btn-group {
                 position: static;
             }
+        }
+    }
+}
+
+// User modal in edit mode
+.editor_enable, .note-editable {
+    .modal:not(.o_technical_modal) {
+        top: 40px;
+        right: 0;
+        bottom: 0;
+        left: $o-we-sidebar-width;
+        width: auto;
+        height: auto;
+
+        .modal-dialog {
+            padding: 0.5rem 0; // To use more editor space if necessary
         }
     }
 }

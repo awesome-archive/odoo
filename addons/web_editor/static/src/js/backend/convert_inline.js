@@ -162,6 +162,7 @@ function getMatchedCSSRules(a) {
         delete style['text-decoration-line'];
         delete style['text-decoration-color'];
         delete style['text-decoration-style'];
+        delete style['text-decoration-thickness'];
     }
 
     // text-align inheritance does not seem to get past <td> elements on some
@@ -205,7 +206,7 @@ function fontToImg($editable) {
         if (content) {
             var color = $font.css('color').replace(/\s/g, '');
             $font.replaceWith($('<img/>', {
-                src: _.str.sprintf('/web_editor/font_to_img/%s/%s/%s', content.charCodeAt(0), window.encodeURI(color), Math.max(1, $font.height())),
+                src: _.str.sprintf('/web_editor/font_to_img/%s/%s/%s', content.charCodeAt(0), window.encodeURI(color), Math.max(1, Math.round($font.height()))),
                 'data-class': $font.attr('class'),
                 'data-style': $font.attr('style'),
                 class: $font.attr('class').replace(new RegExp('(^|\\s+)' + icon + '(-[^\\s]+)?', 'gi'), ''), // remove inline font-awsome style
@@ -422,6 +423,16 @@ FieldHtml.include({
         attachmentThumbnailToLinkImg($editable);
         fontToImg($editable);
         classToStyle($editable);
+
+        // fix outlook image rendering bug
+        _.each(['width', 'height'], function(attribute) {
+            $editable.find('img[style*="width"], img[style*="height"]').attr(attribute, function(){
+                return $(this)[attribute]();
+            }).css(attribute, function(){
+                return $(this).get(0).style[attribute] || 'auto';
+            });
+        });
+
         this.wysiwyg.setValue($editable.html(), {
             notifyChange: false,
         });
@@ -439,6 +450,10 @@ FieldHtml.include({
         styleToClass($editable);
         imgToFont($editable);
         linkImgToAttachmentThumbnail($editable);
+
+        // fix outlook image rendering bug
+        $editable.find('img[style*="width"], img[style*="height"]').removeAttr('height width');
+
         this.wysiwyg.setValue($editable.html(), {
             notifyChange: false,
         });

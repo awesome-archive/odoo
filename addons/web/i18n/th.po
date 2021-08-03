@@ -1,23 +1,25 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# * web
+# 	* web
 # 
 # Translators:
-# surapas haemaprasertsuk <surapas@gmail.com>, 2018
-# surachet saejueng <surachet.s@almacom.co.th>, 2018
-# Prawit Boonthue <prawit.boonthue@gmail.com>, 2018
-# Somchart Jabsung <jabsung.s@gmail.com>, 2018
-# Martin Trigaux, 2018
-# Khwunchai Jaengsawang <khwunchai.j@ku.th>, 2018
-# gsong <gsong2014@foxmail.com>, 2018
+# surachet saejueng <surachet.s@almacom.co.th>, 2020
+# surapas haemaprasertsuk <surapas@gmail.com>, 2020
+# Prawit Boonthue <prawit.boonthue@gmail.com>, 2020
+# Somchart Jabsung <jabsung.s@gmail.com>, 2020
+# Pornvibool Tippayawat <pornvibool.t@gmail.com>, 2020
+# gsong <gsong2014@foxmail.com>, 2020
+# Martin Trigaux, 2020
+# Khwunchai Jaengsawang <khwunchai.j@ku.th>, 2020
+# Odoo Thaidev <odoothaidev@gmail.com>, 2020
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 12.0\n"
+"Project-Id-Version: Odoo Server 13.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-08 06:49+0000\n"
-"PO-Revision-Date: 2018-08-24 09:33+0000\n"
-"Last-Translator: gsong <gsong2014@foxmail.com>, 2018\n"
+"POT-Creation-Date: 2020-04-27 10:17+0000\n"
+"PO-Revision-Date: 2019-08-26 09:15+0000\n"
+"Last-Translator: Odoo Thaidev <odoothaidev@gmail.com>, 2020\n"
 "Language-Team: Thai (https://www.transifex.com/odoo/teams/41243/th/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -27,94 +29,85 @@ msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/calendar/calendar_model.js:520
+#: code:addons/web/static/src/js/views/calendar/calendar_model.js:0
 #, python-format
 msgid " [Me]"
-msgstr ""
+msgstr " [Me]"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_filters.js:231
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
 #, python-format
 msgid " and "
-msgstr ""
+msgstr " และ "
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_inputs.js:580
-#: code:addons/web/static/src/js/views/search/search_view.js:226
+#: code:addons/web/static/src/js/views/control_panel/search/search_facet.js:0
 #, python-format
 msgid " or "
-msgstr "หรือ"
+msgstr " หรือ "
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/field_utils.js:285
-#: code:addons/web/static/src/js/views/kanban/kanban_column.js:156
+#: code:addons/web/static/src/js/fields/field_utils.js:0
 #, python-format
 msgid " records"
-msgstr "รายการ"
+msgstr " รายการ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:655
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "# Code editor"
-msgstr ""
+msgstr "# Code editor"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_filters.js:112
-#: code:addons/web/static/src/js/views/search/search_filters.js:354
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
 #, python-format
 msgid "%(field)s %(operator)s"
 msgstr "%(field)s %(operator)s"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_filters.js:113
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
 #, python-format
 msgid "%(field)s %(operator)s \"%(value)s\""
 msgstr "%(field)s %(operator)s \"%(value)s\""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/translation.js:114
+#: code:addons/web/static/src/js/core/translation.js:0
 #, python-format
 msgid "%d days ago"
 msgstr "%d วัน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/translation.js:112
+#: code:addons/web/static/src/js/core/translation.js:0
 #, python-format
 msgid "%d hours ago"
 msgstr "%d ชั่วโมงที่แล้ว"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/translation.js:110
+#: code:addons/web/static/src/js/core/translation.js:0
 #, python-format
 msgid "%d minutes ago"
 msgstr "%d นาทีก่อน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/translation.js:116
+#: code:addons/web/static/src/js/core/translation.js:0
 #, python-format
 msgid "%d months ago"
 msgstr "%d เดือนที่แล้ว"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/tools/debug_manager.js:141
-#, python-format
-msgid "%d requests (%d ms) %d queries (%d ms)"
-msgstr ""
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/js/core/translation.js:118
+#: code:addons/web/static/src/js/core/translation.js:0
 #, python-format
 msgid "%d years ago"
 msgstr "%d ปีที่ผ่านมา"
@@ -126,497 +119,589 @@ msgid ""
 "                        &lt;body class=\"ie9\"&gt;\n"
 "                    &lt;![endif]--&gt;"
 msgstr ""
+"&lt;!--[if lt IE 10]&gt;\n"
+"                        &lt;body class=\"ie9\"&gt;\n"
+"                    &lt;![endif]--&gt;"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/field_utils.js:431
+#: code:addons/web/static/src/xml/notification.xml:0
+#, python-format
+msgid "&times;"
+msgstr "&times;"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/field_utils.js:0
 #, python-format
 msgid "'%s' is not a correct date"
 msgstr "'%s' วันที่ไม่ถูกต้อง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/time.js:193
+#: code:addons/web/static/src/js/core/time.js:0
 #, python-format
 msgid "'%s' is not a correct date, datetime nor time"
 msgstr "'%s' เป็นวันที่ที่ไม่ถูกต้อง, เฉพาะวันที่ไม่ใช่เวลา"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/field_utils.js:478
+#: code:addons/web/static/src/js/fields/field_utils.js:0
 #, python-format
 msgid "'%s' is not a correct datetime"
 msgstr "'%s' เป็นวันที่และเวลาที่ไม่ถูกต้อง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/field_utils.js:512
+#: code:addons/web/static/src/js/fields/field_utils.js:0
 #, python-format
 msgid "'%s' is not a correct float"
 msgstr "'%s' เป็นเลขทศนิยมไม่ถูกต้อง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/field_utils.js:602
+#: code:addons/web/static/src/js/fields/field_utils.js:0
 #, python-format
 msgid "'%s' is not a correct integer"
 msgstr "'%s' จำนวนเต็มไม่ถูกต้อง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/field_utils.js:548
+#: code:addons/web/static/src/js/fields/field_utils.js:0
 #, python-format
 msgid "'%s' is not a correct monetary field"
-msgstr ""
+msgstr "'%s' จำนวนเงินไม่ถูกต้อง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/time.js:205
+#: code:addons/web/static/src/js/core/time.js:0
 #, python-format
 msgid "'%s' is not convertible to date, datetime nor time"
 msgstr "'%s' ไม่สามารถแปลงเป็นวันที่ได้, เฉพาะวันเวลาไม่ใช่เวลา"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/menu.xml:101
-#, python-format
-msgid "(Enterprise Edition)"
-msgstr "(สำหรับองค์กร)"
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/xml/base.xml:298
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "(change)"
-msgstr ""
+msgstr "(change)"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:508
-#: code:addons/web/static/src/xml/base.xml:537
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "(count)"
-msgstr ""
+msgstr "(count)"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:77
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "(no string)"
 msgstr "(ไม่มีข้อความ)"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:10
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "(nolabel)"
 msgstr "(ไม่มีป้าย)"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/field_utils.js:283
+#: code:addons/web/static/src/js/fields/field_utils.js:0
 #, python-format
 msgid "1 record"
-msgstr ""
+msgstr "1 record"
+
+#. module: web
+#: model_terms:ir.ui.view,arch_db:web.external_layout_background
+msgid "<i class=\"fa fa-at\" role=\"img\" aria-label=\"Email\" title=\"Email\"/>"
+msgstr "<i class=\"fa fa-at\" role=\"img\" aria-label=\"Email\" title=\"Email\"/>"
+
+#. module: web
+#: model_terms:ir.ui.view,arch_db:web.external_layout_background
+msgid "<i class=\"fa fa-building-o\" role=\"img\" aria-label=\"Fiscal number\"/>"
+msgstr "<i class=\"fa fa-building-o\" role=\"img\" aria-label=\"Fiscal number\"/>"
+
+#. module: web
+#: model_terms:ir.ui.view,arch_db:web.external_layout_background
+msgid "<i class=\"fa fa-globe\" role=\"img\" aria-label=\"Website\" title=\"Website\"/>"
+msgstr "<i class=\"fa fa-globe\" role=\"img\" aria-label=\"Website\" title=\"Website\"/>"
+
+#. module: web
+#: model_terms:ir.ui.view,arch_db:web.external_layout_background
+msgid "<i class=\"fa fa-phone\" role=\"img\" aria-label=\"Phone\" title=\"Phone\"/>"
+msgstr "<i class=\"fa fa-phone\" role=\"img\" aria-label=\"Phone\" title=\"Phone\"/>"
+
+#. module: web
+#: model_terms:ir.ui.view,arch_db:web.frontend_layout
+msgid "<span>Copyright &amp;copy;</span>"
+msgstr "<span>สงวนลิขสิทธิ์ &amp;copy;</span>"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/action_manager.js:577
+#: code:addons/web/static/src/js/views/control_panel/search/add_new_favorite_menu.js:0
+#, python-format
+msgid "A name for your favorite is required."
+msgstr "A name for your favorite is required."
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/chrome/action_manager.js:0
 #, python-format
 msgid ""
 "A popup window has been blocked. You may need to change your browser "
 "settings to allow popup windows for this page."
 msgstr ""
+"A popup window has been blocked. You may need to change your browser "
+"settings to allow popup windows for this page."
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/action_manager_report.js:66
+#: code:addons/web/static/src/js/chrome/action_manager_report.js:0
 #, python-format
 msgid ""
 "A popup window with your report was blocked. You may need to change your "
 "browser settings to allow popup windows for this page."
 msgstr ""
+"A popup window with your report was blocked. You may need to change your "
+"browser settings to allow popup windows for this page."
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:632
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "ALL"
-msgstr ""
+msgstr "ทั้งหมด"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:633
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "ANY"
-msgstr ""
+msgstr "ANY"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/services/crash_manager.js:19
+#: code:addons/web/static/src/js/services/crash_manager.js:0
 #, python-format
 msgid "Access Denied"
 msgstr "ไม่ได้รับอนุญาตให้เข้าใช้"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/services/crash_manager.js:15
+#: code:addons/web/static/src/js/services/crash_manager.js:0
 #, python-format
 msgid "Access Error"
 msgstr "การเข้าถึงผิดพลาด"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1568
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Access to all Enterprise Apps"
 msgstr "เข้าถึงแอพทั้งหมดสำหรับองค์กร"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/sidebar.js:34
+#: code:addons/web/static/src/js/chrome/sidebar.js:0
 #, python-format
 msgid "Action"
 msgstr "การดำเนินการ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:111
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Action ID:"
 msgstr "รหัสการกระทำ:"
 
 #. module: web
-#. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:2044
-#, python-format
-msgid "Activate"
-msgstr "เปิดใช้งาน"
+#: model:ir.model,name:web.model_ir_actions_act_window_view
+msgid "Action Window View"
+msgstr "มุมมอง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:248
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Activate Assets Debugging"
-msgstr ""
+msgstr "เปิดใช้งานการแก้ไขข้อบกพร่องของ asset"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:2043
-#: code:addons/web/static/src/js/fields/basic_fields.js:2047
-#: code:addons/web/static/src/js/fields/basic_fields.js:2051
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
-msgid "Active"
-msgstr "เปิดใช้งาน"
+msgid "Activate Tests Assets Debugging"
+msgstr "เปิดใช้งานการทดสอบการแก้จุดบกพร่องของ asset"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/relational_fields.js:802
-#: code:addons/web/static/src/xml/base.xml:1411
-#: code:addons/web/static/src/xml/kanban.xml:56
-#: code:addons/web/static/src/xml/kanban.xml:73
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
+#: code:addons/web/static/src/xml/kanban.xml:0
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Add"
 msgstr "เพิ่ม"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/calendar/calendar_renderer.js:82
+#: code:addons/web/static/src/js/views/calendar/calendar_renderer.js:0
 #, python-format
 msgid "Add %s"
-msgstr ""
+msgstr "เพิ่ม %s"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1126
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Add Custom Filter"
 msgstr "เพิ่มตัวกรอง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1111
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Add Custom Group"
-msgstr ""
+msgstr "เพิ่มกลุ่มกำหนดเอง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/kanban.xml:49
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Add a Column"
-msgstr ""
+msgstr "เพิ่มคอลัมภ์"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1130
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Add a condition"
 msgstr "เพิ่มเงื่อนใข"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/list/list_editable_renderer.js:78
+#: code:addons/web/static/src/js/views/list/list_editable_renderer.js:0
+#: code:addons/web/static/src/js/views/list/list_editable_renderer.js:0
 #, python-format
 msgid "Add a line"
-msgstr ""
+msgstr "เพิ่มรายการ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:616
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Add branch"
-msgstr ""
+msgstr "เพิ่มสาขา"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/kanban.xml:48
+#: code:addons/web/static/src/xml/kanban.xml:0
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Add column"
-msgstr ""
+msgstr "เพิ่มคอลัมภ์"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:640
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Add filter"
-msgstr ""
+msgstr "เพิ่มตัวกรอง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:700
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Add new value"
-msgstr ""
+msgstr "เพิ่มค่าใหม่"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:615
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Add node"
-msgstr ""
+msgstr "เพิ่มโหนด"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:701
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Add tag"
-msgstr ""
+msgstr "เพิ่มป้ายกำกับ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:1966
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
 #, python-format
 msgid "Add to Favorites"
 msgstr "เพิ่มรายการโปรด"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:375
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Add..."
 msgstr "เพิ่ม..."
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/relational_fields.js:1574
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
 #, python-format
 msgid "Add: "
 msgstr "เพิ่ม: "
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1210
+#: code:addons/web/static/src/js/fields/signature.js:0
 #, python-format
-msgid "Advanced Search..."
-msgstr "ค้นหาอย่างละเอียด..."
+msgid "Adopt Your Signature"
+msgstr "Adopt Your Signature"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/dialog.js:315
+#: code:addons/web/static/src/js/fields/signature.js:0
+#, python-format
+msgid "Adopt and Sign"
+msgstr "Adopt and Sign"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Advanced Search..."
+msgstr "Advanced Search..."
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/core/dialog.js:0
 #, python-format
 msgid "Alert"
 msgstr "เตือน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:622
-#: code:addons/web/static/src/xml/base.xml:627
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "All"
 msgstr "ทั้งหมด"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/calendar/calendar_model.js:402
-#: code:addons/web/static/src/js/views/calendar/calendar_renderer.js:397
+#: code:addons/web/static/src/js/views/calendar/calendar_model.js:0
+#: code:addons/web/static/src/js/views/calendar/calendar_renderer.js:0
 #, python-format
 msgid "All day"
 msgstr "ทั้งวัน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:494
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "All users"
 msgstr "ผู้ใช้ทั้งหมด"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/menu.xml:134
-#: code:addons/web/static/src/xml/menu.xml:137
-#: code:addons/web/static/src/xml/menu.xml:143
-#: code:addons/web/static/src/xml/menu.xml:146
-#: code:addons/web/static/src/xml/menu.xml:152
-#: code:addons/web/static/src/xml/menu.xml:155
-#: code:addons/web/static/src/xml/menu.xml:161
-#: code:addons/web/static/src/xml/menu.xml:164
-#: code:addons/web/static/src/xml/menu.xml:170
-#: code:addons/web/static/src/xml/menu.xml:173
-#: code:addons/web/static/src/xml/menu.xml:179
-#: code:addons/web/static/src/xml/menu.xml:182
-#: code:addons/web/static/src/xml/menu.xml:188
-#: code:addons/web/static/src/xml/menu.xml:191
-#: code:addons/web/static/src/xml/menu.xml:197
-#: code:addons/web/static/src/xml/menu.xml:200
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
 #, python-format
 msgid "Alt"
-msgstr ""
+msgstr "Alt"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:149
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Among the"
+msgstr "Among the"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/crash_manager.xml:0
 #, python-format
 msgid "An error occurred"
-msgstr ""
+msgstr "An error occurred"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/abstract_web_client.js:203
+#: code:addons/web/static/src/js/services/crash_manager.js:0
 #, python-format
 msgid ""
 "An unknown CORS error occured. The error probably originates from a "
 "JavaScript file served from a different origin. (Opening your browser "
 "console might give you a hint on the error.)"
 msgstr ""
+"An unknown CORS error occured. The error probably originates from a "
+"JavaScript file served from a different origin. (Opening your browser "
+"console might give you a hint on the error.)"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1573
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "And more"
 msgstr "และอีกมากมาย"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:623
-#: code:addons/web/static/src/xml/base.xml:628
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Any"
-msgstr ""
+msgstr "Any"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1120
-#: code:addons/web/static/src/xml/base.xml:1128
-#: code:addons/web/static/src/xml/base.xml:1203
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Apply"
 msgstr "นำไปใช้"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:2048
-#: code:addons/web/static/src/js/views/list/list_controller.js:154
+#: code:addons/web/static/src/js/views/form/form_controller.js:0
+#: code:addons/web/static/src/js/views/list/list_controller.js:0
 #, python-format
 msgid "Archive"
 msgstr "เก็บ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/kanban.xml:27
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Archive All"
-msgstr ""
+msgstr "Archive All"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:2047
-#, python-format
-msgid "Archived"
-msgstr "ถูกเก็บ"
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/js/views/kanban/kanban_column.js:372
+#: code:addons/web/static/src/js/views/kanban/kanban_column.js:0
 #, python-format
 msgid ""
 "Are you sure that you want to archive all the records from this column?"
 msgstr ""
+"Are you sure that you want to archive all the records from this column?"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/list/list_controller.js:156
+#: code:addons/web/static/src/js/views/list/list_controller.js:0
 #, python-format
 msgid "Are you sure that you want to archive all the selected records?"
-msgstr ""
+msgstr "Are you sure that you want to archive all the selected records?"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/kanban/kanban_column.js:310
+#: code:addons/web/static/src/js/views/form/form_controller.js:0
+#, python-format
+msgid "Are you sure that you want to archive this record?"
+msgstr "Are you sure that you want to archive this record?"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/kanban/kanban_column.js:0
 #, python-format
 msgid "Are you sure that you want to remove this column ?"
-msgstr ""
+msgstr "คุณแน่ใจหรือว่าต้องการลบคอลัมน์นี้"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/favorites_menu.js:273
+#: code:addons/web/static/src/js/views/control_panel/search/favorite_menu.js:0
 #, python-format
 msgid "Are you sure that you want to remove this filter?"
 msgstr "คุณแน่ใจหรือว่าต้องการลบตัวกรองนี้?"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/basic/basic_controller.js:308
-#: code:addons/web/static/src/js/views/calendar/calendar_controller.js:345
+#: code:addons/web/static/src/js/views/basic/basic_controller.js:0
+#: code:addons/web/static/src/js/views/calendar/calendar_controller.js:0
 #, python-format
 msgid "Are you sure you want to delete this record ?"
 msgstr "คุณแน่ใจหรือว่าต้องการลบเร็กคอร์ดนี้?"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1028
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
-msgid "Attach"
-msgstr ""
+msgid "Are you sure you want to perform the following update on those"
+msgstr "Are you sure you want to perform the following update on those"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:348
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Attach"
+msgstr "Attach"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/kanban.xml:0
+#, python-format
+msgid "Attachment"
+msgstr "แนบ"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Attachment :"
 msgstr "แนบ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1407
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/name_and_signature.xml:0
+#, python-format
+msgid "Auto"
+msgstr "อัตโนมัติ"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Available fields"
 msgstr "ฟิลด์ที่ใช้ได้"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1536
-#: code:addons/web/static/src/xml/kanban.xml:161
-#: code:addons/web/static/src/xml/web_calendar.xml:53
-#: code:addons/web/static/src/xml/web_calendar.xml:56
+#: code:addons/web/static/src/xml/kanban.xml:0
+#: code:addons/web/static/src/xml/kanban.xml:0
+#: code:addons/web/static/src/xml/web_calendar.xml:0
+#: code:addons/web/static/src/xml/web_calendar.xml:0
 #, python-format
 msgid "Avatar"
 msgstr ""
+"สนามนี้ถือเป็นภาพที่ใช้เป็นสัญลักษณ์สำหรับการติดต่อนี้ จำกัด 1024x1024px"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:515
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
+#, python-format
+msgid "Badges"
+msgstr "ป้าย"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Bar Chart"
 msgstr "กราฟแท่ง"
@@ -628,435 +713,515 @@ msgstr "พื้นฐาน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1143
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Based On"
-msgstr ""
+msgstr "อิง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:250
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Become Superuser"
-msgstr ""
+msgstr "มาเป็น Superuser"
 
 #. module: web
-#: code:addons/web/controllers/main.py:1538
+#: code:addons/web/controllers/main.py:0
 #, python-format
 msgid ""
 "Binary fields can not be exported to Excel unless their content is "
 "base64-encoded. That does not seem to be the case for %s."
 msgstr ""
+"ไม่สามารถส่งออกเขตข้อมูลไบนารีไปยัง Excel ได้เว้นแต่เนื้อหาจะเข้ารหัสแบบ "
+"base64 ดูเหมือนจะไม่เป็นเช่นนั้นสำหรับ %s."
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:952
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Binary file"
 msgstr "ไฟล์ไบนารี่"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/colorpicker.xml:35
+#: code:addons/web/static/src/xml/colorpicker_dialog.xml:0
 #, python-format
 msgid "Blue"
 msgstr "สีน้ำเงิน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1572
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Bugfixes guarantee"
 msgstr "รับประกันการแก้ไขข้อผิดพลาด"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:74
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Button"
 msgstr "ปุ่ม"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:103
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Button Type:"
 msgstr "ชนิด ปุ่มกด"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/utils.js:131
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/name_and_signature.xml:0
 #, python-format
-msgid "Bytes,Kb,Mb,Gb,Tb,Pb,Eb,Zb,Yb"
-msgstr "ไบท์,กิโลไบท์,เมกะไบท์,กิ๊กกะไบท์,เทราไบท์,เพนตะ,เอ็กซะไบท์,Zb,Yb"
+msgid ""
+"By clicking Adopt and Sign, I agree that the chosen signature/initials will "
+"be a valid electronic representation of my hand-written signature/initials "
+"for all purposes when it is used on documents, including legally binding "
+"contracts."
+msgstr ""
+"By clicking Adopt and Sign, I agree that the chosen signature/initials will "
+"be a valid electronic representation of my hand-written signature/initials "
+"for all purposes when it is used on documents, including legally binding "
+"contracts."
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1222
+#: code:addons/web/static/src/js/core/utils.js:0
+#, python-format
+msgid "Bytes|Kb|Mb|Gb|Tb|Pb|Eb|Zb|Yb"
+msgstr "Bytes|Kb|Mb|Gb|Tb|Pb|Eb|Zb|Yb"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "CLEAR"
-msgstr ""
+msgstr "CLEAR"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/calendar/calendar_view.js:22
+#: code:addons/web/static/src/js/views/calendar/calendar_view.js:0
 #, python-format
 msgid "Calendar"
 msgstr "ปฏิทิน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/calendar/calendar_view.js:44
+#: code:addons/web/static/src/xml/web_calendar.xml:0
+#, python-format
+msgid "Calendar toolbar"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/calendar/calendar_view.js:0
 #, python-format
 msgid "Calendar view has not defined 'date_start' attribute."
 msgstr "มุมมองปฏิทินยังไม่ได้กำหนด 'date_start'"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/dialog.js:329
-#: code:addons/web/static/src/js/core/dialog.js:382
-#: code:addons/web/static/src/js/fields/relational_fields.js:65
-#: code:addons/web/static/src/js/fields/upgrade_fields.js:75
-#: code:addons/web/static/src/js/services/crash_manager.js:200
-#: code:addons/web/static/src/js/views/calendar/calendar_quick_create.js:56
-#: code:addons/web/static/src/js/views/kanban/kanban_column.js:304
-#: code:addons/web/static/src/js/views/view_dialogs.js:397
-#: code:addons/web/static/src/xml/base.xml:179
+#: code:addons/web/static/src/js/core/dialog.js:0
+#: code:addons/web/static/src/js/core/dialog.js:0
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
+#: code:addons/web/static/src/js/fields/signature.js:0
+#: code:addons/web/static/src/js/fields/upgrade_fields.js:0
+#: code:addons/web/static/src/js/services/crash_manager.js:0
+#: code:addons/web/static/src/js/views/calendar/calendar_quick_create.js:0
+#: code:addons/web/static/src/js/views/kanban/kanban_column.js:0
+#: code:addons/web/static/src/js/views/list/list_confirm_dialog.js:0
+#: code:addons/web/static/src/js/views/view_dialogs.js:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Cancel"
 msgstr "ยกเลิก"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/graph/graph_renderer.js:106
+#: code:addons/web/static/src/js/views/graph/graph_renderer.js:0
 #, python-format
 msgid "Cannot render chart with mode : "
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/kanban/kanban_record.js:414
+#: code:addons/web/static/src/js/views/kanban/kanban_record.js:0
 #, python-format
 msgid "Card color: %s"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/controllers/main.py:819
-#: code:addons/web/controllers/main.py:821
-#: code:addons/web/controllers/main.py:833
-#: code:addons/web/static/src/js/widgets/change_password.js:27
-#: code:addons/web/static/src/xml/base.xml:178
+#: code:addons/web/controllers/main.py:0 code:addons/web/controllers/main.py:0
+#: code:addons/web/controllers/main.py:0
+#: code:addons/web/static/src/js/widgets/change_password.js:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Change Password"
 msgstr "เปลี่ยนรหัสผ่าน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:49
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Change default:"
 msgstr "เปลี่ยนค่าเริ่มต้น:"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/colorpicker.js:35
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Change graph"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#, python-format
+msgid "Checkbox"
+msgstr "ช่องทำเครื่องหมาย"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
+#, python-format
+msgid "Checkboxes"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/widgets/colorpicker_dialog.js:0
 #, python-format
 msgid "Choose"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:936
-#: code:addons/web/static/src/xml/base.xml:976
-#: code:addons/web/static/src/xml/base.xml:1007
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/name_and_signature.xml:0
 #, python-format
 msgid "Clear"
 msgstr "ล้าง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:245
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Clear Events"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:2052
-#: code:addons/web/static/src/js/tools/debug_manager.js:490
-#: code:addons/web/static/src/js/views/calendar/calendar_controller.js:356
-#: code:addons/web/static/src/js/views/view_dialogs.js:123
-#: code:addons/web/static/src/js/widgets/data_export.js:212
-#: code:addons/web/static/src/js/widgets/domain_selector_dialog.js:24
-#: code:addons/web/static/src/xml/base.xml:743
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Clear Signature"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/tools/debug_manager_backend.js:0
+#: code:addons/web/static/src/js/views/view_dialogs.js:0
+#: code:addons/web/static/src/js/widgets/data_export.js:0
+#: code:addons/web/static/src/js/widgets/domain_selector_dialog.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/dialog.xml:0
+#: code:addons/web/static/src/xml/notification.xml:0
 #, python-format
 msgid "Close"
 msgstr "ปิด"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:2051
+#: code:addons/web/static/src/js/views/kanban/kanban_renderer.js:0
 #, python-format
-msgid "Closed"
-msgstr "ปิดแล้ว"
+msgid "Column %s"
+msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/kanban.xml:54
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Column title"
 msgstr ""
 
 #. module: web
+#: model:ir.model,name:web.model_res_company
+msgid "Companies"
+msgstr "บริษัท"
+
+#. module: web
+#: model_terms:ir.ui.view,arch_db:web.frontend_layout
+msgid "Company name"
+msgstr "ชื่อบริษัท"
+
+#. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1185
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Compare To"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:468
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Condition:"
 msgstr "เงื่อนไข:"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:173
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Confirm New Password"
 msgstr "ยืนยันรหัสผ่านใหม่"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/dialog.js:341
-#: code:addons/web/static/src/js/core/dialog.js:391
+#: code:addons/web/static/src/js/core/dialog.js:0
+#: code:addons/web/static/src/js/core/dialog.js:0
+#: code:addons/web/static/src/js/views/list/list_confirm_dialog.js:0
 #, python-format
 msgid "Confirmation"
 msgstr "ยืนยัน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/abstract_web_client.js:337
+#: code:addons/web/static/src/js/chrome/abstract_web_client.js:0
 #, python-format
 msgid "Connection lost"
 msgstr "การเชื่อมต่อมีปัญหา"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/abstract_web_client.js:351
+#: code:addons/web/static/src/js/chrome/abstract_web_client.js:0
 #, python-format
 msgid "Connection restored"
 msgstr "เชื่อมต่อแล้ว"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:37
-#: code:addons/web/static/src/xml/base.xml:90
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Context:"
 msgstr "บริบท"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/menu.xml:137
-#: code:addons/web/static/src/xml/menu.xml:146
-#: code:addons/web/static/src/xml/menu.xml:155
-#: code:addons/web/static/src/xml/menu.xml:164
-#: code:addons/web/static/src/xml/menu.xml:173
-#: code:addons/web/static/src/xml/menu.xml:182
-#: code:addons/web/static/src/xml/menu.xml:191
-#: code:addons/web/static/src/xml/menu.xml:200
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
+#: code:addons/web/static/src/xml/menu.xml:0
 #, python-format
 msgid "Control"
 msgstr "ควบคุม"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:1305
-#: code:addons/web/static/src/js/services/crash_manager.js:129
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Control panel toolbar"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#: code:addons/web/static/src/js/services/crash_manager.js:0
 #, python-format
 msgid "Copied !"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:956
-#: code:addons/web/static/src/xml/base.xml:961
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Copy Text"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:147
+#: code:addons/web/static/src/xml/crash_manager.xml:0
 #, python-format
 msgid "Copy the full error to clipboard"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/ajax.js:372
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#, python-format
+msgid "Copy to Clipboard"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/core/ajax.js:0
 #, python-format
 msgid "Could not connect to the server"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:1515
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#: code:addons/web/static/src/js/fields/signature.js:0
 #, python-format
 msgid "Could not display the selected image."
 msgstr "ไม่สามารถแสดงภาพที่เลือก"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/utils.js:457
+#: code:addons/web/static/src/js/core/utils.js:0
 #, python-format
 msgid "Could not serialize XML"
 msgstr "ไม่สามารถบันทึกแบบ XML ได้"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/graph/graph_view.js:49
-#: code:addons/web/static/src/js/views/graph/graph_view.js:52
-#: code:addons/web/static/src/js/views/pivot/pivot_view.js:48
-#: code:addons/web/static/src/js/views/pivot/pivot_view.js:60
-#: code:addons/web/static/src/xml/base.xml:511
-#: code:addons/web/static/src/xml/base.xml:540
+#: code:addons/web/static/src/js/views/kanban/kanban_record.js:0
+#, python-format
+msgid ""
+"Could not set the cover image: incorrect field (\"%s\") is provided in the "
+"view."
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/graph/graph_view.js:0
+#: code:addons/web/static/src/js/views/graph/graph_view.js:0
+#: code:addons/web/static/src/js/views/pivot/pivot_view.js:0
+#: code:addons/web/static/src/js/views/pivot/pivot_view.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Count"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/relational_fields.js:44
-#: code:addons/web/static/src/js/views/calendar/calendar_controller.js:262
-#: code:addons/web/static/src/js/views/calendar/calendar_quick_create.js:45
-#: code:addons/web/static/src/js/views/kanban/kanban_controller.js:403
-#: code:addons/web/static/src/js/views/view_dialogs.js:403
-#: code:addons/web/static/src/xml/base.xml:386
-#: code:addons/web/static/src/xml/base.xml:406
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
+#: code:addons/web/static/src/js/views/calendar/calendar_controller.js:0
+#: code:addons/web/static/src/js/views/calendar/calendar_quick_create.js:0
+#: code:addons/web/static/src/js/views/kanban/kanban_controller.js:0
+#: code:addons/web/static/src/js/views/view_dialogs.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Create"
 msgstr "สร้าง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/form/form_controller.js:616
+#: code:addons/web/static/src/js/views/form/form_controller.js:0
+#: code:addons/web/static/src/js/views/view_dialogs.js:0
 #, python-format
 msgid "Create "
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/relational_fields.js:520
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
 #, python-format
 msgid "Create \"<strong>%s</strong>\""
 msgstr "สร้าง \"<strong>%s</strong>\""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/relational_fields.js:41
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
 #, python-format
 msgid "Create a %s"
 msgstr "สร้าง %s"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/menu.xml:159
+#: code:addons/web/static/src/xml/menu.xml:0
 #, python-format
 msgid "Create a new record"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/relational_fields.js:534
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
 #, python-format
 msgid "Create and Edit..."
 msgstr "สร้างและแก้ไข ..."
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/relational_fields.js:55
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
 #, python-format
 msgid "Create and edit"
 msgstr "สร้างและแก้ไข"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/relational_fields.js:563
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
 #, python-format
 msgid "Create: "
 msgstr "สร้าง: "
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/calendar/calendar_controller.js:245
+#: code:addons/web/static/src/js/views/calendar/calendar_controller.js:0
 #, python-format
 msgid "Create: %s"
 msgstr ""
 
 #. module: web
-#: model:ir.model.fields,field_description:web.field_report_layout__create_uid
-msgid "Created by"
-msgstr "สร้างโดย"
-
-#. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:353
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Created by :"
 msgstr "สร้างโดย :"
 
 #. module: web
-#: model:ir.model.fields,field_description:web.field_report_layout__create_date
-msgid "Created on"
-msgstr "สร้างเมื่อ"
-
-#. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:307
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Creation Date:"
 msgstr "วันที่สร้าง:"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:303
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Creation User:"
 msgstr "สร้างผู้ใช้:"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:919
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Current state"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/favorites_menu.js:185
-#, python-format
-msgid "Custom Filter"
-msgstr "ตัวกรองที่กำหนดเอง"
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/js/views/kanban/kanban_record.js:29
-#: code:addons/web/static/src/xml/base.xml:867
-#: code:addons/web/static/src/xml/kanban.xml:88
+#: code:addons/web/static/src/js/views/kanban/kanban_record.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Dark blue"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/kanban/kanban_record.js:26
-#: code:addons/web/static/src/xml/base.xml:864
-#: code:addons/web/static/src/xml/kanban.xml:85
+#: code:addons/web/static/src/js/views/kanban/kanban_record.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Dark purple"
 msgstr ""
@@ -1068,246 +1233,268 @@ msgstr "ฐานข้อมูล"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/menu.xml:107
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
 #, python-format
-msgid "Database expiration:"
-msgstr "วันหมดอายุฐานข้อมูล:"
+msgid "Date"
+msgstr "วันที่"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:558
-#: code:addons/web/static/src/xml/web_calendar.xml:80
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#, python-format
+msgid "Date & Time"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/web_calendar.xml:0
 #, python-format
 msgid "Day"
 msgstr "วัน"
 
 #. module: web
-#. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:2044
-#, python-format
-msgid "Deactivate"
-msgstr "ปิดการใช้งาน"
+#: model_terms:ir.ui.view,arch_db:web.debug_icon
+msgid ""
+"Debug mode is activated#{debug_mode_help}. Click here to exit debug mode."
+msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:451
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#, python-format
+msgid "Decimal"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Default:"
 msgstr "ค่าปริยาย:"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/calendar/calendar_controller.js:343
-#: code:addons/web/static/src/js/views/form/form_controller.js:178
-#: code:addons/web/static/src/js/views/list/list_controller.js:168
-#: code:addons/web/static/src/xml/base.xml:853
-#: code:addons/web/static/src/xml/base.xml:1330
-#: code:addons/web/static/src/xml/base.xml:1453
-#: code:addons/web/static/src/xml/kanban.xml:24
+#: code:addons/web/static/src/js/views/form/form_controller.js:0
+#: code:addons/web/static/src/js/views/list/list_controller.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/kanban.xml:0
+#: code:addons/web/static/src/xml/web_calendar.xml:0
 #, python-format
 msgid "Delete"
 msgstr "ลบ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:614
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Delete node"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/list/list_editable_renderer.js:557
+#: code:addons/web/static/src/js/views/list/list_editable_renderer.js:0
 #, python-format
 msgid "Delete row "
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:364
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Delete this attachment"
 msgstr "ลบเอกสารแนบนี้"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1049
-#, python-format
-msgid "Delete this file"
-msgstr "ลบแฟ้มนี้"
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/xml/menu.xml:125
+#: code:addons/web/static/src/xml/menu.xml:0
 #, python-format
 msgid "Description"
 msgstr "รายละเอียด"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/view_dialogs.js:123
-#: code:addons/web/static/src/js/widgets/colorpicker.js:36
-#: code:addons/web/static/src/js/widgets/domain_selector_dialog.js:31
-#: code:addons/web/static/src/xml/base.xml:393
-#: code:addons/web/static/src/xml/base.xml:416
-#: code:addons/web/static/src/xml/kanban.xml:75
-#: code:addons/web/static/src/xml/report.xml:18
+#: code:addons/web/static/src/js/views/kanban/kanban_record.js:0
+#: code:addons/web/static/src/js/views/view_dialogs.js:0
+#: code:addons/web/static/src/js/widgets/colorpicker_dialog.js:0
+#: code:addons/web/static/src/js/widgets/domain_selector_dialog.js:0
+#: code:addons/web/static/src/js/widgets/translation_dialog.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Discard"
 msgstr "ยกเลิก"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/menu.xml:150
+#: code:addons/web/static/src/xml/menu.xml:0
 #, python-format
 msgid "Discard a record modification"
 msgstr ""
 
 #. module: web
-#: model:ir.model.fields,field_description:web.field_report_layout__display_name
-msgid "Display Name"
-msgstr "ชื่อที่ใช้แสดง"
-
-#. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/data_export.js:362
+#: code:addons/web/static/src/js/widgets/data_export.js:0
 #, python-format
 msgid "Do you really want to delete this export template?"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/calendar/calendar_renderer.js:148
+#: code:addons/web/static/src/js/views/calendar/calendar_renderer.js:0
 #, python-format
 msgid "Do you really want to delete this filter from favorites ?"
 msgstr ""
 
 #. module: web
-#: model:ir.model.fields,field_description:web.field_report_layout__view_id
-msgid "Document Template"
-msgstr ""
-
-#. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1546
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Documentation"
 msgstr "เอกสารกำกับ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/domain_selector_dialog.js:36
-#: code:addons/web/static/src/xml/base.xml:601
+#: code:addons/web/static/src/js/widgets/domain_selector_dialog.js:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Domain"
 msgstr "โดเมน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/domain_selector.js:536
+#: code:addons/web/static/src/js/widgets/domain_selector.js:0
 #, python-format
 msgid "Domain error"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:41
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Domain node"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Domain:"
 msgstr "โดเมน:"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/misc.js:16
+#: code:addons/web/static/src/js/core/misc.js:0
 #, python-format
 msgid "Don't leave yet,<br />it's still loading..."
 msgstr "รอก่อน,<br />กำลังโหลด..."
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:546
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Download"
+msgstr "ดาวน์โหลด"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Download xls"
 msgstr "ดาวน์โหลด xls"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:587
-#: code:addons/web/static/src/xml/base.xml:1556
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/name_and_signature.xml:0
 #, python-format
-msgid "Dropdown menu"
+msgid "Draw"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/form/form_controller.js:184
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Dropdown menu"
+msgstr "เมนูแบบดรอปดาว์น"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/form/form_controller.js:0
 #, python-format
 msgid "Duplicate"
 msgstr "ทำสำเนา"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/calendar/calendar_controller.js:337
-#: code:addons/web/static/src/js/views/calendar/calendar_quick_create.js:50
-#: code:addons/web/static/src/xml/base.xml:402
-#: code:addons/web/static/src/xml/base.xml:935
-#: code:addons/web/static/src/xml/kanban.xml:74
-#: code:addons/web/static/src/xml/report.xml:14
+#: code:addons/web/static/src/js/views/calendar/calendar_quick_create.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/kanban.xml:0
+#: code:addons/web/static/src/xml/web_calendar.xml:0
 #, python-format
 msgid "Edit"
 msgstr "แก้ไข"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:256
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Edit Action"
 msgstr "แก้ไขการกระทำ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/kanban/kanban_column.js:323
+#: code:addons/web/static/src/js/views/kanban/kanban_column.js:0
 #, python-format
 msgid "Edit Column"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:608
+#: code:addons/web/static/src/xml/debug.xml:0
+#, python-format
+msgid "Edit ControlPanelView"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Edit Domain"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:279
-#, python-format
-msgid "Edit SearchView"
-msgstr "แก้ไขมุมมองค้นหา"
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/xml/kanban.xml:23
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Edit Stage"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:276
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Edit View:"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/menu.xml:141
+#: code:addons/web/static/src/xml/menu.xml:0
 #, python-format
 msgid "Edit a record"
 msgstr ""
 
 #. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
 #: model_terms:ir.ui.view,arch_db:web.login
+#, python-format
 msgid "Email"
 msgstr "อีเมล"
 
@@ -1318,229 +1505,214 @@ msgstr "อีเมล:"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/services/crash_manager.js:132
-#: code:addons/web/static/src/js/views/search/favorites_menu.js:87
-#: code:addons/web/static/src/js/views/search/favorites_menu.js:94
+#: code:addons/web/static/src/js/services/crash_manager.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/add_new_favorite_menu.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/add_new_favorite_menu.js:0
 #, python-format
 msgid "Error"
 msgstr "ผิดพลาด"
 
 #. module: web
-#: code:addons/web/controllers/main.py:823
+#: code:addons/web/controllers/main.py:0
 #, python-format
 msgid "Error, password not changed !"
 msgstr "ผิดพลาด รหัสผ่านไม่ได้เปลี่ยน!"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/kanban.xml:62
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Esc to discard"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/calendar/calendar_model.js:529
+#: code:addons/web/static/src/js/views/calendar/calendar_model.js:0
 #, python-format
 msgid "Everybody's calendars"
 msgstr "ปฏิทินของทุกคน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/calendar/calendar_model.js:529
+#: code:addons/web/static/src/js/views/calendar/calendar_model.js:0
 #, python-format
 msgid "Everything"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/kanban.xml:60
-#, python-format
-msgid "Examples"
-msgstr "ตัวอย่าง"
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/xml/base.xml:545
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Expand all"
 msgstr "ขยายทั้งหมด"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1433
-#, python-format
-msgid "Expand parents"
-msgstr ""
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/js/views/list/list_controller.js:149
+#: code:addons/web/static/src/js/views/list/list_controller.js:0
+#: code:addons/web/static/src/js/widgets/data_export.js:0
 #, python-format
 msgid "Export"
 msgstr "ส่งออก"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/data_export.js:209
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Export All"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/widgets/data_export.js:0
 #, python-format
 msgid "Export Data"
 msgstr "ส่งออกข้อมูล"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1400
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Export Format:"
 msgstr ""
 
 #. module: web
-#. openerp-web
-#: code:addons/web/static/src/js/widgets/data_export.js:211
+#: code:addons/web/controllers/main.py:0
 #, python-format
-msgid "Export To File"
-msgstr "ส่งออกเป็นไฟล์"
+msgid "Exporting grouped data to csv is not supported."
+msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/controllers/main.py:1302
-#: code:addons/web/controllers/main.py:1305
-#: code:addons/web/static/src/js/widgets/data_export.js:482
+#: code:addons/web/controllers/main.py:0 code:addons/web/controllers/main.py:0
+#: code:addons/web/static/src/js/widgets/data_export.js:0
 #, python-format
 msgid "External ID"
 msgstr "รหัสจากภายนอก"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:826
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "External link"
-msgstr ""
+msgstr "รหัสจากภายนอก"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1220
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "FILTER"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/action_manager_act_window.js:540
+#: code:addons/web/static/src/js/views/control_panel/control_panel_model.js:0
 #, python-format
 msgid "Failed to evaluate search criterions"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/field_utils.js:62
+#: code:addons/web/static/src/js/fields/field_utils.js:0
 #, python-format
 msgid "False"
 msgstr "เท็จ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1352
-#: code:addons/web/static/src/xml/base.xml:1353
+#: code:addons/web/static/src/js/views/control_panel/search/favorite_menu.js:0
 #, python-format
 msgid "Favorites"
 msgstr "รายการโปรด"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:17
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Field:"
 msgstr "ฟิลด์"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/tools/debug_manager.js:527
-#: code:addons/web/static/src/xml/base.xml:274
+#: code:addons/web/static/src/js/tools/debug_manager_backend.js:0
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Fields View Get"
 msgstr "ดึงฟิลด์มุมมอง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1419
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Fields to export"
 msgstr "ฟิลด์ที่จะนำออกฟิลด์ที่จะนำออก"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:1416
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#, python-format
+msgid "File"
+msgstr "ไฟล์"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
 #, python-format
 msgid "File Upload"
 msgstr "อัพโหลดไฟล์"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:1396
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
 #, python-format
 msgid "File upload"
 msgstr "อัพโหลดไพล์"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_inputs.js:578
-#, python-format
-msgid "Filter"
-msgstr "ตัวกรอง"
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/js/views/search/favorites_menu.js:87
-#, python-format
-msgid "Filter name is required."
-msgstr "ต้องมีชื่อตัวกรอง"
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/js/views/search/search_inputs.js:516
+#: code:addons/web/static/src/js/views/control_panel/search/search_bar_autocomplete_sources.js:0
 #, python-format
 msgid "Filter on: %s"
 msgstr "กรองด้วย: %s"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/favorites_menu.js:94
+#: code:addons/web/static/src/js/views/control_panel/search/add_new_favorite_menu.js:0
 #, python-format
 msgid "Filter with same name already exists."
 msgstr "ชื่อตัวกรองนี้มีอยู่แล้ว"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/filters_menu.js:67
+#: code:addons/web/static/src/js/views/control_panel/search/filter_menu.js:0
 #, python-format
 msgid "Filters"
 msgstr "ตัวกรอง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:544
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Flip axis"
 msgstr "กลับแกน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/kanban.xml:21
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Fold"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:756
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Followed by"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/pivot/pivot_controller.js:128
+#: code:addons/web/static/src/js/views/pivot/pivot_controller.js:0
 #, python-format
 msgid ""
 "For Excel compatibility, data cannot be exported if there are more than 256 columns.\n"
@@ -1550,76 +1722,82 @@ msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/form/form_view.js:18
+#: code:addons/web/static/src/js/views/form/form_view.js:0
 #, python-format
 msgid "Form"
 msgstr "รูปแบบ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/filters_menu.js:179
+#: code:addons/web/static/src/js/views/qweb/qweb_view.js:0
 #, python-format
-msgid "From %s To %s"
+msgid "Freedom View"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/kanban/kanban_record.js:30
-#: code:addons/web/static/src/xml/base.xml:868
-#: code:addons/web/static/src/xml/kanban.xml:89
+#: code:addons/web/static/src/xml/name_and_signature.xml:0
+#, python-format
+msgid "Full Name"
+msgstr "ชื่อเต็ม"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/kanban/kanban_record.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Fushia"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1565
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Get this feature and much more with Odoo Enterprise!"
 msgstr "รับคุณสมบัตินี้และคุณสมบัติอื่นอีกมากมายด้วย Odoo สำหรับองค์กร"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/services/crash_manager.js:18
+#: code:addons/web/static/src/js/services/crash_manager.js:0
 #, python-format
 msgid "Global Business Error"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/kanban/kanban_column_quick_create.js:189
+#: code:addons/web/static/src/js/views/kanban/kanban_column_quick_create.js:0
 #, python-format
 msgid "Got it"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/graph/graph_view.js:23
+#: code:addons/web/static/src/js/views/graph/graph_view.js:0
 #, python-format
 msgid "Graph"
 msgstr "กราฟ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/kanban/kanban_record.js:31
-#: code:addons/web/static/src/xml/base.xml:869
-#: code:addons/web/static/src/xml/colorpicker.xml:31
-#: code:addons/web/static/src/xml/kanban.xml:90
+#: code:addons/web/static/src/js/views/kanban/kanban_record.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/colorpicker_dialog.xml:0
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Green"
-msgstr ""
+msgstr "เขียว"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/groupby_menu.js:88
-#: code:addons/web/static/src/js/views/search/search_inputs.js:780
+#: code:addons/web/static/src/js/views/control_panel/search/groupby_menu.js:0
 #, python-format
 msgid "Group By"
 msgstr "จัดกลุ่มโดย"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_inputs.js:754
+#: code:addons/web/static/src/js/views/control_panel/search/search_bar_autocomplete_sources.js:0
 #, python-format
 msgid "Group by: %s"
 msgstr "จัดกลุ่ม โดย: %s"
@@ -1627,102 +1805,112 @@ msgstr "จัดกลุ่ม โดย: %s"
 #. module: web
 #: model:ir.model,name:web.model_ir_http
 msgid "HTTP Routing"
+msgstr "See http://openerp.com"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#, python-format
+msgid "Handle"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:877
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Hide in Kanban"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:432
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Hit DOWN to navigate to the list below"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:439
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Hit ENTER to"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:431
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Hit ENTER to CREATE"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:423
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Hit ENTER to SAVE"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:424
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Hit ESCAPE to DISCARD"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/colorpicker.xml:41
+#: code:addons/web/static/src/xml/colorpicker_dialog.xml:0
 #, python-format
 msgid "Hue"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/dialog.js:357
+#: code:addons/web/static/src/js/core/dialog.js:0
 #, python-format
 msgid "I am sure about this."
 msgstr ""
 
 #. module: web
-#: model:ir.model.fields,field_description:web.field_report_layout__id
-msgid "ID"
-msgstr "รหัส"
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "I want to update data (import-compatible export)"
+msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:286
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "ID:"
 msgstr "รหัส:"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:1515
-#: code:addons/web/static/src/js/fields/basic_fields.js:1835
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#: code:addons/web/static/src/js/fields/signature.js:0
 #, python-format
 msgid "Image"
 msgstr "รูปภาพ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:2043
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
 #, python-format
-msgid "Inactive"
-msgstr "ไม่เปิดใช้งาน"
+msgid "Integer"
+msgstr "ตัวเลขจำนวนเต็ม"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/graph/graph_renderer.js:258
-#: code:addons/web/static/src/js/views/graph/graph_renderer.js:273
+#: code:addons/web/static/src/js/views/graph/graph_renderer.js:0
+#: code:addons/web/static/src/js/views/graph/graph_renderer.js:0
 #, python-format
 msgid "Invalid data"
 msgstr "ข้อมูลไม่ถูกต้อง"
 
 #. module: web
-#: code:addons/web/controllers/main.py:717
-#: code:addons/web/controllers/main.py:731
+#: code:addons/web/controllers/main.py:0 code:addons/web/controllers/main.py:0
 #, python-format
 msgid ""
 "Invalid database name. Only alphanumerical characters, underscore, hyphen "
@@ -1731,210 +1919,215 @@ msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:606
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Invalid domain"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/model_field_selector.js:405
-#: code:addons/web/static/src/xml/base.xml:737
+#: code:addons/web/static/src/js/widgets/model_field_selector.js:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Invalid field chain"
 msgstr ""
 
 #. module: web
+#: code:addons/web/controllers/main.py:0
+#, python-format
+msgid "Invalid inherit mode. Module %s and template name %s"
+msgstr ""
+
+#. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/graph/graph_renderer.js:105
+#: code:addons/web/static/src/js/views/graph/graph_renderer.js:0
 #, python-format
 msgid "Invalid mode for chart"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/tools/debug_manager.js:209
+#: code:addons/web/static/src/js/tools/debug_manager_backend.js:0
 #, python-format
 msgid "JS Mobile Tests"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/tools/debug_manager.js:198
+#: code:addons/web/static/src/js/tools/debug_manager_backend.js:0
 #, python-format
 msgid "JS Tests"
 msgstr "ทดสอบ JS"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/kanban/kanban_view.js:17
+#: code:addons/web/static/src/js/views/kanban/kanban_view.js:0
 #, python-format
 msgid "Kanban"
 msgstr "Kanban"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/user_menu.js:125
+#: code:addons/web/static/src/js/chrome/user_menu.js:0
 #, python-format
 msgid "Keyboard Shortcuts"
-msgstr ""
+msgstr "คีย์ลัดบนแป้นคีย์บอร์ด"
 
 #. module: web
-#: code:addons/web/controllers/main.py:840
+#: code:addons/web/controllers/main.py:0
 #, python-format
 msgid "Languages"
 msgstr "ภาษา"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/time_range_menu_options.js:9
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
 #, python-format
 msgid "Last 30 Days"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/time_range_menu_options.js:10
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
 #, python-format
 msgid "Last 365 Days"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/time_range_menu_options.js:8
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
+#, python-format
+msgid "Last 5 Years"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
 #, python-format
 msgid "Last 7 Days"
 msgstr ""
 
 #. module: web
-#: model:ir.model.fields,field_description:web.field_report_layout____last_update
-msgid "Last Modified on"
-msgstr "แก้ไขครั้งสุดท้ายเมื่อ"
-
-#. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/time_range_menu_options.js:18
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
 #, python-format
 msgid "Last Month"
-msgstr ""
+msgstr "เดือนที่แล้ว"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/time_range_menu_options.js:19
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
 #, python-format
 msgid "Last Quarter"
 msgstr ""
 
 #. module: web
-#: model:ir.model.fields,field_description:web.field_report_layout__write_uid
-msgid "Last Updated by"
-msgstr "อัพเดทครั้งสุดท้ายโดย"
-
-#. module: web
-#: model:ir.model.fields,field_description:web.field_report_layout__write_date
-msgid "Last Updated on"
-msgstr "อัพเดทครั้งสุดท้ายเมื่อ"
-
-#. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/time_range_menu_options.js:17
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
 #, python-format
 msgid "Last Week"
-msgstr ""
+msgstr "Last Week"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/time_range_menu_options.js:20
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
 #, python-format
 msgid "Last Year"
-msgstr ""
+msgstr "Last Year"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:315
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Latest Modification Date:"
 msgstr "วันที่แก้ไขล่าสุด"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:311
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Latest Modification by:"
 msgstr "แก้ไขล่าสุดโดย:"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:251
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Leave the Developer Tools"
 msgstr "ออกจากโหมดนักพัฒนา"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/kanban/kanban_record.js:25
-#: code:addons/web/static/src/xml/base.xml:863
-#: code:addons/web/static/src/xml/kanban.xml:84
+#: code:addons/web/static/src/js/views/kanban/kanban_record.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Light blue"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/colorpicker.xml:49
+#: code:addons/web/static/src/xml/colorpicker_dialog.xml:0
 #, python-format
 msgid "Lightness %"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:516
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Line Chart"
 msgstr "กราฟเส้น"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/list/list_view.js:21
+#: code:addons/web/static/src/js/views/list/list_view.js:0
 #, python-format
 msgid "List"
 msgstr "รายการ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/kanban.xml:42
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/name_and_signature.xml:0
+#, python-format
+msgid "Load"
+msgstr "โหลด"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Load more... ("
 msgstr "โหลดเพิ่ม... ("
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/loading.js:58
+#: code:addons/web/static/src/js/chrome/loading.js:0
 #, python-format
 msgid "Loading"
 msgstr "กำลังโหลด"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/loading.js:56
+#: code:addons/web/static/src/js/chrome/loading.js:0
 #, python-format
 msgid "Loading (%d)"
 msgstr "กำลังโหลด (%d)"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1062
-#: code:addons/web/static/src/xml/base.xml:1466
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Loading, please wait..."
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/misc.js:13
-#: code:addons/web/static/src/js/fields/relational_fields.js:144
-#: code:addons/web/static/src/js/fields/relational_fields.js:230
-#: code:addons/web/static/src/xml/base.xml:1459
+#: code:addons/web/static/src/js/core/misc.js:0
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Loading..."
 msgstr "กำลังโหลด..."
@@ -1951,7 +2144,7 @@ msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1551
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Log out"
 msgstr "ออกระบบ"
@@ -1961,20 +2154,14 @@ msgstr "ออกระบบ"
 #: model_terms:ir.ui.view,arch_db:web.external_layout_boxed
 #: model_terms:ir.ui.view,arch_db:web.external_layout_clean
 #: model_terms:ir.ui.view,arch_db:web.external_layout_standard
+#: model_terms:ir.ui.view,arch_db:web.frontend_layout
 #: model_terms:ir.ui.view,arch_db:web.login_layout
 msgid "Logo"
 msgstr "โลโก้"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_inputs.js:461
-#, python-format
-msgid "M2O search fields do not currently handle multiple default values"
-msgstr "กล่องค้นหา M2O ไม่สามารถจัดการค่าเริ่มต้นแบบหลายค่าได้"
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/xml/menu.xml:127
+#: code:addons/web/static/src/xml/menu.xml:0
 #, python-format
 msgid "Mac"
 msgstr ""
@@ -1986,8 +2173,19 @@ msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/tools/debug_manager.js:364
-#: code:addons/web/static/src/xml/base.xml:271
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Main actions"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/tools/debug_manager_backend.js:0
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Manage Attachments"
 msgstr ""
@@ -1999,456 +2197,571 @@ msgstr "จัดการฐานข้อมูล"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/tools/debug_manager.js:300
-#: code:addons/web/static/src/xml/base.xml:259
+#: code:addons/web/static/src/js/tools/debug_manager_backend.js:0
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Manage Filters"
 msgstr "จัดการตัวกรอง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:639
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
+#, python-format
+msgid "Many2many"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
+#, python-format
+msgid "Many2one"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Match"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:646
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Match records with"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:644
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Match records with the following rule:"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/misc.js:19
+#: code:addons/web/static/src/js/core/misc.js:0
 #, python-format
 msgid "Maybe you should consider reloading the application by pressing F5..."
 msgstr "บางทีคุณอาจจะลองโหลดโปรแกรมใหม่โดยการกด F5 ..."
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:503
-#: code:addons/web/static/src/xml/base.xml:532
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Measures"
 msgstr "ตัวชี้วัด"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/kanban/kanban_record.js:28
-#: code:addons/web/static/src/xml/base.xml:866
-#: code:addons/web/static/src/xml/kanban.xml:87
+#: code:addons/web/static/src/js/views/kanban/kanban_record.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Medium blue"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/tools/debug_manager.js:390
+#: code:addons/web/static/src/js/tools/debug_manager_backend.js:0
 #, python-format
 msgid "Metadata (%s)"
 msgstr "เมตาดาต้า (%s)"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:107
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Method:"
 msgstr "วิธี:"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/services/crash_manager.js:16
+#: code:addons/web/static/src/js/services/crash_manager.js:0
 #, python-format
 msgid "Missing Record"
 msgstr "รายการศูนย์หาย"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1570
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Mobile support"
 msgstr "รองรับโทรศัพท์มือถือ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:358
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Modified by :"
 msgstr "แก้ใขโดย:"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:45
-#: code:addons/web/static/src/xml/base.xml:94
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Modifiers:"
 msgstr "ตัวปรับเปลี่ยน"
 
 #. module: web
+#: code:addons/web/controllers/main.py:0
+#, python-format
+msgid ""
+"Module %s not loaded or inexistent, or templates of addon being loaded (%s) "
+"are misordered"
+msgstr ""
+
+#. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:560
-#: code:addons/web/static/src/xml/web_calendar.xml:82
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#, python-format
+msgid "Monetary"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/web_calendar.xml:0
 #, python-format
 msgid "Month"
 msgstr "เดือน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/form/form_renderer.js:401
-#: code:addons/web/static/src/xml/base.xml:903
+#: code:addons/web/static/src/js/views/form/form_renderer.js:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "More"
 msgstr "เพิ่มเติม"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1415
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
 #, python-format
-msgid "Move Down"
-msgstr "เลื่อนลง"
+msgid "Multiline Text"
+msgstr "ข้อความหลายบรรทัด"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1414
-#, python-format
-msgid "Move Up"
-msgstr "เลื่อนขึ้นเลื่อนขึ้น"
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1550
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "My Odoo.com account"
 msgstr "บัญชี Odoo.com ของฉัน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:634
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "NONE"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1470
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Name:"
 msgstr "ชื่อ:"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/basic/basic_model.js:686
+#: code:addons/web/static/src/js/views/basic/basic_model.js:0
 #, python-format
 msgid "New"
 msgstr "ใหม่"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:169
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "New Password"
 msgstr "รหัสผ่านใหม่"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1569
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "New design"
 msgstr "ดีไซน์ใหม่"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1505
-#: code:addons/web/static/src/xml/base.xml:1506
-#: code:addons/web/static/src/xml/web_calendar.xml:77
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "New template"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/web_calendar.xml:0
 #, python-format
 msgid "Next"
 msgstr "ต่อไป"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_inputs.js:338
+#: code:addons/web/static/src/js/views/control_panel/search/search_bar_autocomplete_sources.js:0
 #, python-format
 msgid "No"
 msgstr "ไม่"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:294
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "No Update:"
 msgstr "ไม่มีอัพเดท:"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/tools/debug_manager.js:359
+#: code:addons/web/static/src/js/tools/debug_manager_backend.js:0
 #, python-format
 msgid "No attachment available"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/kanban/kanban_record.js:21
-#: code:addons/web/static/src/xml/kanban.xml:80
+#: code:addons/web/static/src/js/views/kanban/kanban_record.js:0
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "No color"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/graph/graph_renderer.js:111
-#: code:addons/web/static/src/js/views/graph/graph_renderer.js:307
-#: code:addons/web/static/src/xml/base.xml:575
+#: code:addons/web/static/src/js/views/graph/graph_renderer.js:0
+#, python-format
+msgid "No data"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "No data to display"
 msgstr "ไม่มีข้อมูลให้แสดง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/tools/debug_manager.js:374
+#: code:addons/web/static/src/js/widgets/data_export.js:0
+#, python-format
+msgid "No match found."
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/tools/debug_manager_backend.js:0
 #, python-format
 msgid "No metadata available"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/field_utils.js:281
+#: code:addons/web/static/src/js/fields/field_utils.js:0
 #, python-format
 msgid "No records"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/relational_fields.js:540
+#: code:addons/web/static/src/js/views/view_dialogs.js:0
+#, python-format
+msgid "No records found!"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
 #, python-format
 msgid "No results to show..."
 msgstr "ไม่มีผลลัพธ์ให้แสดง"
 
 #. module: web
+#: code:addons/web/controllers/main.py:0
+#, python-format
+msgid "No template found to inherit from. Module %s and template name %s"
+msgstr ""
+
+#. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:624
+#: code:addons/web/static/src/js/views/list/list_controller.js:0
+#: code:addons/web/static/src/js/views/list/list_controller.js:0
+#, python-format
+msgid "No valid record to save"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/core/utils.js:0
+#, python-format
+msgid "Node [%s] is not a JSONified XML node"
+msgstr "โหนด [%s] ไม่ใช่ JSONified XML โหนต"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "None"
 msgstr "ไม่มี"
 
 #. module: web
+#: code:addons/web/models/models.py:0 code:addons/web/models/models.py:0
+#: code:addons/web/models/models.py:0
+#, python-format
+msgid "Not Set"
+msgstr ""
+
+#. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:923
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Not active state"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:927
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Not active state, click to change it"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:21
-#: code:addons/web/static/src/xml/base.xml:86
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Object:"
 msgstr "วัตถุ:"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/dialog.js:59
-#: code:addons/web/static/src/xml/menu.xml:100
+#: code:addons/web/static/src/js/core/dialog.js:0
+#: model_terms:ir.ui.view,arch_db:web.brand_promotion_message
 #, python-format
 msgid "Odoo"
 msgstr "Odoo"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/apps.js:148
+#: code:addons/web/static/src/js/apps.js:0
 #, python-format
 msgid "Odoo Apps will be available soon"
 msgstr "Odoo Apps will be available soon"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/abstract_web_client.js:201
-#: code:addons/web/static/src/js/chrome/abstract_web_client.js:209
-#: code:addons/web/static/src/js/services/crash_manager.js:153
+#: code:addons/web/static/src/js/services/crash_manager.js:0
+#: code:addons/web/static/src/js/services/crash_manager.js:0
+#: code:addons/web/static/src/js/services/crash_manager.js:0
+#: code:addons/web/static/src/js/services/crash_manager.js:0
 #, python-format
 msgid "Odoo Client Error"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/upgrade_fields.js:86
+#: code:addons/web/static/src/js/fields/upgrade_fields.js:0
 #, python-format
 msgid "Odoo Enterprise"
 msgstr "Odoo สำหรับองค์กร"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/services/crash_manager.js:115
+#: code:addons/web/static/src/js/services/crash_manager.js:0
 #, python-format
 msgid "Odoo Error"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/services/crash_manager.js:212
+#: code:addons/web/static/src/js/services/crash_manager.js:0
 #, python-format
 msgid "Odoo Session Expired"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/services/crash_manager.js:105
-#: code:addons/web/static/src/js/services/crash_manager.js:194
+#: code:addons/web/static/src/js/services/crash_manager.js:0
 #, python-format
 msgid "Odoo Warning"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:2060
-#, python-format
-msgid "Off"
-msgstr "ปิด"
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/js/core/dialog.js:64
-#: code:addons/web/static/src/js/core/dialog.js:304
-#: code:addons/web/static/src/js/core/dialog.js:323
-#: code:addons/web/static/src/js/core/dialog.js:375
-#: code:addons/web/static/src/js/views/kanban/kanban_column.js:299
-#: code:addons/web/static/src/xml/base.xml:1443
+#: code:addons/web/static/src/js/core/dialog.js:0
+#: code:addons/web/static/src/js/core/dialog.js:0
+#: code:addons/web/static/src/js/core/dialog.js:0
+#: code:addons/web/static/src/js/core/dialog.js:0
+#: code:addons/web/static/src/js/views/kanban/kanban_column.js:0
+#: code:addons/web/static/src/js/views/list/list_confirm_dialog.js:0
 #, python-format
 msgid "Ok"
 msgstr "ตกลง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:165
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Old Password"
 msgstr "รหัสผ่านเดิม"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:2059
-#, python-format
-msgid "On"
-msgstr "เปิด"
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/xml/base.xml:53
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "On change:"
 msgstr "เมื่อเปลี่ยนแปลง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:2283
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
 #, python-format
-msgid "Only Integer Value should be valid."
-msgstr "ค่าควรจำนวนเต็มเท่านั้นที่ถูกต้อง"
+msgid "One2many"
+msgstr ""
 
 #. module: web
-#: code:addons/web/controllers/main.py:502
+#. openerp-web
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#, python-format
+msgid "Only Integer or Float Value should be valid."
+msgstr ""
+
+#. module: web
+#: code:addons/web/controllers/main.py:0
 #, python-format
 msgid ""
 "Only employee can access this database. Please contact the administrator."
 msgstr ""
 
 #. module: web
+#: code:addons/web/models/models.py:0
+#, python-format
+msgid ""
+"Only types %(supported_types)s are supported for category (found type "
+"%(field_type)s)"
+msgstr ""
+
+#. module: web
+#: code:addons/web/models/models.py:0
+#, python-format
+msgid ""
+"Only types %(supported_types)s are supported for filter (found type "
+"%(field_type)s)"
+msgstr ""
+
+#. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:487
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Only you"
 msgstr "คุณเท่านั้น"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/colorpicker.xml:55
+#: code:addons/web/static/src/xml/colorpicker_dialog.xml:0
 #, python-format
 msgid "Opacity %"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:2052
-#, python-format
-msgid "Open"
-msgstr "เปิด"
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/xml/base.xml:231
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Open Developer Tools"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:241
+#: code:addons/web/static/src/xml/debug.xml:0
+#, python-format
+msgid "Open Developer Tools#{widget.debug_mode_help}"
+msgstr "เปิดเครื่องมือของนักพัฒนา#{widget.debug_mode_help}"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Open View"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/menu.xml:195
+#: code:addons/web/static/src/xml/menu.xml:0
 #, python-format
 msgid "Open the next record"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/menu.xml:186
+#: code:addons/web/static/src/xml/menu.xml:0
 #, python-format
 msgid "Open the previous record"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/menu.xml:177
+#: code:addons/web/static/src/xml/menu.xml:0
 #, python-format
 msgid "Open to kanban view"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/menu.xml:168
+#: code:addons/web/static/src/xml/menu.xml:0
 #, python-format
 msgid "Open to list view"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/relational_fields.js:639
-#: code:addons/web/static/src/js/views/calendar/calendar_controller.js:323
-#: code:addons/web/static/src/js/views/form/form_controller.js:616
-#: code:addons/web/static/src/js/views/form/form_controller.js:638
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
+#: code:addons/web/static/src/js/views/calendar/calendar_controller.js:0
+#: code:addons/web/static/src/js/views/form/form_controller.js:0
+#: code:addons/web/static/src/js/views/form/form_controller.js:0
+#: code:addons/web/static/src/js/views/view_dialogs.js:0
 #, python-format
 msgid "Open: "
 msgstr "เปิด: "
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/kanban/kanban_record.js:23
-#: code:addons/web/static/src/xml/base.xml:861
-#: code:addons/web/static/src/xml/kanban.xml:82
+#: code:addons/web/static/src/js/views/list/list_renderer.js:0
+#, python-format
+msgid "Optional columns"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/kanban/kanban_record.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Orange"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/kanban/kanban_column_progressbar.js:0
+#, python-format
+msgid "Other"
+msgstr "อื่นๆ"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#, python-format
+msgid "PDF Viewer"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "PDF controls"
 msgstr ""
 
 #. module: web
@@ -2467,9 +2780,38 @@ msgid "Page: <span class=\"page\"/> / <span class=\"topage\"/>"
 msgstr ""
 
 #. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Pager"
+msgstr ""
+
+#. module: web
 #: model_terms:ir.ui.view,arch_db:web.login
 msgid "Password"
 msgstr "รหัสผ่าน"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#, python-format
+msgid "Percentage"
+msgstr "เป็นเปอร์เซ็นต์"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#, python-format
+msgid "Percentage Pie"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#, python-format
+msgid "Phone"
+msgstr "โทรศัพท์"
 
 #. module: web
 #: model_terms:ir.ui.view,arch_db:web.external_layout_standard
@@ -2478,21 +2820,21 @@ msgstr "โทรศัพท์:"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/colorpicker.js:33
+#: code:addons/web/static/src/js/widgets/colorpicker_dialog.js:0
 #, python-format
 msgid "Pick a color"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:517
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Pie Chart"
 msgstr "กราฟวงกลม"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/graph/graph_renderer.js:274
+#: code:addons/web/static/src/js/views/graph/graph_renderer.js:0
 #, python-format
 msgid ""
 "Pie chart cannot display all zero numbers.. Try to change your domain to "
@@ -2501,7 +2843,7 @@ msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/graph/graph_renderer.js:259
+#: code:addons/web/static/src/js/views/graph/graph_renderer.js:0
 #, python-format
 msgid ""
 "Pie chart cannot mix positive and negative numbers. Try to change your "
@@ -2510,62 +2852,75 @@ msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/pivot/pivot_view.js:23
+#: code:addons/web/static/src/js/views/pivot/pivot_view.js:0
 #, python-format
 msgid "Pivot"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/list/list_renderer.js:352
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Pivot settings"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
+#: code:addons/web/static/src/js/views/list/list_renderer.js:0
 #, python-format
 msgid "Please click on the \"save\" button first."
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/data_export.js:177
+#: code:addons/web/static/src/js/widgets/data_export.js:0
 #, python-format
 msgid "Please enter save field list name"
 msgstr "โปรดบันทึกฟิลด์รายการชื่อ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/data_export.js:478
+#: code:addons/web/static/src/js/widgets/data_export.js:0
 #, python-format
 msgid "Please select fields to export..."
 msgstr "กรุณาเลือกฟิลด์ที่จะนำออก."
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/data_export.js:464
+#: code:addons/web/static/src/js/widgets/data_export.js:0
 #, python-format
 msgid "Please select fields to save export list..."
 msgstr "โปรดเลือกฟิลเพื่อบันทึกรายการนำออก..."
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1525
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Please update translations of :"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:150
+#: code:addons/web/static/src/xml/crash_manager.xml:0
 #, python-format
 msgid ""
 "Please use the copy button to report the error to your support service."
 msgstr ""
 
 #. module: web
+#: model_terms:ir.ui.view,arch_db:web.brand_promotion_message
+msgid "Powered by %s%s"
+msgstr ""
+
+#. module: web
 #: model_terms:ir.ui.view,arch_db:web.login_layout
 msgid "Powered by <span>Odoo</span>"
-msgstr " <span>Odoo</span>  "
+msgstr "สนับสนุนโดย <span>Odoo</span>"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1549
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Preferences"
 msgstr "การตั้งค่า"
@@ -2581,358 +2936,406 @@ msgid "Preview Internal Report"
 msgstr "แสดงตัวอย่างรายงานภายนอก"
 
 #. module: web
-#: model:ir.model.fields,field_description:web.field_report_layout__image
-msgid "Preview image src"
-msgstr ""
-
-#. module: web
-#: model:ir.model.fields,field_description:web.field_report_layout__pdf
-msgid "Preview pdf src"
-msgstr ""
-
-#. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:741
-#: code:addons/web/static/src/xml/web_calendar.xml:75
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/web_calendar.xml:0
 #, python-format
 msgid "Previous"
-msgstr ""
+msgstr "Previous"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/time_range_menu_options.js:24
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
 #, python-format
 msgid "Previous Period"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/time_range_menu_options.js:25
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
 #, python-format
 msgid "Previous Year"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/sidebar.js:33
-#: code:addons/web/static/src/xml/report.xml:11
+#: code:addons/web/static/src/js/chrome/sidebar.js:0
+#: code:addons/web/static/src/xml/report.xml:0
 #, python-format
 msgid "Print"
 msgstr "พิมพ์"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/kanban/kanban_record.js:32
-#: code:addons/web/static/src/xml/base.xml:870
-#: code:addons/web/static/src/xml/kanban.xml:91
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#, python-format
+msgid "Priority"
+msgstr "ระดับความสำคัญ"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#, python-format
+msgid "Progress Bar"
+msgstr "แถบสถานะ"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/kanban/kanban_record.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Purple"
 msgstr "ม่วง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:561
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
+#, python-format
+msgid "Q1"
+msgstr "Q1"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
+#, python-format
+msgid "Q2"
+msgstr "Q2"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
+#, python-format
+msgid "Q3"
+msgstr "Q3"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
+#, python-format
+msgid "Q4"
+msgstr "Q4"
+
+#. module: web
+#: model:ir.model.fields.selection,name:web.selection__ir_actions_act_window_view__view_mode__qweb
+msgid "QWeb"
+msgstr "QWeb"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Quarter"
 msgstr "ไตรมาส"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/kanban.xml:32
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Quick add"
 msgstr ""
 
 #. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
+#, python-format
+msgid "Quick search: %s"
+msgstr ""
+
+#. module: web
 #: model:ir.model,name:web.model_ir_qweb_field_image
 msgid "Qweb Field Image"
+msgstr "QWeb"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
+#, python-format
+msgid "Radio"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1160
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Range"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/kanban/kanban_record.js:22
-#: code:addons/web/static/src/xml/base.xml:860
-#: code:addons/web/static/src/xml/colorpicker.xml:27
-#: code:addons/web/static/src/xml/kanban.xml:81
+#: code:addons/web/static/src/js/views/kanban/kanban_record.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/colorpicker_dialog.xml:0
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Red"
 msgstr "สีแดง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:249
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Regenerate Assets Bundles"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/model_field_selector.js:467
+#: code:addons/web/static/src/js/widgets/model_field_selector.js:0
 #, python-format
 msgid "Relation not allowed"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:771
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Relation to follow"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:57
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Relation:"
 msgstr "ความสัมพันธ์:"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/view_dialogs.js:157
-#: code:addons/web/static/src/xml/base.xml:1238
-#: code:addons/web/static/src/xml/base.xml:1412
+#: code:addons/web/static/src/js/views/view_dialogs.js:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Remove"
 msgstr "ลบออก"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1413
+#: code:addons/web/static/src/js/views/kanban/kanban_record.js:0
 #, python-format
-msgid "Remove All"
-msgstr "ลบทั้งหมด"
+msgid "Remove Cover Image"
+msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:1966
+#: code:addons/web/static/src/js/widgets/data_export.js:0
+#, python-format
+msgid "Remove field"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
 #, python-format
 msgid "Remove from Favorites"
 msgstr "ลบออกจากรายการโปรด"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:696
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Remove tag"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/web_calendar.xml:65
+#: code:addons/web/static/src/xml/web_calendar.xml:0
 #, python-format
 msgid "Remove this favorite from the list"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/action_manager_report.js:112
+#: code:addons/web/static/src/js/chrome/action_manager_report.js:0
 #, python-format
 msgid "Report"
 msgstr "รายงาน"
 
 #. module: web
-#: model:ir.model,name:web.model_report_layout
-msgid "Report Layout"
-msgstr ""
-
-#. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/services/crash_manager.js:223
+#: code:addons/web/static/src/js/services/crash_manager.js:0
 #, python-format
 msgid "Request timeout"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:2048
-#, python-format
-msgid "Restore"
-msgstr ""
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/xml/base.xml:240
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Run Click Everywhere Test"
-msgstr ""
+msgstr "Run Click Everywhere Test"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:239
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Run JS Mobile Tests"
-msgstr ""
+msgstr "Run JS Mobile Tests"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:238
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Run JS Tests"
-msgstr ""
+msgstr "Run JS Tests"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1226
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "SEE RESULT"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/kanban/kanban_record.js:27
-#: code:addons/web/static/src/xml/base.xml:865
-#: code:addons/web/static/src/xml/kanban.xml:86
+#: code:addons/web/static/src/js/fields/signature.js:0
+#, python-format
+msgid "SIGNATURE"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/kanban/kanban_record.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Salmon pink"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/colorpicker.xml:45
+#: code:addons/web/static/src/xml/colorpicker_dialog.xml:0
 #, python-format
 msgid "Saturation %"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/view_dialogs.js:137
-#: code:addons/web/static/src/js/widgets/domain_selector_dialog.js:28
-#: code:addons/web/static/src/xml/base.xml:390
-#: code:addons/web/static/src/xml/base.xml:412
-#: code:addons/web/static/src/xml/base.xml:1375
-#: code:addons/web/static/src/xml/report.xml:17
+#: code:addons/web/static/src/js/views/view_dialogs.js:0
+#: code:addons/web/static/src/js/widgets/domain_selector_dialog.js:0
+#: code:addons/web/static/src/js/widgets/translation_dialog.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Save"
 msgstr "บันทึก"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/view_dialogs.js:137
+#: code:addons/web/static/src/js/views/view_dialogs.js:0
 #, python-format
 msgid "Save & Close"
-msgstr ""
+msgstr "บันทึกและปิด"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/view_dialogs.js:146
+#: code:addons/web/static/src/js/views/view_dialogs.js:0
 #, python-format
 msgid "Save & New"
 msgstr "บันทึกและสร้างใหม่"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:1577
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
 #, python-format
 msgid "Save As..."
 msgstr "บันทึกเป็น..."
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/menu.xml:132
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
-msgid "Save a record"
-msgstr ""
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1443
-#, python-format
-msgid "Save as:"
-msgstr "บันทึกเป็น:"
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1358
-#, python-format
-msgid "Save current search"
+msgid "Save Current Search"
 msgstr "บันทึกการค้นหาปัจจุบัน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/tools/debug_manager.js:491
+#: code:addons/web/static/src/xml/menu.xml:0
+#, python-format
+msgid "Save a record"
+msgstr "บันทึกรายการ"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Save as :"
+msgstr "บันทึกเป็น :"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/tools/debug_manager_backend.js:0
 #, python-format
 msgid "Save default"
 msgstr "บันทึกค่าเริ่มต้น"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1419
-#, python-format
-msgid "Save fields list"
-msgstr "บันทึกรายการของฟิลด์"
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1446
-#, python-format
-msgid "Saved exports:"
-msgstr "บันทึกการส่งออก"
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1592
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Search"
 msgstr "ค้นหา"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_inputs.js:366
+#: code:addons/web/static/src/js/views/control_panel/search/search_bar_autocomplete_sources.js:0
 #, python-format
 msgid "Search %(field)s at: %(value)s"
 msgstr "ค้นหา %(field)s ที่: %(value)s"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_inputs.js:199
-#: code:addons/web/static/src/js/views/search/search_inputs.js:218
-#: code:addons/web/static/src/js/views/search/search_inputs.js:407
+#: code:addons/web/static/src/js/views/control_panel/search/search_bar_autocomplete_sources.js:0
 #, python-format
 msgid "Search %(field)s for: %(value)s"
 msgstr "ค้นหา %(field)s สำหรับ: %(value)s"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/relational_fields.js:496
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
 #, python-format
 msgid "Search More..."
 msgstr "ค้นหาอื่น ๆ ..."
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1231
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Search..."
 msgstr "ค้นหา..."
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/relational_fields.js:563
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
 #, python-format
 msgid "Search: "
 msgstr "ค้นหา: "
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:154
+#: code:addons/web/static/src/xml/crash_manager.xml:0
 #, python-format
 msgid "See details"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/view_dialogs.js:410
-#: code:addons/web/static/src/xml/base.xml:974
-#: code:addons/web/static/src/xml/base.xml:975
-#: code:addons/web/static/src/xml/base.xml:1005
-#: code:addons/web/static/src/xml/base.xml:1006
+#: code:addons/web/static/src/xml/kanban.xml:0
+#, python-format
+msgid "See examples"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/kanban/kanban_record.js:0
+#: code:addons/web/static/src/js/views/view_dialogs.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Select"
 msgstr "เลือก"
@@ -2946,160 +3349,238 @@ msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:610
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Select Signature Style"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Select a model to add a filter."
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/tools/debug_manager.js:169
+#: code:addons/web/static/src/js/tools/debug_manager_backend.js:0
 #, python-format
 msgid "Select a view"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:2746
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Select field"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
 #, python-format
 msgid "Selected records"
 msgstr "รายการที่เลือก"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:61
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
 #, python-format
-msgid "Selection:"
-msgstr "การเลือก:"
+msgid "Selection"
+msgstr "เลือก"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/tools/debug_manager.js:488
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Selection:"
+msgstr "ตัวเลือก:"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/tools/debug_manager_backend.js:0
 #, python-format
 msgid "Set Default"
 msgstr "ตั้งเป็นปริยาย"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:268
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Set Defaults"
 msgstr "ตั้งค่าเริ่มต้น"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/kanban.xml:19
+#: code:addons/web/static/src/js/views/kanban/kanban_record.js:0
+#, python-format
+msgid "Set a Cover Image"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/special_fields.js:0
+#, python-format
+msgid "Set a timezone on your user"
+msgstr "กำหนดเขตเวลาสำหรับผู้ใช้ของคุณ"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Settings"
 msgstr "ตั้งค่า"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1371
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Share with all users"
 msgstr "แบ่งปันกับผู้ใช้ทั้งหมด"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/menu.xml:114
+#: code:addons/web/static/src/xml/menu.xml:0
 #, python-format
 msgid "Shortcuts"
+msgstr "คีย์ลัด"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Show sub-fields"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/apps.js:148
+#: code:addons/web/static/src/js/apps.js:0
 #, python-format
 msgid "Showing locally available modules"
 msgstr "แสดงโมดูลภายใน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:33
+#: code:addons/web/static/src/js/fields/signature.js:0
+#, python-format
+msgid "Signature"
+msgstr "ลายเซ็นต์"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Size:"
 msgstr "ขนาด:"
 
 #. module: web
-#: code:addons/web/controllers/main.py:1169
+#: code:addons/web/controllers/main.py:0
 #, python-format
 msgid "Something horrible happened"
 msgstr "มีบางอย่างหน้ากลัวเกิดขึ้น"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:98
+#: code:addons/web/static/src/js/services/crash_manager.js:0
+#, python-format
+msgid "Something went wrong !"
+msgstr "อ๊ะ มีบางอย่างผิดพลาด !"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Special:"
 msgstr "พิเศษ:"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/misc.js:14
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Stacked"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/core/misc.js:0
 #, python-format
 msgid "Still loading..."
 msgstr "กำลังโหลด..."
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/misc.js:15
+#: code:addons/web/static/src/js/core/misc.js:0
 #, python-format
 msgid "Still loading...<br />Please be patient."
 msgstr "กำลังโหลดอยู่ ... <br />กรุณาอดทนรอ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/web_calendar.xml:96
+#: code:addons/web/static/src/xml/name_and_signature.xml:0
+#, python-format
+msgid "Style"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/name_and_signature.xml:0
+#, python-format
+msgid "Styles"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/calendar/calendar_quick_create.js:0
+#, python-format
+msgid "Summary"
+msgstr "สรุป"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/web_calendar.xml:0
 #, python-format
 msgid "Summary:"
 msgstr "สรุป"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1547
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Support"
 msgstr "สนับสนุน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:2061
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
-msgid "Switch Off"
-msgstr "ปิด"
+msgid "Switch to this company"
+msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:2062
-#, python-format
-msgid "Switch On"
-msgstr "เปิด"
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/js/widgets/domain_selector.js:583
+#: code:addons/web/static/src/js/widgets/domain_selector.js:0
 #, python-format
 msgid "Syntax error"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/misc.js:18
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
+#, python-format
+msgid "Tags"
+msgstr "ป้ายกำกับ"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/core/misc.js:0
 #, python-format
 msgid "Take a minute to get a coffee,<br />because it's loading..."
 msgstr "ใช้เวลาสักครู่ จิปกาแฟรอได้เลย, <br /> เพราะกำลังโหลด ..."
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/switch_company_menu.js:44
-#, python-format
-msgid "Tap on the list to change company"
-msgstr ""
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/xml/base.xml:260
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Technical Translation"
 msgstr "การแปลศัพท์ทางเทคนิค"
@@ -3111,16 +3592,44 @@ msgid "Tel:"
 msgstr "โทร:"
 
 #. module: web
+#: code:addons/web/controllers/main.py:0
+#, python-format
+msgid "Template %s already exists in module %s"
+msgstr ""
+
+#. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/domain_selector.js:537
-#: code:addons/web/static/src/js/widgets/domain_selector.js:583
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Template:"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#, python-format
+msgid "Text"
+msgstr "ข้อความ"
+
+#. module: web
+#: code:addons/web/controllers/main.py:0
+#, python-format
+msgid ""
+"The content of this cell is too long for an XLSX file (more than %s "
+"characters). Please use the CSV format for this export."
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/widgets/domain_selector.js:0
+#: code:addons/web/static/src/js/widgets/domain_selector.js:0
 #, python-format
 msgid "The domain you entered is not properly formed"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/model_field_selector.js:406
+#: code:addons/web/static/src/js/widgets/model_field_selector.js:0
 #, python-format
 msgid ""
 "The field chain is not valid. Did you maybe use a non-existing field name or"
@@ -3129,27 +3638,34 @@ msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:1577
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
 #, python-format
 msgid "The field is empty, there's nothing to save !"
 msgstr "ฟิลด์ยังว่างเปล่า, ยังไม่มีอะไรที่ต้องบันทึก !"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/basic/basic_controller.js:398
-#: code:addons/web/static/src/js/widgets/attach_document.js:65
+#: code:addons/web/static/src/js/views/calendar/calendar_quick_create.js:0
+#, python-format
+msgid "The following field is invalid:"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/basic/basic_controller.js:0
+#: code:addons/web/static/src/js/widgets/attach_document.js:0
 #, python-format
 msgid "The following fields are invalid:"
 msgstr "ฟิลด์ต่อไปนี้ไม่ถูกต้อง"
 
 #. module: web
-#: code:addons/web/controllers/main.py:821
+#: code:addons/web/controllers/main.py:0
 #, python-format
 msgid "The new password and its confirmation must be identical."
 msgstr "รหัสผ่านใหม่และรหัสผ่านที่ยืนยันที่จะต้องเหมือนกัน"
 
 #. module: web
-#: code:addons/web/controllers/main.py:832
+#: code:addons/web/controllers/main.py:0
 #, python-format
 msgid ""
 "The old password you provided is incorrect, your password was not changed."
@@ -3157,7 +3673,7 @@ msgstr "รหัสผ่านเดิมผิด รหัสผ่าน�
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/services/crash_manager.js:224
+#: code:addons/web/static/src/js/services/crash_manager.js:0
 #, python-format
 msgid ""
 "The operation was interrupted. This usually means that the current operation"
@@ -3166,23 +3682,25 @@ msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/basic/basic_controller.js:75
+#: code:addons/web/static/src/js/views/basic/basic_controller.js:0
 #, python-format
 msgid ""
 "The record has been modified, your changes will be discarded. Do you want to"
 " proceed?"
 msgstr ""
+"มีการแก้ไขบันทึกการเปลี่ยนแปลงของคุณจะถูกยกเลิก "
+"คุณต้องการดำเนินการต่อหรือไม่?"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:1395
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
 #, python-format
 msgid "The selected file exceed the maximum file size of %s."
 msgstr "ไฟล์ที่ถูกเลือกมีขนาดใหญ่เกิน %s."
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/relational_fields.js:1643
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
 #, python-format
 msgid ""
 "The type of the field '%s' must be a many2many field with a relation to "
@@ -3192,65 +3710,79 @@ msgstr ""
 "'ir.attachment'."
 
 #. module: web
-#: code:addons/web/controllers/main.py:1513
+#: code:addons/web/controllers/main.py:0
 #, python-format
 msgid ""
-"There are too many rows (%s rows, limit: 65535) to export as Excel 97-2003 "
-"(.xls) format. Consider splitting the export."
+"There are too many rows (%s rows, limit: %s) to export as Excel 2007-2013 "
+"(.xlsx) format. Consider splitting the export."
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:1416
+#: code:addons/web/static/src/xml/kanban.xml:0
+#, python-format
+msgid "There is no available image to be set as cover."
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
 #, python-format
 msgid "There was a problem while uploading your file"
 msgstr "พบปัญหาในขณะที่อัพโหลดไฟล์ของคุณ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/time_range_menu_options.js:13
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
 #, python-format
 msgid "This Month"
 msgstr "เดือนนี้"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/time_range_menu_options.js:14
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
 #, python-format
 msgid "This Quarter"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/time_range_menu_options.js:12
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
 #, python-format
 msgid "This Week"
-msgstr ""
+msgstr "สัปดาห์นี้"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/time_range_menu_options.js:15
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
 #, python-format
 msgid "This Year"
 msgstr "ปีนี้"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/date_picker.js:181
+#: code:addons/web/static/src/js/widgets/date_picker.js:0
 #, python-format
 msgid "This date is on the future. Make sure it is what you expected."
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/domain_selector.js:472
+#: code:addons/web/static/src/js/widgets/domain_selector.js:0
 #, python-format
 msgid "This domain is not supported."
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/favorites_menu.js:272
+#: code:addons/web/static/src/xml/name_and_signature.xml:0
+#, python-format
+msgid "This file is invalid. Please select an image."
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/control_panel/search/favorite_menu.js:0
 #, python-format
 msgid ""
 "This filter is global and will be removed for everybody if you continue."
@@ -3269,102 +3801,123 @@ msgstr "นี่คือตัวอย่างของรายงานภ
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_view.js:1039
-#: code:addons/web/static/src/js/views/search/time_range_menu.js:128
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
 #, python-format
-msgid "Time Range"
-msgstr ""
+msgid "Time"
+msgstr "เวลา"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1139
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Time Ranges"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/special_fields.js:94
+#: code:addons/web/static/src/js/fields/special_fields.js:0
 #, python-format
 msgid ""
-"Timezone Mismatch : The timezone of your browser doesn't match the selected "
-"one. The time in Odoo is displayed according to the timezone set on your "
-"user's preferences."
+"Timezone Mismatch : This timezone is different from that of your browser.\n"
+"Please, set the same timezone as your browser's to avoid time discrepancies in your system."
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/time_range_menu_options.js:11
-#: code:addons/web/static/src/xml/web_calendar.xml:76
-#: code:addons/web/static/src/xml/web_calendar.xml:89
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
+#: code:addons/web/static/src/xml/web_calendar.xml:0
+#: code:addons/web/static/src/xml/web_calendar.xml:0
 #, python-format
 msgid "Today"
 msgstr "วันนี้"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:244
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#, python-format
+msgid "Toggle"
+msgstr "Toggle"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "Toggle Timelines"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/pivot/pivot_model.js:622
-#: code:addons/web/static/src/js/views/pivot/pivot_model.js:770
+#: code:addons/web/static/src/js/views/graph/graph_renderer.js:0
+#: code:addons/web/static/src/js/views/pivot/pivot_model.js:0
+#: code:addons/web/static/src/js/views/pivot/pivot_model.js:0
 #, python-format
 msgid "Total"
 msgstr "รวม"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/abstract_web_client.js:211
+#: code:addons/web/static/src/js/services/crash_manager.js:0
+#: code:addons/web/static/src/js/services/crash_manager.js:0
 #, python-format
 msgid "Traceback:"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/field_utils.js:62
+#: code:addons/web/static/src/js/widgets/translation_dialog.js:0
+#, python-format
+msgid "Translate: "
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/field_utils.js:0
 #, python-format
 msgid "True"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:577
+#: code:addons/web/static/src/js/views/pivot/pivot_renderer.js:0
 #, python-format
 msgid ""
-"Try to add some records, or make sure\n"
-"                that there is at least one measure and no active filter in the search bar."
+"Try to add some records, or make sure that there is at least one measure and"
+" no active filter in the search bar."
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/graph/graph_renderer.js:112
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid ""
-"Try to add some records, or make sure that there is no active filter in the "
-"search bar."
+"Try to add some records, or make sure that there is no\n"
+"                active filter in the search bar."
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/abstract_web_client.js:338
+#: code:addons/web/static/src/js/chrome/abstract_web_client.js:0
 #, python-format
 msgid "Trying to reconnect..."
 msgstr "กำลังพยายามเชื่อมต่อใหม่..."
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:25
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Type:"
 msgstr "ชนิด:"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/action_manager_report.js:24
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
+#, python-format
+msgid "URL"
+msgstr "URL"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/chrome/action_manager_report.js:0
 #, python-format
 msgid ""
 "Unable to find Wkhtmltopdf on this system. The report will be shown in html."
@@ -3372,186 +3925,237 @@ msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/list/list_controller.js:162
+#: code:addons/web/static/src/js/views/form/form_controller.js:0
+#: code:addons/web/static/src/js/views/list/list_controller.js:0
 #, python-format
 msgid "Unarchive"
 msgstr "ยกเลิกการเก็บ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/kanban.xml:28
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Unarchive All"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/calendar/calendar_model.js:578
-#: code:addons/web/static/src/js/views/graph/graph_renderer.js:547
-#: code:addons/web/static/src/js/views/kanban/kanban_column.js:76
-#: code:addons/web/static/src/js/views/kanban/kanban_column.js:79
-#: code:addons/web/static/src/js/views/kanban/kanban_renderer_mobile.js:182
-#: code:addons/web/static/src/js/views/list/list_renderer.js:435
-#: code:addons/web/static/src/js/views/list/list_renderer.js:438
-#: code:addons/web/static/src/js/views/pivot/pivot_model.js:1078
+#: code:addons/web/controllers/main.py:0
+#: code:addons/web/static/src/js/views/calendar/calendar_model.js:0
+#: code:addons/web/static/src/js/views/graph/graph_model.js:0
+#: code:addons/web/static/src/js/views/graph/graph_renderer.js:0
+#: code:addons/web/static/src/js/views/kanban/kanban_column.js:0
+#: code:addons/web/static/src/js/views/kanban/kanban_column.js:0
+#: code:addons/web/static/src/js/views/kanban/kanban_renderer_mobile.js:0
+#: code:addons/web/static/src/js/views/list/list_renderer.js:0
+#: code:addons/web/static/src/js/views/list/list_renderer.js:0
+#: code:addons/web/static/src/js/views/pivot/pivot_model.js:0
 #, python-format
 msgid "Undefined"
 msgstr "ยังไม่กำหนด"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/kanban.xml:17
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Unfold"
-msgstr ""
+msgstr "ขยายทั้งหมด"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/abstract_web_client.js:202
+#: code:addons/web/static/src/js/services/crash_manager.js:0
 #, python-format
 msgid "Unknown CORS error"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/py_utils.js:299
+#: code:addons/web/static/src/js/core/py_utils.js:0
 #, python-format
 msgid "Unknown nonliteral type "
 msgstr "ชนิดไม่ทราบอย่างแท้จริง "
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/list/list_editable_renderer.js:556
+#: code:addons/web/static/src/js/views/list/list_editable_renderer.js:0
 #, python-format
 msgid "Unlink row "
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/_deprecated/data.js:739
+#: code:addons/web/static/src/js/_deprecated/data.js:0
 #, python-format
 msgid "Unnamed"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/pivot/pivot_view.js:106
+#: code:addons/web/static/src/js/views/pivot/pivot_view.js:0
 #, python-format
 msgid "Untitled"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1393
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
-msgid "Update data (import-compatible export)"
+msgid "Update to:"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/upgrade_fields.js:69
+#: code:addons/web/static/src/js/fields/upgrade_fields.js:0
 #, python-format
 msgid "Upgrade now"
 msgstr "อัพเกรดตอนนี้"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1577
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Upgrade to enterprise"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1571
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Upgrade to future versions"
 msgstr "อัพเกรดเป็นเวอร์ชันหน้า"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:974
-#: code:addons/web/static/src/xml/base.xml:1005
+#: code:addons/web/static/src/js/views/kanban/kanban_record.js:0
+#, python-format
+msgid "Upload and Set"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Upload your file"
 msgstr "อัพโหลดไฟล์ของคุณ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/relational_fields.js:1807
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Uploaded"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "Uploading"
+msgstr "กำลังอัพโหลด"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
 #, python-format
 msgid "Uploading Error"
 msgstr "อัพโหลดมีปัญหา"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:938
-#: code:addons/web/static/src/xml/base.xml:978
-#: code:addons/web/static/src/xml/base.xml:1004
-#: code:addons/web/static/src/xml/base.xml:1060
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Uploading..."
 msgstr "กำลังอัพโหลด..."
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1365
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Use by default"
 msgstr "ใช้เป็นค่าเริ่มต้น"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1387
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
-msgid "Use data in a spreadsheet (export all data)"
+msgid "User"
+msgstr "ผู้ใช้"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/services/crash_manager.js:0
+#, python-format
+msgid "User Error"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1371
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Users"
 msgstr "ผู้ใช้งาน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/services/crash_manager.js:17
+#: code:addons/web/static/src/js/services/crash_manager.js:0
 #, python-format
 msgid "Validation Error"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/tools/debug_manager.js:287
-#: code:addons/web/static/src/xml/base.xml:258
+#: code:addons/web/static/src/js/views/pivot/pivot_model.js:0
+#, python-format
+msgid "Variation"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/tools/debug_manager_backend.js:0
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "View Fields"
 msgstr "ดูฟิลด์"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:270
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "View Metadata"
 msgstr "ดู Metadata"
 
 #. module: web
+#: model:ir.model.fields,field_description:web.field_ir_actions_act_window_view__view_mode
+msgid "View Type"
+msgstr "ประเภทมุมมอง"
+
+#. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/action_manager.js:580
-#: code:addons/web/static/src/js/chrome/action_manager_report.js:69
-#: code:addons/web/static/src/js/services/crash_manager.js:13
-#: code:addons/web/static/src/js/services/crash_manager.js:14
-#: code:addons/web/static/src/js/views/basic/basic_controller.js:78
-#: code:addons/web/static/src/js/views/list/list_renderer.js:352
-#: code:addons/web/static/src/xml/base.xml:606
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "View switcher"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/chrome/action_manager.js:0
+#: code:addons/web/static/src/js/chrome/action_manager_report.js:0
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
+#: code:addons/web/static/src/js/services/crash_manager.js:0
+#: code:addons/web/static/src/js/views/basic/basic_controller.js:0
+#: code:addons/web/static/src/js/views/basic/basic_controller.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/favorite_menu.js:0
+#: code:addons/web/static/src/js/views/list/list_renderer.js:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Warning"
 msgstr "คำเตือน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/attach_document.js:87
+#: code:addons/web/static/src/js/widgets/attach_document.js:0
 #, python-format
 msgid "Warning : You have to save first before attaching a file."
 msgstr ""
@@ -3579,121 +4183,117 @@ msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:559
-#: code:addons/web/static/src/xml/web_calendar.xml:81
+#: code:addons/web/static/src/js/views/calendar/calendar_model.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/web_calendar.xml:0
 #, python-format
 msgid "Week"
 msgstr "สัปดาห์"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/rainbow_man.js:37
+#: code:addons/web/static/src/js/widgets/rainbow_man.js:0
 #, python-format
 msgid "Well Done!"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:1383
-#, python-format
-msgid "What do you want to do?"
-msgstr ""
-
-#. module: web
-#. openerp-web
-#: code:addons/web/static/src/xml/base.xml:29
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Widget:"
 msgstr "วิดเจ็ต:"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/menu.xml:126
+#: code:addons/web/static/src/xml/menu.xml:0
 #, python-format
 msgid "Windows/Linux"
 msgstr ""
 
 #. module: web
-#: code:addons/web/controllers/main.py:497
+#: code:addons/web/controllers/main.py:0
 #, python-format
 msgid "Wrong login/password"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/basic_fields.js:2283
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
 #, python-format
 msgid "Wrong value entered!"
 msgstr "ใส่ค่าผิด!"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:290
+#: code:addons/web/static/src/xml/debug.xml:0
 #, python-format
 msgid "XML ID:"
 msgstr "XML ID:"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:562
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Year"
 msgstr "ปี"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/kanban/kanban_record.js:24
-#: code:addons/web/static/src/xml/base.xml:862
-#: code:addons/web/static/src/xml/kanban.xml:83
+#: code:addons/web/static/src/js/views/kanban/kanban_record.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "Yellow"
-msgstr ""
+msgstr "Yellow"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_inputs.js:337
-#: code:addons/web/static/src/xml/base.xml:49
+#: code:addons/web/static/src/js/views/control_panel/search/search_bar_autocomplete_sources.js:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "Yes"
 msgstr "ใช่"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/time_range_menu_options.js:16
+#: code:addons/web/static/src/js/views/control_panel/search/control_panel_view_parameters.js:0
 #, python-format
 msgid "Yesterday"
 msgstr "เมื่อวาน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/abstract_web_client.js:352
+#: code:addons/web/static/src/js/chrome/abstract_web_client.js:0
 #, python-format
 msgid "You are back online"
 msgstr "คุณกลับมาออนไลน์แล้ว"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/fields/relational_fields.js:71
+#: code:addons/web/static/src/js/fields/relational_fields.js:0
 #, python-format
 msgid "You are creating a new %s, are you sure it does not exist yet?"
 msgstr "คุณกำลังสร้างฐานข้อมูล %s ใหม่  คุณแน่ใจแล้วหรือว่าไม่มีอยู่แล้ว?"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/model_field_selector.js:467
+#: code:addons/web/static/src/js/widgets/model_field_selector.js:0
 #, python-format
 msgid "You cannot follow relations for this field chain construction"
 msgstr ""
 
 #. module: web
-#: code:addons/web/controllers/main.py:819
+#: code:addons/web/controllers/main.py:0
 #, python-format
 msgid "You cannot leave any password empty."
 msgstr "คุณต้องใส่รหัสผ่าน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/misc.js:17
+#: code:addons/web/static/src/js/core/misc.js:0
 #, python-format
 msgid ""
 "You may not believe it,<br />but the application is actually loading..."
@@ -3702,7 +4302,16 @@ msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/action_manager_report.js:29
+#: code:addons/web/static/src/js/views/basic/basic_controller.js:0
+#, python-format
+msgid ""
+"You need to save this new record before editing the translation. Do you want"
+" to proceed?"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/chrome/action_manager_report.js:0
 #, python-format
 msgid ""
 "You need to start Odoo with at least two workers to print a pdf version of "
@@ -3711,7 +4320,7 @@ msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/action_manager_report.js:26
+#: code:addons/web/static/src/js/chrome/action_manager_report.js:0
 #, python-format
 msgid ""
 "You should upgrade your version of Wkhtmltopdf to at least 0.12.0 in order "
@@ -3721,14 +4330,14 @@ msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/services/crash_manager.js:212
+#: code:addons/web/static/src/js/services/crash_manager.js:0
 #, python-format
 msgid "Your Odoo session expired. Please refresh the current web page."
 msgstr "เซสชั่นของคุณหมดลงแล้ว กรุณารีเฟรชหน้านี้ใหม่"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/chrome/action_manager_report.js:22
+#: code:addons/web/static/src/js/chrome/action_manager_report.js:0
 #, python-format
 msgid ""
 "Your installation of Wkhtmltopdf seems to be broken. The report will be "
@@ -3737,327 +4346,393 @@ msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/kanban/kanban_record.js:246
+#: code:addons/web/static/src/js/widgets/name_and_signature.js:0
+#: code:addons/web/static/src/xml/name_and_signature.xml:0
+#, python-format
+msgid "Your name"
+msgstr "ชื่อของคุณ"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/kanban/kanban_record.js:0
 #, python-format
 msgid "[No widget %s]"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/translation.js:113
+#: code:addons/web/static/src/js/core/translation.js:0
 #, python-format
 msgid "a day ago"
 msgstr "วันที่ผ่านมา"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/translation.js:109
+#: code:addons/web/static/src/js/core/translation.js:0
 #, python-format
 msgid "about a minute ago"
 msgstr "ประมาณนาทีที่ผ่านมา"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/translation.js:115
+#: code:addons/web/static/src/js/core/translation.js:0
 #, python-format
 msgid "about a month ago"
 msgstr "ประมาณเดือนที่ผ่านมา"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/translation.js:117
+#: code:addons/web/static/src/js/core/translation.js:0
 #, python-format
 msgid "about a year ago"
 msgstr "ประมาณปีที่ผ่านมา"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/translation.js:111
+#: code:addons/web/static/src/js/core/translation.js:0
 #, python-format
 msgid "about an hour ago"
 msgstr "ประมาณหนึ่งชั่วโมงที่ผ่านมา"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:639
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "all records"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/domain_selector.js:28
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "are valid for this update."
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/widgets/domain_selector.js:0
 #, python-format
 msgid "child of"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_filters.js:168
-#: code:addons/web/static/src/js/widgets/domain_selector.js:23
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/widgets/domain_selector.js:0
 #, python-format
 msgid "contains"
 msgstr "ประกอบด้วย"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/domain_selector.js:24
+#: code:addons/web/static/src/js/widgets/domain_selector.js:0
 #, python-format
 msgid "does not contain"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_filters.js:169
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
 #, python-format
 msgid "doesn't contain"
 msgstr "ไม่มี"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_filters.js:275
-#: code:addons/web/static/src/js/views/search/search_filters.js:304
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
 #, python-format
 msgid "greater than"
 msgstr "มากกว่า"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_filters.js:277
-#: code:addons/web/static/src/js/views/search/search_filters.js:306
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
 #, python-format
 msgid "greater than or equal to"
 msgstr "มากกว่าหรือเท่ากับ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/domain_selector.js:25
+#: code:addons/web/static/src/js/widgets/domain_selector.js:0
 #, python-format
 msgid "in"
-msgstr ""
+msgstr "ใน"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_filters.js:296
-#: code:addons/web/static/src/js/views/search/search_filters.js:331
-#: code:addons/web/static/src/js/widgets/domain_selector.js:863
-#: code:addons/web/static/src/xml/base.xml:727
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/widgets/domain_selector.js:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "is"
 msgstr "เป็น"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_filters.js:188
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
 #, python-format
 msgid "is after"
+msgstr "หลัง"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#, python-format
+msgid "is after or equal to"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_filters.js:189
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
 #, python-format
 msgid "is before"
+msgstr "ก่อน"
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#, python-format
+msgid "is before or equal to"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_filters.js:190
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
 #, python-format
 msgid "is between"
-msgstr ""
+msgstr "ระหว่าง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_filters.js:170
-#: code:addons/web/static/src/js/views/search/search_filters.js:186
-#: code:addons/web/static/src/js/views/search/search_filters.js:273
-#: code:addons/web/static/src/js/views/search/search_filters.js:302
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
 #, python-format
 msgid "is equal to"
 msgstr "เท่ากับ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_filters.js:350
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
 #, python-format
 msgid "is false"
 msgstr "เป็นเท็จ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_filters.js:332
-#: code:addons/web/static/src/js/widgets/domain_selector.js:864
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/widgets/domain_selector.js:0
 #, python-format
 msgid "is not"
 msgstr "ไม่ใช่"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/domain_selector.js:18
+#: code:addons/web/static/src/js/widgets/domain_selector.js:0
 #, python-format
 msgid "is not ="
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_filters.js:171
-#: code:addons/web/static/src/js/views/search/search_filters.js:187
-#: code:addons/web/static/src/js/views/search/search_filters.js:274
-#: code:addons/web/static/src/js/views/search/search_filters.js:303
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
 #, python-format
 msgid "is not equal to"
 msgstr "ไม่เท่ากับ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_filters.js:173
-#: code:addons/web/static/src/js/views/search/search_filters.js:192
-#: code:addons/web/static/src/js/views/search/search_filters.js:280
-#: code:addons/web/static/src/js/views/search/search_filters.js:309
-#: code:addons/web/static/src/js/views/search/search_filters.js:334
-#: code:addons/web/static/src/js/widgets/domain_selector.js:37
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/widgets/domain_selector.js:0
 #, python-format
 msgid "is not set"
 msgstr "ไม่ถูกเลือกไว้"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_filters.js:172
-#: code:addons/web/static/src/js/views/search/search_filters.js:191
-#: code:addons/web/static/src/js/views/search/search_filters.js:279
-#: code:addons/web/static/src/js/views/search/search_filters.js:308
-#: code:addons/web/static/src/js/views/search/search_filters.js:333
-#: code:addons/web/static/src/js/widgets/domain_selector.js:36
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/widgets/domain_selector.js:0
 #, python-format
 msgid "is set"
 msgstr "ถูกเลือกไว้"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_filters.js:349
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
 #, python-format
 msgid "is true"
-msgstr "เป็นความจริง"
+msgstr "เป็นจริง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/utils.js:113
+#: code:addons/web/static/src/js/core/utils.js:0
 #, python-format
 msgid "kMGTPE"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_filters.js:276
-#: code:addons/web/static/src/js/views/search/search_filters.js:305
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
 #, python-format
 msgid "less than"
 msgstr "น้อยกว่า"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/core/translation.js:108
+#: code:addons/web/static/src/js/core/translation.js:0
 #, python-format
 msgid "less than a minute ago"
 msgstr "น้อยกว่านาทีที่ผ่านมา"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_filters.js:278
-#: code:addons/web/static/src/js/views/search/search_filters.js:307
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_filters.js:0
 #, python-format
 msgid "less than or equal to"
 msgstr "น้อยกว่าหรือเท่ากับ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:729
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "not"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_inputs.js:237
+#: code:addons/web/static/src/js/views/control_panel/search/search_bar_autocomplete_sources.js:0
 #, python-format
 msgid "not a valid integer"
 msgstr "จำนวนเต็มไม่ถูกต้อง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/views/search/search_inputs.js:252
+#: code:addons/web/static/src/js/views/control_panel/search/search_bar_autocomplete_sources.js:0
 #, python-format
 msgid "not a valid number"
 msgstr "ตัวเลขไม่ถูกต้อง"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/domain_selector.js:26
+#: code:addons/web/static/src/js/widgets/domain_selector.js:0
 #, python-format
 msgid "not in"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/domain_selector.js:674
+#: code:addons/web/static/src/js/widgets/domain_selector.js:0
 #, python-format
 msgid "not set (false)"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:648
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "of the following rules:"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:663
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "of:"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:720
-#: code:addons/web/static/src/xml/base.xml:1320
+#: code:addons/web/static/src/js/views/control_panel/search/search_facet.js:0
+#: code:addons/web/static/src/js/views/control_panel/search/search_facet.js:0
+#: code:addons/web/static/src/xml/base.xml:0
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "or"
 msgstr "หรือ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/domain_selector.js:29
+#: code:addons/web/static/src/js/widgets/domain_selector.js:0
 #, python-format
 msgid "parent of"
 msgstr ""
 
 #. module: web
+#: model_terms:ir.ui.view,arch_db:web.brand_promotion
+msgid "portal"
+msgstr ""
+
+#. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:604
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "record(s)"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/kanban.xml:42
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "records ?"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/kanban.xml:0
 #, python-format
 msgid "remaining)"
 msgstr "ที่เหลือ"
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/xml/base.xml:729
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "search"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
+#, python-format
+msgid "selected records,"
+msgstr ""
+
+#. module: web
+#. openerp-web
+#: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "set"
 msgstr ""
 
 #. module: web
 #. openerp-web
-#: code:addons/web/static/src/js/widgets/domain_selector.js:674
+#: code:addons/web/static/src/js/widgets/domain_selector.js:0
 #, python-format
 msgid "set (true)"
 msgstr ""

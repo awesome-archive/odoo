@@ -23,20 +23,20 @@ class AccountMove(models.Model):
         domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]",
         help="Delivery address for current invoice.")
 
-    @api.onchange('partner_shipping_id')
+    @api.onchange('partner_shipping_id', 'company_id')
     def _onchange_partner_shipping_id(self):
         """
         Trigger the change of fiscal position when the shipping address is modified.
         """
         delivery_partner_id = self._get_invoice_delivery_partner_id()
-        fiscal_position = self.env['account.fiscal.position'].get_fiscal_position(
+        fiscal_position = self.env['account.fiscal.position'].with_context(force_company=self.company_id.id).get_fiscal_position(
             self.partner_id.id, delivery_id=delivery_partner_id)
 
         if fiscal_position:
             self.fiscal_position_id = fiscal_position
 
     def unlink(self):
-        downpayment_lines = self.mapped('line_ids.sale_line_ids').filtered(lambda line: line.is_downpayment)
+        downpayment_lines = self.mapped('line_ids.sale_line_ids').filtered(lambda line: line.is_downpayment and line.invoice_lines <= self.mapped('line_ids'))
         res = super(AccountMove, self).unlink()
         if downpayment_lines:
             downpayment_lines.unlink()
@@ -53,14 +53,14 @@ class AccountMove(models.Model):
 
         # Recompute 'narration' based on 'company.invoice_terms'.
         if self.type == 'out_invoice':
-            self.narration = self.company_id.with_context(lang=self.partner_id.lang).invoice_terms
+            self.narration = self.company_id.with_context(lang=self.partner_id.lang or self.env.lang).invoice_terms
 
         return res
 
     @api.onchange('invoice_user_id')
     def onchange_user_id(self):
         if self.invoice_user_id and self.invoice_user_id.sale_team_id:
-            self.team_id = self.invoice_user_id.sale_team_id
+            self.team_id = self.env['crm.team']._get_default_team_id(user_id=self.invoice_user_id.id, domain=[('company_id', '=', self.company_id.id)])
 
     def _reverse_moves(self, default_values_list=None, cancel=False):
         # OVERRIDE

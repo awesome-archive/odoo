@@ -4,7 +4,7 @@ odoo.define('pos_restaurant.printbill', function (require) {
 var core = require('web.core');
 var screens = require('point_of_sale.screens');
 var gui = require('point_of_sale.gui');
-
+var _t = core._t;
 var QWeb = core.qweb;
 
 var BillScreenWidget = screens.ReceiptScreenWidget.extend({
@@ -24,6 +24,14 @@ var BillScreenWidget = screens.ReceiptScreenWidget.extend({
         this._super();
         this.$('.receipt-change').remove();
     },
+    print_web: function(){
+        this._super();
+        this.pos.get_order()._printed = false;
+    },
+    print_html: function(){
+        this._super();
+        this.pos.get_order()._printed = false;
+    },
 });
 
 gui.define_screen({name:'bill', widget: BillScreenWidget});
@@ -37,7 +45,7 @@ var PrintBillButton = screens.ActionButtonWidget.extend({
         } else {
           this.gui.show_popup('error', {
               'title': _t('Nothing to Print'),
-              'body':  _t('There is no order lines'),
+              'body':  _t('There are no order lines'),
           });
         }
     },

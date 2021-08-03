@@ -194,7 +194,12 @@ class IrHttp(models.AbstractModel):
                 return serve
 
         # Don't handle exception but use werkzeug debugger if server in --dev mode
-        if 'werkzeug' in tools.config['dev_mode'] and not isinstance(exception, werkzeug.exceptions.NotFound):
+        # Don't intercept JSON request to respect the JSON Spec and return exception as JSON
+        # "The Response is expressed as a single JSON Object, with the following members:
+        #   jsonrpc, result, error, id"
+        if ('werkzeug' in tools.config['dev_mode']
+                and not isinstance(exception, werkzeug.exceptions.NotFound)
+                and request._request_type != 'json'):
             raise exception
 
         try:
@@ -310,13 +315,13 @@ class IrHttp(models.AbstractModel):
                 # eg: Allow to download an attachment on a task from /my/task/task_id
                 record.check('read')
                 record = record_sudo
+
+        # check read access
+        try:
             # We have prefetched some fields of record, among which the field
             # 'write_date' used by '__last_update' below. In order to check
             # access on record, we have to invalidate its cache first.
             record._cache.clear()
-
-        # check read access
-        try:
             record['__last_update']
         except AccessError:
             return None, 403
@@ -346,7 +351,8 @@ class IrHttp(models.AbstractModel):
                         filename = os.path.basename(module_resource_path)
                         mimetype = guess_mimetype(base64.b64decode(content), default=default_mimetype)
                         filehash = '"%s"' % hashlib.md5(pycompat.to_text(content).encode('utf-8')).hexdigest()
-            else:
+
+            if not content:
                 status = 301
                 content = record.url
 
@@ -373,18 +379,24 @@ class IrHttp(models.AbstractModel):
             content = record[field] or ''
 
         # filename
+        default_filename = False
         if not filename:
             if filename_field in record:
                 filename = record[filename_field]
             if not filename:
+                default_filename = True
                 filename = "%s-%s-%s" % (record._name, record.id, field)
 
         if not mimetype:
-            mimetype = guess_mimetype(base64.b64decode(content), default=default_mimetype)
+            try:
+                decoded_content = base64.b64decode(content)
+            except base64.binascii.Error:  # if we could not decode it, no need to pass it down: it would crash elsewhere...
+                return (404, [], None)
+            mimetype = guess_mimetype(decoded_content, default=default_mimetype)
 
         # extension
         _, existing_extension = os.path.splitext(filename)
-        if not existing_extension:
+        if not existing_extension or default_filename:
             extension = mimetypes.guess_extension(mimetype)
             if extension:
                 filename = "%s%s" % (filename, extension)

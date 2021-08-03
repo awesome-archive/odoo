@@ -10,7 +10,6 @@ import threading
 import re
 
 from collections import defaultdict
-from email.utils import formataddr
 
 from odoo import _, api, fields, models
 from odoo import tools
@@ -195,7 +194,7 @@ class MailMail(models.Model):
         body = self._send_prepare_body()
         body_alternative = tools.html2plaintext(body)
         if partner:
-            email_to = [formataddr((partner.name or 'False', partner.email or 'False'))]
+            email_to = [tools.formataddr((partner.name or 'False', partner.email or 'False'))]
         else:
             email_to = tools.email_split_and_format(self.email_to)
         res = {
@@ -302,9 +301,12 @@ class MailMail(models.Model):
                 headers = {}
                 ICP = self.env['ir.config_parameter'].sudo()
                 bounce_alias = ICP.get_param("mail.bounce.alias")
+                bounce_alias_static = tools.str2bool(ICP.get_param("mail.bounce.alias.static", "False"))
                 catchall_domain = ICP.get_param("mail.catchall.domain")
                 if bounce_alias and catchall_domain:
-                    if mail.mail_message_id.is_thread_message():
+                    if bounce_alias_static:
+                        headers['Return-Path'] = '%s@%s' % (bounce_alias, catchall_domain)
+                    elif mail.mail_message_id.is_thread_message():
                         headers['Return-Path'] = '%s+%d-%s-%d@%s' % (bounce_alias, mail.id, mail.model, mail.res_id, catchall_domain)
                     else:
                         headers['Return-Path'] = '%s+%d@%s' % (bounce_alias, mail.id, catchall_domain)

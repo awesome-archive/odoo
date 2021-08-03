@@ -22,14 +22,14 @@ var PrinterMixin = {
         function process_next_job() {
             if (self.receipt_queue.length > 0) {
                 var r = self.receipt_queue.shift();
-                self.htmlToImg(r)
+                return self.htmlToImg(r)
                     .then(self.send_printing_job.bind(self))
                     .then(self._onIoTActionResult.bind(self))
                     .then(process_next_job)
                     .guardedCatch(self._onIoTActionFail.bind(self));
             }
         }
-        process_next_job();
+        return process_next_job();
     },
 
     /**
@@ -48,11 +48,16 @@ var PrinterMixin = {
         var self = this;
         $('.pos-receipt-print').html(receipt);
         var promise = new Promise(function (resolve, reject) {
-            html2canvas($('.pos-receipt-print')[0], {
+            self.receipt = $('.pos-receipt-print>.pos-receipt');
+            html2canvas(self.receipt[0], {
+                onparsed: function(queue) {
+                    queue.stack.ctx.height = Math.ceil(self.receipt.outerHeight() + self.receipt.offset().top);
+                },
                 onrendered: function (canvas) {
                     $('.pos-receipt-print').empty();
                     resolve(self.process_canvas(canvas));
-                } 
+                },
+                letterRendering: true,
             })
         });
         return promise;

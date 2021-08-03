@@ -77,7 +77,7 @@ msgstr "Informace o účastnících kalendáře"
 #. module: google_calendar
 #: model:ir.model,name:google_calendar.model_calendar_event
 msgid "Calendar Event"
-msgstr ""
+msgstr "Událost kalendáře"
 
 #. module: google_calendar
 #: model:ir.model.fields,field_description:google_calendar.field_res_users__google_calendar_cal_id
@@ -262,6 +262,14 @@ msgid ""
 msgstr ""
 "Účet, který se pokoušíte synchronizovat (%s), není stejný jako ten poslední,"
 " který jste použili (%s)!"
+
+#. module: google_calendar
+#: code:addons/google_calendar/models/google_calendar.py:278
+#, python-format
+msgid ""
+"The event \"%s\", %s (ID: %s) cannot be synchronized because of the "
+"following error: %s"
+msgstr ""
 
 #. module: google_calendar
 #: model:ir.model.fields,field_description:google_calendar.field_res_users__google_calendar_token_validity

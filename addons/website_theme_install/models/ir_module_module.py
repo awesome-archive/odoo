@@ -162,6 +162,8 @@ class IrModuleModule(models.Model):
                         # at update, ignore active field
                         if 'active' in rec_data:
                             rec_data.pop('active')
+                        if model_name == 'ir.ui.view' and (find.arch_updated or find.arch == rec_data['arch']):
+                            rec_data.pop('arch')
                         find.update(rec_data)
                         self._post_copy(rec, find)
                 else:
@@ -305,19 +307,14 @@ class IrModuleModule(models.Model):
         return websites
 
     def _theme_upgrade_upstream(self):
-        """
-            Upgrade the upstream dependencies of a theme.
-            We only need to upgrade the upper dependency and the rest will chain.
+        """ Upgrade the upstream dependencies of a theme, and install it if necessary. """
+        def install_or_upgrade(theme):
+            if theme.state != 'installed':
+                theme.button_install()
+            themes = theme + theme._theme_get_upstream()
+            themes.filtered(lambda m: m.state == 'installed').button_upgrade()
 
-            This upper dependency will usually be theme_common but it can also be different
-            for example for theme_default and theme_bootswatch which are standalone themes.
-
-            :return: recordset of websites ``website``
-        """
-        for theme in self:
-            upper_theme = (theme + theme._theme_get_upstream())[-1]
-            if upper_theme.state == 'installed':
-                upper_theme.button_immediate_upgrade()
+        self._button_immediate_function(install_or_upgrade)
 
     @api.model
     def _theme_remove(self, website):
@@ -328,6 +325,12 @@ class IrModuleModule(models.Model):
 
             :param website: ``website`` model for which the themes have to be removed
         """
+
+        # _theme_remove is the entry point of any change of theme for a website
+        # (either removal or installation of a theme and its dependencies). In
+        # either case, we need to reset some default configuration before.
+        self.env['theme.utils'].with_context(website_id=website.id)._reset_default_config()
+
         if not website.theme_id:
             return
 
@@ -355,10 +358,8 @@ class IrModuleModule(models.Model):
         # website.theme_id must be set before upgrade/install to trigger the load in ``write``
         website.theme_id = self
 
+        # this will install 'self' if it is not installed yet
         self._theme_upgrade_upstream()
-
-        if self.state != 'installed':
-            self.button_immediate_install()
 
         return website.button_go_website()
 

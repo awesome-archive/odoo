@@ -217,6 +217,7 @@ return AbstractRenderer.extend({
         } else {
             this.$calendar.fullCalendar('render');
         }
+        this._renderEvents();
     },
     /**
      * @override
@@ -459,10 +460,12 @@ return AbstractRenderer.extend({
             eventMouseout: function (eventData) {
                 self.$calendar.find(_.str.sprintf('[data-event-id=%s]', eventData.id)).removeClass('o_cw_custom_hover');
             },
-            eventDragStart: function () {
+            eventDragStart: function (eventData) {
+                self.$calendar.find(_.str.sprintf('[data-event-id=%s]', eventData.id)).addClass('o_cw_custom_hover');
                 self._unselectEvent();
             },
-            eventResizeStart: function () {
+            eventResizeStart: function (eventData) {
+                self.$calendar.find(_.str.sprintf('[data-event-id=%s]', eventData.id)).addClass('o_cw_custom_hover');
                 self._unselectEvent();
             },
             eventLimitClick: function () {
@@ -623,7 +626,7 @@ return AbstractRenderer.extend({
         if (filterIndex < arrFilters.length) {
             var options = arrFilters[filterIndex];
             if (!_.find(options.filters, function (f) {return f.display == null || f.display;})) {
-                return;
+                return this._renderFiltersOneByOne(filterIndex + 1);
             }
 
             var self = this;
@@ -702,19 +705,23 @@ return AbstractRenderer.extend({
         }
 
         if (!this.hideDate) {
-            if (!isSameDayEvent && start.isSame(end, 'month')) {
-                // Simplify date-range if an event occurs into the same month (eg. '4-5 August 2019')
-                context.eventDate.date = start.clone().format('MMMM D') + '-' + end.clone().format('D, YYYY');
-            } else {
-                context.eventDate.date = isSameDayEvent ? start.clone().format('dddd, LL') : start.clone().format('LL') + ' - ' + end.clone().format('LL');
-            }
-
             if (eventData.record.allday && isSameDayEvent) {
                 context.eventDate.duration = _t("All day");
             } else if (eventData.record.allday && !isSameDayEvent) {
                 var daysLocaleData = moment.localeData();
                 var days = moment.duration(end.diff(start)).days();
                 context.eventDate.duration = daysLocaleData.relativeTime(days, true, 'dd');
+            }
+
+            if (eventData.allDay) {
+                // cancel correction done in _recordToCalendarEvent
+                end.subtract(1, 'day');
+            }
+            if (!isSameDayEvent && start.isSame(end, 'month')) {
+                // Simplify date-range if an event occurs into the same month (eg. '4-5 August 2019')
+                context.eventDate.date = start.clone().format('MMMM D') + '-' + end.clone().format('D, YYYY');
+            } else {
+                context.eventDate.date = isSameDayEvent ? start.clone().format('dddd, LL') : start.clone().format('LL') + ' - ' + end.clone().format('LL');
             }
         }
 

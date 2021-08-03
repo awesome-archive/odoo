@@ -17,6 +17,24 @@ class test_inherits(common.TransactionCase):
         self.assertEqual(pallet.field_in_box, 'box')
         self.assertEqual(pallet.field_in_pallet, 'pallet')
 
+    def test_create_3_levels_inherits_with_defaults(self):
+        unit = self.env['test.unit'].create({
+            'name': 'U',
+            'state': 'a',
+            'size': 1,
+        })
+        ctx = {
+            'default_state': 'b',       # 'state' is inherited from 'test.unit'
+            'default_size': 2,          # 'size' is inherited from 'test.box'
+        }
+        pallet = self.env['test.pallet'].with_context(ctx).create({
+            'name': 'P',
+            'unit_id': unit.id,         # grand-parent field is set
+        })
+        # default 'state' should be ignored, but default 'size' should not
+        self.assertEqual(pallet.state, 'a')
+        self.assertEqual(pallet.size, 2)
+
     def test_read_3_levels_inherits(self):
         """ Check that we can read an inherited field on 3 levels """
         pallet = self.env.ref('test_inherits.pallet_a')
@@ -27,6 +45,34 @@ class test_inherits(common.TransactionCase):
         pallet = self.env.ref('test_inherits.pallet_a')
         pallet.write({'name': 'C'})
         self.assertEqual(pallet.name, 'C')
+
+    def test_write_4_one2many(self):
+        """ Check that we can write on an inherited one2many field. """
+        box = self.env.ref('test_inherits.box_a')
+        box.write({'line_ids': [(0, 0, {'name': 'Line 1'})]})
+        self.assertTrue(all(box.line_ids._ids))
+        self.assertEqual(box.line_ids.mapped('name'), ['Line 1'])
+        self.assertEqual(box.line_ids, box.unit_id.line_ids)
+        box.flush()
+        box.invalidate_cache(['line_ids'])
+        box.write({'line_ids': [(0, 0, {'name': 'Line 2'})]})
+        self.assertTrue(all(box.line_ids._ids))
+        self.assertEqual(box.line_ids.mapped('name'), ['Line 1', 'Line 2'])
+        self.assertEqual(box.line_ids, box.unit_id.line_ids)
+        box.flush()
+        box.invalidate_cache(['line_ids'])
+        box.write({'line_ids': [(1, box.line_ids[0].id, {'name': 'First line'})]})
+        self.assertTrue(all(box.line_ids._ids))
+        self.assertEqual(box.line_ids.mapped('name'), ['First line', 'Line 2'])
+        self.assertEqual(box.line_ids, box.unit_id.line_ids)
+
+    def test_write_5_field_readonly(self):
+        """ Check that we can write on an inherited readonly field. """
+        self.assertTrue(self.env['test.box']._fields['readonly_name'])
+        box = self.env.ref('test_inherits.box_a')
+        box.write({'readonly_name': "Superuser's box"})
+        self.assertEqual(box.readonly_name, "Superuser's box")
+        self.assertEqual(box.unit_id.readonly_name, "Superuser's box")
 
     def test_ir_model_data_inherits(self):
         """ Check the existence of the correct ir.model.data """
@@ -72,3 +118,33 @@ class test_inherits(common.TransactionCase):
         unit5 = UnitModel.create({'val1': 7})
         with self.assertRaises(ValidationError):
             box.write({'another_unit_id': unit5.id, 'val1': 8, 'val2': 7})
+
+    def test_display_name(self):
+        """ Check the 'display_name' of an inherited translated 'name'. """
+        self.env['res.lang'].load_lang('fr_FR')
+
+        # concrete check
+        pallet_en = self.env['test.pallet'].create({'name': 'Bread'})
+        pallet_fr = pallet_en.with_context(lang='fr_FR')
+        pallet_fr.box_id.unit_id.name = 'Pain'
+        self.assertEqual(pallet_en.display_name, 'Bread')
+        self.assertEqual(pallet_fr.display_name, 'Pain')
+
+        # check model
+        Unit = type(self.env['test.unit'])
+        Box = type(self.env['test.box'])
+        Pallet = type(self.env['test.pallet'])
+        self.assertTrue(Unit.name.translate)
+        self.assertIn('lang', Unit.display_name.depends_context)
+        self.assertIn('lang', Box.display_name.depends_context)
+        self.assertIn('lang', Pallet.display_name.depends_context)
+
+    def test_multi_write_m2o_inherits(self):
+        """Verify that an inherits m2o field can be written to in batch"""
+        unit_foo = self.env['test.unit'].create({'name': 'foo'})
+        boxes = self.env['test.box'].create([{'unit_id': unit_foo.id}] * 5)
+
+        unit_bar = self.env['test.unit'].create({'name': 'bar'})
+        boxes.unit_id = unit_bar
+
+        self.assertEquals(boxes.mapped('unit_id.name'), ['bar'])

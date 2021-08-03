@@ -4,6 +4,7 @@ import base64
 import hashlib
 import os
 
+from odoo.exceptions import AccessError
 from odoo.tests.common import TransactionCase
 
 HASH_SPLIT = 2      # FIXME: testing implementations detail is not a good idea
@@ -69,3 +70,72 @@ class TestIrAttachment(TransactionCase):
 
         a2_fn = os.path.join(self.filestore, a2_store_fname2)
         self.assertTrue(os.path.isfile(a2_fn))
+
+    def test_06_linked_record_permission(self):
+        model_ir_attachment = self.env.ref('base.model_ir_attachment')
+        Attachment = self.Attachment.with_user(self.env.ref('base.user_demo').id)
+        a1 = self.Attachment.create({'name': 'a1'})
+        vals = {'name': 'attach', 'res_id': a1.id, 'res_model': 'ir.attachment'}
+        a2 = Attachment.create(vals)
+
+        # remove access to linked record a1
+        rule = self.env['ir.rule'].create({
+            'name': 'test_rule', 'domain_force': "[('id', '!=', %s)]" % a1.id,
+            'model_id': self.env.ref('base.model_ir_attachment').id,
+        })
+        a2.invalidate_cache(ids=a2.ids)
+
+        # no read permission on linked record
+        with self.assertRaises(AccessError):
+            a2.datas
+
+        # read permission on linked record
+        rule.perm_read = False
+        a2.datas
+
+        # no write permission on linked record
+        with self.assertRaises(AccessError):
+            a3 = Attachment.create(vals)
+        with self.assertRaises(AccessError):
+            a2.write({'datas': self.blob2_b64})
+        with self.assertRaises(AccessError):
+            a2.unlink()
+
+        # write permission on linked record
+        rule.perm_write = False
+        a4 = Attachment.create(vals)
+        a4.write({'datas': self.blob2_b64})
+        a4.unlink()
+
+    def test_07_write_mimetype(self):
+        """
+        Tests the consistency of documents' mimetypes
+        """
+        Attachment = self.Attachment.with_user(self.env.ref('base.user_demo').id)
+        a2 = Attachment.create({'name': 'a2', 'datas': self.blob1_b64, 'mimetype': 'image/png'})
+        self.assertEqual(a2.mimetype, 'image/png', "the new mimetype should be the one given on write")
+        a3 = Attachment.create({'name': 'a3', 'datas': self.blob1_b64, 'mimetype': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'})
+        self.assertEqual(a3.mimetype, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', "should preserve office mime type")
+
+    def test_08_neuter_xml_mimetype(self):
+        """
+        Tests that potentially harmful mimetypes (XML mimetypes that can lead to XSS attacks) are converted to text
+        """
+        Attachment = self.Attachment.with_user(self.env.ref('base.user_demo').id)
+        document = Attachment.create({'name': 'document', 'datas': self.blob1_b64})
+        document.write({'datas': self.blob1_b64, 'mimetype': 'text/xml'})
+        self.assertEqual(document.mimetype, 'text/plain', "XML mimetype should be forced to text")
+        document.write({'datas': self.blob1_b64, 'mimetype': 'image/svg+xml'})
+        self.assertEqual(document.mimetype, 'text/plain', "SVG mimetype should be forced to text")
+        document.write({'datas': self.blob1_b64, 'mimetype': 'text/html'})
+        self.assertEqual(document.mimetype, 'text/plain', "HTML mimetype should be forced to text")
+        document.write({'datas': self.blob1_b64, 'mimetype': 'application/xhtml+xml'})
+        self.assertEqual(document.mimetype, 'text/plain', "XHTML mimetype should be forced to text")
+
+    def test_09_dont_neuter_xml_mimetype_for_admin(self):
+        """
+        Admin user does not have a mime type filter
+        """
+        document = self.Attachment.create({'name': 'document', 'datas': self.blob1_b64})
+        document.write({'datas': self.blob1_b64, 'mimetype': 'text/xml'})
+        self.assertEqual(document.mimetype, 'text/xml', "XML mimetype should not be forced to text, for admin user")

@@ -244,6 +244,9 @@ odoo.define('website_slides.quiz', function (require) {
          */
         _onClickNext: function (ev) {
             if (this.slide.hasNext) {
+                if (this.$('#slides_quiz_modal').length !== 0) {
+                    this.$('#slides_quiz_modal').modal('hide');
+                }
                 this.trigger_up('slide_go_next');
             }
         },
@@ -295,7 +298,7 @@ odoo.define('website_slides.quiz', function (require) {
                 slideData.quizData = {
                     questions: self._extractQuestionsAndAnswers(),
                     quizKarmaMax: slideData.quizKarmaMax,
-                    quizKarmaWon: slideData.quizKarmaWon,
+                    quizKarmaWon: slideData.quizKarmaWon || 0,
                     quizKarmaGain: slideData.quizKarmaGain,
                     quizAttemptsCount: slideData.quizAttemptsCount,
                 };
@@ -327,7 +330,7 @@ odoo.define('website_slides.quiz', function (require) {
 
         _extractChannelData: function (slideData){
             return {
-                id: slideData.channelId,
+                channelId: slideData.channelId,
                 channelEnroll: slideData.channelEnroll,
                 signupAllowed: slideData.signupAllowed
             };

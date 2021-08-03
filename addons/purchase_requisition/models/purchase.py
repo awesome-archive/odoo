@@ -23,7 +23,7 @@ class PurchaseOrder(models.Model):
         payment_term = partner.property_supplier_payment_term_id
 
         FiscalPosition = self.env['account.fiscal.position']
-        fpos = FiscalPosition.get_fiscal_position(partner.id)
+        fpos = FiscalPosition.with_context(force_company=self.company_id.id).get_fiscal_position(partner.id)
         fpos = FiscalPosition.browse(fpos)
 
         self.partner_id = partner.id
@@ -87,7 +87,8 @@ class PurchaseOrder(models.Model):
             if po.requisition_id.type_id.exclusive == 'exclusive':
                 others_po = po.requisition_id.mapped('purchase_ids').filtered(lambda r: r.id != po.id)
                 others_po.button_cancel()
-                po.requisition_id.action_done()
+                if po.state not in ['draft', 'sent', 'to approve']:
+                    po.requisition_id.action_done()
         return res
 
     @api.model

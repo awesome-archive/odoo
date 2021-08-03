@@ -89,12 +89,7 @@ class SaleOrder(models.Model):
         else:
             domain += [('product_custom_attribute_value_ids', '=', False)]
 
-        lines = self.env['sale.order.line'].sudo().search(domain)
-
-        if line_id:
-            return lines
-
-        return self.env['sale.order.line']
+        return self.env['sale.order.line'].sudo().search(domain)
 
     def _website_product_id_change(self, order_id, product_id, qty=0):
         order = self.sudo().browse(order_id)
@@ -105,6 +100,7 @@ class SaleOrder(models.Model):
             'quantity': qty,
             'date': order.date_order,
             'pricelist': order.pricelist_id.id,
+            'force_company': order.company_id.id,
         })
         product = self.env['product.product'].with_context(product_context).browse(product_id)
         discount = 0
@@ -153,12 +149,12 @@ class SaleOrder(models.Model):
 
         try:
             if add_qty:
-                add_qty = float(add_qty)
+                add_qty = int(add_qty)
         except ValueError:
             add_qty = 1
         try:
             if set_qty:
-                set_qty = float(set_qty)
+                set_qty = int(set_qty)
         except ValueError:
             set_qty = 0
         quantity = 0
@@ -257,15 +253,16 @@ class SaleOrder(models.Model):
                     'quantity': quantity,
                     'date': order.date_order,
                     'pricelist': order.pricelist_id.id,
+                    'force_company': order.company_id.id,
                 })
-                product_with_context = self.env['product.product'].with_context(product_context)
-                product = product_with_context.browse(product_id)
-                values['price_unit'] = self.env['account.tax']._fix_tax_included_price_company(
-                    order_line._get_display_price(product),
-                    order_line.product_id.taxes_id,
-                    order_line.tax_id,
-                    self.company_id
-                )
+            product_with_context = self.env['product.product'].with_context(product_context)
+            product = product_with_context.browse(product_id)
+            values['price_unit'] = self.env['account.tax']._fix_tax_included_price_company(
+                order_line._get_display_price(product),
+                order_line.product_id.taxes_id,
+                order_line.tax_id,
+                self.company_id
+            )
 
             order_line.write(values)
 
@@ -298,7 +295,8 @@ class SaleOrder(models.Model):
                 accessory_products |= line.product_id.accessory_product_ids.filtered(lambda product:
                     product.website_published and
                     product not in products and
-                    product._is_variant_possible(parent_combination=combination)
+                    product._is_variant_possible(parent_combination=combination) and
+                    (product.company_id == line.company_id or not product.company_id)
                 )
 
             return random.sample(accessory_products, len(accessory_products))
@@ -352,6 +350,13 @@ class SaleOrder(models.Model):
                 template.send_mail(order.id)
                 sent_orders |= order
         sent_orders.write({'cart_recovery_email_sent': True})
+
+    def action_confirm(self):
+        res = super(SaleOrder, self).action_confirm()
+        for order in self:
+            if not order.transaction_ids and not order.amount_total and self._context.get('send_email'):
+                order._send_order_confirmation_mail()
+        return res
 
 
 class SaleOrderLine(models.Model):
