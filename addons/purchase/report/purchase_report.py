@@ -30,8 +30,8 @@ class PurchaseReport(models.Model):
     company_id = fields.Many2one('res.company', 'Company', readonly=True)
     currency_id = fields.Many2one('res.currency', 'Currency', readonly=True)
     user_id = fields.Many2one('res.users', 'Purchase Representative', readonly=True)
-    delay = fields.Float('Days to Confirm', digits=(16, 2), readonly=True)
-    delay_pass = fields.Float('Days to Receive', digits=(16, 2), readonly=True)
+    delay = fields.Float('Days to Confirm', digits=(16, 2), readonly=True, group_operator='avg')
+    delay_pass = fields.Float('Days to Receive', digits=(16, 2), readonly=True, group_operator='avg')
     price_total = fields.Float('Total', readonly=True)
     price_average = fields.Float('Average Cost', readonly=True, group_operator="avg")
     nbr_lines = fields.Integer('# of Lines', readonly=True)
@@ -92,7 +92,10 @@ class PurchaseReport(models.Model):
                     sum(l.product_qty / line_uom.factor * product_uom.factor) as qty_ordered,
                     sum(l.qty_received / line_uom.factor * product_uom.factor) as qty_received,
                     sum(l.qty_invoiced / line_uom.factor * product_uom.factor) as qty_billed,
-                    sum(l.product_qty / line_uom.factor * product_uom.factor) - sum(l.qty_received / line_uom.factor * product_uom.factor) as qty_to_be_billed
+                    case when t.purchase_method = 'purchase' 
+                         then sum(l.product_qty / line_uom.factor * product_uom.factor) - sum(l.qty_invoiced / line_uom.factor * product_uom.factor)
+                         else sum(l.qty_received / line_uom.factor * product_uom.factor) - sum(l.qty_invoiced / line_uom.factor * product_uom.factor)
+                    end as qty_to_be_billed
         """ % self.env['res.currency']._select_companies_rates()
         return select_str
 
@@ -135,6 +138,7 @@ class PurchaseReport(models.Model):
                 line_uom.uom_type,
                 line_uom.category_id,
                 t.uom_id,
+                t.purchase_method,
                 line_uom.id,
                 product_uom.factor,
                 partner.country_id,

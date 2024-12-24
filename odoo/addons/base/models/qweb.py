@@ -5,7 +5,8 @@ import os.path
 import re
 import traceback
 
-from collections import OrderedDict, Sized, Mapping
+from collections import OrderedDict
+from collections.abc import Sized, Mapping
 from functools import reduce
 from itertools import tee, count
 from textwrap import dedent
@@ -16,7 +17,7 @@ from psycopg2.extensions import TransactionRollbackError
 import werkzeug
 from werkzeug.utils import escape as _escape
 
-from odoo.tools import pycompat, freehash
+from odoo.tools import pycompat, freehash, wrap_values
 
 try:
     import builtins
@@ -94,6 +95,7 @@ class Contextifier(ast.NodeTransformer):
                 # handle that cross-version
                 kwonlyargs=[],
                 kw_defaults=[],
+                posonlyargs=[],
             ),
             body=Contextifier(self._safe_names + tuple(names)).visit(node.body)
         ), node)
@@ -327,6 +329,7 @@ class QWeb(object):
             log = {'last_path_node': None}
             new = self.default_values()
             new.update(values)
+            wrap_values(new)
             try:
                 return compiled(self, append, new, options, log)
             except (QWebException, TransactionRollbackError) as e:
@@ -542,7 +545,7 @@ class QWeb(object):
                 ast.arg(arg='values', annotation=None),
                 ast.arg(arg='options', annotation=None),
                 ast.arg(arg='log', annotation=None),
-            ], defaults=[], vararg=None, kwarg=None, kwonlyargs=[], kw_defaults=[]),
+            ], defaults=[], vararg=None, kwarg=None, posonlyargs=[], kwonlyargs=[], kw_defaults=[]),
             body=body or [ast.Return()],
             decorator_list=[])
         if lineno is not None:
@@ -599,12 +602,12 @@ class QWeb(object):
                         ast.Compare(
                             left=ast.Name(id='content', ctx=ast.Load()),
                             ops=[ast.IsNot()],
-                            comparators=[ast.Name(id='None', ctx=ast.Load())]
+                            comparators=[ast.Constant(None)]
                         ),
                         ast.Compare(
                             left=ast.Name(id='content', ctx=ast.Load()),
                             ops=[ast.IsNot()],
-                            comparators=[ast.Name(id='False', ctx=ast.Load())]
+                            comparators=[ast.Constant(False)]
                         )
                     ]
                 ),
@@ -1232,7 +1235,7 @@ class QWeb(object):
                         keywords=[], starargs=None, kwargs=None
                     ),
                     self._compile_expr0(expression),
-                    ast.Name(id='None', ctx=ast.Load()),
+                    ast.Constant(None),
                 ], ctx=ast.Load())
             )
         ]
@@ -1549,7 +1552,7 @@ class QWeb(object):
                     if isinstance(key, str):
                         keys.append(ast.Str(s=key))
                     elif key is None:
-                        keys.append(ast.Name(id='None', ctx=ast.Load()))
+                        keys.append(ast.Constant(None))
                     values.append(ast.Str(s=value))
 
                 # {'nsmap': {None: 'xmlns def'}}
@@ -1717,14 +1720,5 @@ class QWeb(object):
         ), elts)
 
     def _compile_expr(self, expr):
-        """ Compiles a purported Python expression to ast, and alter its
-        variable references to access values data instead exept for
-        python buildins.
-        This compile method is unsafe!
-        Can be overridden to use a safe eval method.
-        """
-        # string must be stripped otherwise whitespace before the start for
-        # formatting purpose are going to break parse/compile
-        st = ast.parse(expr.strip(), mode='eval')
-        # ast.Expression().body -> expr
-        return Contextifier(builtin_defaults).visit(st).body
+        """This method must be overridden by <ir.qweb> in order to compile the template."""
+        raise NotImplementedError("Templates should use the ir.qweb compile method")

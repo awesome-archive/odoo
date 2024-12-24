@@ -55,6 +55,7 @@ $o-checklist-checkmark-width: 2px;
 $o-checklist-before-size: 13px;
 
 $o-we-toolbar-height: 32px;
+$o-we-technical-modal-zindex: 2001;
 
 // ============    'Preview' component Mixins    ===============
 // Create a "preview" work-area to edit/customize specific elements
@@ -257,6 +258,24 @@ $o-we-toolbar-height: 32px;
         border: 1px solid darken($o-we-bg-color, 5%);
         border-radius: 0;
         box-shadow: none;
+    }
+}
+
+@mixin o-w-preserve-dropdown-menus {
+    .dropdown-menu {
+        background-color: white;
+    }
+    .dropdown-item {
+        color: #212529;
+
+        @include hover-focus {
+            color: darken(#212529, 5%);
+        }
+        &.active,
+        &:active {
+            color: white;
+            @include gradient-bg($o-brand-primary);
+        }
     }
 }
 

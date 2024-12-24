@@ -24,8 +24,11 @@ class AccountAnalyticDefault(models.Model):
 
     @api.constrains('analytic_id', 'analytic_tag_ids')
     def _check_account_or_tags(self):
-        if any(not default.analytic_id and not default.analytic_tag_ids for default in self):
-            raise ValidationError(_('An analytic default requires at least an analytic account or an analytic tag.'))
+        if any(not default.analytic_id
+               and not any(tag.analytic_distribution_ids for tag in default.analytic_tag_ids)
+               for default in self
+               ):
+            raise ValidationError(_('An analytic default requires an analytic account or an analytic tag used for analytic distribution.'))
 
     @api.model
     def account_get(self, product_id=None, partner_id=None, account_id=None, user_id=None, date=None, company_id=None):
@@ -68,38 +71,23 @@ class AccountAnalyticDefault(models.Model):
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
-    @api.model
-    def default_get(self, fields_list):
-        defaults = super().default_get(fields_list)
-        if {'account_analytic_id', 'analytic_tag_ids'} & set(fields_list):
-            rec = self.env['account.analytic.default'].account_get(
-                product_id=self.product_id.id,
-                partner_id=self.move_id.commercial_partner_id.id,
-                user_id=self.move_id.user_id.id or self.env.uid,
-                date=fields.Date.today(),
-                company_id=self.company_id.id,
-            )
-            if rec:
-                if 'account_analytic_id' in fields_list:
-                    defaults.update({
-                        'account_analytic_id': rec.analytic_id.id,
-                    })
-                if 'analytic_tag_ids' in fields_list:
-                    defaults.update({
-                        'analytic_tag_ids': rec.analytic_tag_ids.ids,
-                    })
-        return defaults
+    # Overload of fields defined in account
+    analytic_account_id = fields.Many2one(compute="_compute_analytic_account", store=True, readonly=False, copy=True)
+    analytic_tag_ids = fields.Many2many(compute="_compute_analytic_account", store=True, readonly=False, copy=True)
 
-    @api.onchange('product_id', 'account_id')
-    def _onchange_product_id_account_id(self):
-        rec = self.env['account.analytic.default'].account_get(
-            product_id=self.product_id.id,
-            partner_id=self.partner_id.id,
-            account_id=self.account_id.id,
-            user_id=self.env.uid,
-            date=self.date_maturity,
-            company_id=self.move_id.company_id.id
-        )
-        if rec:
-            self.analytic_account_id = rec.analytic_id.id
-            self.analytic_tag_ids = rec.analytic_tag_ids.ids
+    @api.depends('product_id', 'account_id', 'partner_id', 'date_maturity')
+    def _compute_analytic_account(self):
+        for record in self:
+            record.analytic_account_id = record.analytic_account_id
+            record.analytic_tag_ids = record.analytic_tag_ids
+            rec = self.env['account.analytic.default'].account_get(
+                product_id=record.product_id.id,
+                partner_id=record.partner_id.commercial_partner_id.id or record.move_id.partner_id.commercial_partner_id.id,
+                account_id=record.account_id.id,
+                user_id=record.env.uid,
+                date=record.date_maturity,
+                company_id=record.move_id.company_id.id
+            )
+            if rec and not record.exclude_from_invoice_tab:
+                record.analytic_account_id = rec.analytic_id
+                record.analytic_tag_ids = rec.analytic_tag_ids

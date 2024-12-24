@@ -26,9 +26,7 @@ setup(
         'babel >= 1.0',
         'decorator',
         'docutils',
-        'feedparser',
         'gevent',
-        'html2text',
         'Jinja2',
         'lxml',  # windows binary http://www.lfd.uci.edu/~gohlke/pythonlibs/
         'libsass',
@@ -57,9 +55,9 @@ setup(
         'xlsxwriter',
         'xlwt',
     ],
-    python_requires='>=3.5',
+    python_requires='>=3.6',
     extras_require={
-        'ldap': ['pyldap'],
+        'ldap': ['python-ldap'],
         'SSL': ['pyopenssl'],
     },
     tests_require=[

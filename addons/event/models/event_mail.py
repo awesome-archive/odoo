@@ -46,6 +46,12 @@ class EventTypeMail(models.Model):
         domain=[('model', '=', 'event.registration')], ondelete='restrict',
         help='This field contains the template of the mail that will be automatically sent')
 
+    @api.model
+    def _get_event_mail_fields_whitelist(self):
+        """ Whitelist of fields that are copied from event_type_mail_ids to event_mail_ids when
+        changing the event_type_id field of event.event """
+        return ['notification_type', 'template_id', 'interval_nbr', 'interval_unit', 'interval_type']
+
 
 class EventMailScheduler(models.Model):
     """ Event automated mailing. This model replaces all existing fields and
@@ -75,7 +81,7 @@ class EventMailScheduler(models.Model):
         help='This field contains the template of the mail that will be automatically sent')
     scheduled_date = fields.Datetime('Scheduled Sent Mail', compute='_compute_scheduled_date', store=True)
     mail_registration_ids = fields.One2many('event.mail.registration', 'scheduler_id')
-    mail_sent = fields.Boolean('Mail Sent on Event')
+    mail_sent = fields.Boolean('Mail Sent on Event', copy=False)
     done = fields.Boolean('Sent', compute='_compute_done', store=True)
 
     @api.depends('mail_sent', 'interval_type', 'event_id.registration_ids', 'mail_registration_ids')
@@ -158,7 +164,8 @@ class EventMailScheduler(models.Model):
         for scheduler in schedulers:
             try:
                 with self.env.cr.savepoint():
-                    scheduler.execute()
+                    # Prevent a mega prefetch of the registration ids of all the events of all the schedulers
+                    self.browse(scheduler.id).execute()
             except Exception as e:
                 _logger.exception(e)
                 self.invalidate_cache()
@@ -183,7 +190,21 @@ class EventMailRegistration(models.Model):
     def execute(self):
         for mail in self:
             if mail.registration_id.state in ['open', 'done'] and not mail.mail_sent and mail.scheduler_id.notification_type == 'mail':
-                mail.scheduler_id.template_id.send_mail(mail.registration_id.id)
+                organizer = mail.scheduler_id.event_id.organizer_id
+                company = self.env.company
+                author = self.env.ref('base.user_root')
+                if organizer.email:
+                    author = organizer
+                elif company.email:
+                    author = company.partner_id
+                elif self.env.user.email:
+                    author = self.env.user
+                
+                email_values = {
+                    'email_from': author.email_formatted,
+                    'author_id': author.id,
+                }
+                mail.scheduler_id.template_id.send_mail(mail.registration_id.id, email_values=email_values)
                 mail.write({'mail_sent': True})
 
     @api.depends('registration_id', 'scheduler_id.interval_unit', 'scheduler_id.interval_type')

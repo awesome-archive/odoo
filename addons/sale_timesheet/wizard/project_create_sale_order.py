@@ -27,6 +27,7 @@ class ProjectCreateSalesOrder(models.TransientModel):
         return result
 
     project_id = fields.Many2one('project.project', "Project", domain=[('sale_line_id', '=', False)], help="Project for which we are creating a sales order", required=True)
+    company_id = fields.Many2one(related='project_id.company_id')
     partner_id = fields.Many2one('res.partner', string="Customer", required=True, help="Customer of the sales order")
     product_id = fields.Many2one('product.product', domain=[('type', '=', 'service'), ('invoice_policy', '=', 'delivery'), ('service_type', '=', 'timesheet')], string="Service", help="Product of the sales order item. Must be a service invoiced based on timesheets on tasks.")
     price_unit = fields.Float("Unit Price", help="Unit price of the sales order item.")
@@ -69,7 +70,21 @@ class ProjectCreateSalesOrder(models.TransientModel):
         if timesheet_with_so_line:
             raise UserError(_('The sales order cannot be created because some timesheets of this project are already linked to another sales order.'))
 
-        # create SO
+        # create SO according to the chosen billable type
+        sale_order = self._create_sale_order()
+
+        view_form_id = self.env.ref('sale.view_order_form').id
+        action = self.env.ref('sale.action_orders').read()[0]
+        action.update({
+            'views': [(view_form_id, 'form')],
+            'view_mode': 'form',
+            'name': sale_order.name,
+            'res_id': sale_order.id,
+        })
+        return action
+
+    def _create_sale_order(self):
+        """ Private implementation of generating the sales order """
         sale_order = self.env['sale.order'].create({
             'project_id': self.project_id.id,
             'partner_id': self.partner_id.id,
@@ -81,23 +96,17 @@ class ProjectCreateSalesOrder(models.TransientModel):
         sale_order.onchange_partner_shipping_id()
 
         # create the sale lines, the map (optional), and assign existing timesheet to sale lines
+        self._make_billable(sale_order)
+
+        # confirm SO
+        sale_order.action_confirm()
+        return sale_order
+
+    def _make_billable(self, sale_order):
         if self.billable_type == 'project_rate':
             self._make_billable_at_project_rate(sale_order)
         else:
             self._make_billable_at_employee_rate(sale_order)
-
-        # confirm SO
-        sale_order.action_confirm()
-
-        view_form_id = self.env.ref('sale.view_order_form').id
-        action = self.env.ref('sale.action_orders').read()[0]
-        action.update({
-            'views': [(view_form_id, 'form')],
-            'view_mode': 'form',
-            'name': sale_order.name,
-            'res_id': sale_order.id,
-        })
-        return action
 
     def _make_billable_at_project_rate(self, sale_order):
         # trying to simulate the SO line created a task, according to the product configuration

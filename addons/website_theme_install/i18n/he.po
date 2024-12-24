@@ -1,21 +1,23 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# * website_theme_install
+# 	* website_theme_install
 # 
 # Translators:
 # Martin Trigaux, 2019
 # ExcaliberX <excaliberx@gmail.com>, 2019
 # Yihya Hugirat <hugirat@gmail.com>, 2019
-# hed shefetr <hed@laylinetech.com>, 2019
+# hed shefer <hed@laylinetech.com>, 2019
 # דודי מלכה <Dudimalka6@gmail.com>, 2019
+# ZVI BLONDER <ZVIBLONDER@gmail.com>, 2020
+# Netta Waizer, 2022
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server saas~11.5\n"
+"Project-Id-Version: Odoo Server 13.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-21 13:18+0000\n"
+"POT-Creation-Date: 2019-10-18 09:48+0000\n"
 "PO-Revision-Date: 2019-08-26 09:16+0000\n"
-"Last-Translator: דודי מלכה <Dudimalka6@gmail.com>, 2019\n"
+"Last-Translator: Netta Waizer, 2022\n"
 "Language-Team: Hebrew (https://www.transifex.com/odoo/teams/41243/he/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -31,12 +33,12 @@ msgstr "פעיל"
 #. module: website_theme_install
 #: model:ir.model.fields,field_description:website_theme_install.field_theme_ir_ui_view__arch
 msgid "Arch"
-msgstr ""
+msgstr "קשת"
 
 #. module: website_theme_install
 #: model:ir.model.fields,field_description:website_theme_install.field_theme_ir_ui_view__arch_fs
 msgid "Arch Fs"
-msgstr ""
+msgstr "Arch Fs"
 
 #. module: website_theme_install
 #: model:ir.model,name:website_theme_install.model_ir_attachment
@@ -46,7 +48,7 @@ msgstr "קובץ מצורף"
 #. module: website_theme_install
 #: model:ir.model.fields,field_description:website_theme_install.field_theme_ir_attachment__copy_ids
 msgid "Attachment using a copy of me"
-msgstr ""
+msgstr "קובץ מצורף באמצעות עותק שלי"
 
 #. module: website_theme_install
 #: model_terms:ir.ui.view,arch_db:website_theme_install.theme_view_search
@@ -54,7 +56,7 @@ msgid "Author"
 msgstr "מחבר"
 
 #. module: website_theme_install
-#: selection:theme.ir.ui.view,mode:0
+#: model:ir.model.fields.selection,name:website_theme_install.selection__theme_ir_ui_view__mode__primary
 msgid "Base view"
 msgstr "תצוגת בסיס"
 
@@ -72,12 +74,12 @@ msgstr "קטגוריה"
 #: model_terms:ir.ui.view,arch_db:website_theme_install.res_config_settings_view_form
 #: model_terms:ir.ui.view,arch_db:website_theme_install.view_website_form_view_themes_modal
 msgid "Choose a theme"
-msgstr ""
+msgstr "בחר ערכת נושא"
 
 #. module: website_theme_install
 #: model:ir.actions.act_window,name:website_theme_install.theme_install_kanban_action
 msgid "Choose a theme for your website"
-msgstr ""
+msgstr "בחר ערכת נושא לאתר האינטרנט שלך"
 
 #. module: website_theme_install
 #: model:ir.model,name:website_theme_install.model_res_company
@@ -117,10 +119,10 @@ msgstr "נוצר ב-"
 #: model:ir.model.fields,field_description:website_theme_install.field_theme_website_menu__display_name
 #: model:ir.model.fields,field_description:website_theme_install.field_theme_website_page__display_name
 msgid "Display Name"
-msgstr "הצג שם"
+msgstr "שם תצוגה"
 
 #. module: website_theme_install
-#: selection:theme.ir.ui.view,mode:0
+#: model:ir.model.fields.selection,name:website_theme_install.selection__theme_ir_ui_view__mode__extension
 msgid "Extension View"
 msgstr "תצוגת שלוחה"
 
@@ -136,7 +138,7 @@ msgstr "תעודה מזהה"
 #. module: website_theme_install
 #: model:ir.model.fields,field_description:website_theme_install.field_theme_ir_ui_view__inherit_id
 msgid "Inherit"
-msgstr ""
+msgstr "יורש"
 
 #. module: website_theme_install
 #: model_terms:ir.ui.view,arch_db:website_theme_install.theme_view_kanban
@@ -146,10 +148,11 @@ msgstr "מותקן"
 #. module: website_theme_install
 #: model:ir.model.fields,field_description:website_theme_install.field_ir_module_module__is_installed_on_current_website
 msgid "Is Installed On Current Website"
-msgstr ""
+msgstr "מותקן באתר הנוכחי"
 
 #. module: website_theme_install
 #: model:ir.model.fields,field_description:website_theme_install.field_ir_attachment__key
+#: model:ir.model.fields,field_description:website_theme_install.field_mrp_document__key
 #: model:ir.model.fields,field_description:website_theme_install.field_theme_ir_attachment__key
 #: model:ir.model.fields,field_description:website_theme_install.field_theme_ir_ui_view__key
 msgid "Key"
@@ -183,17 +186,17 @@ msgstr "עדכון אחרון ב"
 #. module: website_theme_install
 #: model_terms:ir.ui.view,arch_db:website_theme_install.onboarding_website_theme_step
 msgid "Let's start!"
-msgstr "בואו נתחיל!"
+msgstr "בוא נתחיל!"
 
 #. module: website_theme_install
 #: model_terms:ir.ui.view,arch_db:website_theme_install.theme_view_kanban
 msgid "Live Preview"
-msgstr ""
+msgstr "תצוגה מקדימה חיה"
 
 #. module: website_theme_install
 #: model:ir.model.fields,field_description:website_theme_install.field_theme_website_menu__copy_ids
 msgid "Menu using a copy of me"
-msgstr ""
+msgstr "תפריט באמצעות עותק שלי"
 
 #. module: website_theme_install
 #: model:ir.model.fields,field_description:website_theme_install.field_theme_ir_ui_view__mode
@@ -231,7 +234,12 @@ msgstr "דף"
 #. module: website_theme_install
 #: model:ir.model.fields,field_description:website_theme_install.field_theme_website_page__website_indexed
 msgid "Page Indexed"
-msgstr ""
+msgstr "דף מאונדקס"
+
+#. module: website_theme_install
+#: model:ir.model.fields,field_description:website_theme_install.field_theme_website_page__copy_ids
+msgid "Page using a copy of me"
+msgstr "עמוד באמצעות עותק שלי"
 
 #. module: website_theme_install
 #: model:ir.model.fields,field_description:website_theme_install.field_theme_website_menu__parent_id
@@ -241,27 +249,27 @@ msgstr "אב"
 #. module: website_theme_install
 #: model_terms:ir.ui.view,arch_db:website_theme_install.customize_modal
 msgid "Please"
-msgstr ""
+msgstr "בבקשה"
 
 #. module: website_theme_install
 #: model:ir.model.fields,field_description:website_theme_install.field_theme_ir_ui_view__priority
 msgid "Priority"
-msgstr "קְדִימוּת"
+msgstr "עדיפות"
 
 #. module: website_theme_install
 #: model_terms:ir.ui.view,arch_db:website_theme_install.theme_view_kanban
 msgid "Remove theme"
-msgstr ""
+msgstr "הסר ערכת נושא"
 
 #. module: website_theme_install
 #: model:ir.model.fields,field_description:website_theme_install.field_ir_module_module__image_ids
 msgid "Screenshots"
-msgstr ""
+msgstr "צילומי מסך"
 
 #. module: website_theme_install
 #: model_terms:ir.ui.view,arch_db:website_theme_install.onboarding_website_theme_step
 msgid "Select a theme for your website."
-msgstr ""
+msgstr "בחר ערכת נושא לאתר האינטרנט שלך."
 
 #. module: website_theme_install
 #: model:ir.model.fields,field_description:website_theme_install.field_theme_website_menu__sequence
@@ -270,6 +278,7 @@ msgstr "רצף"
 
 #. module: website_theme_install
 #: model:ir.model.fields,help:website_theme_install.field_ir_attachment__key
+#: model:ir.model.fields,help:website_theme_install.field_mrp_document__key
 msgid ""
 "Technical field used to resolve multiple attachments in a multi-website "
 "environment."
@@ -278,12 +287,12 @@ msgstr "שדה טכני המשמש לפתרון מספר קבצים מצורפי
 #. module: website_theme_install
 #: model_terms:ir.ui.view,arch_db:website_theme_install.theme_view_search
 msgid "Theme"
-msgstr "נושא"
+msgstr "ערכת נושא"
 
 #. module: website_theme_install
 #: model:ir.model,name:website_theme_install.model_theme_ir_attachment
 msgid "Theme Attachments"
-msgstr ""
+msgstr "קבצי נושא"
 
 #. module: website_theme_install
 #: model:ir.model.fields,field_description:website_theme_install.field_ir_attachment__theme_template_id
@@ -292,26 +301,21 @@ msgstr ""
 #: model:ir.model.fields,field_description:website_theme_install.field_website_menu__theme_template_id
 #: model:ir.model.fields,field_description:website_theme_install.field_website_page__theme_template_id
 msgid "Theme Template"
-msgstr ""
+msgstr "תבנית ערכת נושא"
 
 #. module: website_theme_install
 #: model:ir.model,name:website_theme_install.model_theme_ir_ui_view
 msgid "Theme UI View"
-msgstr ""
+msgstr "תצוגת ממשק משתמש ערכת נושא"
 
 #. module: website_theme_install
 #: model:ir.model,name:website_theme_install.model_theme_utils
 msgid "Theme Utils"
-msgstr ""
+msgstr "ערכות נושא"
 
 #. module: website_theme_install
 #: model_terms:ir.ui.view,arch_db:website_theme_install.theme_view_kanban
 msgid "Theme preview"
-msgstr ""
-
-#. module: website_theme_install
-#: model:ir.model.fields,field_description:website_theme_install.field_theme_website_page__copy_ids
-msgid "Theme using a copy of me"
 msgstr ""
 
 #. module: website_theme_install
@@ -322,19 +326,19 @@ msgstr "סוג"
 #. module: website_theme_install
 #: model_terms:ir.ui.view,arch_db:website_theme_install.theme_view_kanban
 msgid "Update theme"
-msgstr ""
+msgstr "עדכון ערכת נושא"
 
 #. module: website_theme_install
 #: model:ir.model.fields,field_description:website_theme_install.field_theme_ir_attachment__url
 #: model:ir.model.fields,field_description:website_theme_install.field_theme_website_menu__url
 #: model:ir.model.fields,field_description:website_theme_install.field_theme_website_page__url
 msgid "Url"
-msgstr "כתובת"
+msgstr "כתובת אתר אינטרנט"
 
 #. module: website_theme_install
 #: model_terms:ir.ui.view,arch_db:website_theme_install.theme_view_kanban
 msgid "Use this theme"
-msgstr ""
+msgstr "השתמש בערכת נושא זה"
 
 #. module: website_theme_install
 #: model:ir.model,name:website_theme_install.model_ir_ui_view
@@ -345,12 +349,12 @@ msgstr "תצוגה"
 #. module: website_theme_install
 #: model:ir.model.fields,field_description:website_theme_install.field_theme_ir_ui_view__copy_ids
 msgid "Views using a copy of me"
-msgstr ""
+msgstr "צפיות באמצעות עותק שלי"
 
 #. module: website_theme_install
 #: model:ir.model,name:website_theme_install.model_website
 msgid "Website"
-msgstr "אתר"
+msgstr "אתר אינטרנט"
 
 #. module: website_theme_install
 #: model:ir.model,name:website_theme_install.model_website_menu
@@ -365,12 +369,12 @@ msgstr ""
 #. module: website_theme_install
 #: model:ir.model,name:website_theme_install.model_theme_website_menu
 msgid "Website Theme Menu"
-msgstr ""
+msgstr "תפריט ערכת נושא לאתר"
 
 #. module: website_theme_install
 #: model:ir.model,name:website_theme_install.model_theme_website_page
 msgid "Website Theme Page"
-msgstr ""
+msgstr "עמוד ערכת נושא האתר"
 
 #. module: website_theme_install
 #: model_terms:ir.ui.view,arch_db:website_theme_install.customize_modal
@@ -378,14 +382,14 @@ msgid "install a theme"
 msgstr ""
 
 #. module: website_theme_install
-#: selection:theme.ir.ui.view,inherit_id:0
+#: model:ir.model.fields.selection,name:website_theme_install.selection__theme_ir_ui_view__inherit_id__ir_ui_view
 msgid "ir.ui.view"
 msgstr "ir.ui.view"
 
 #. module: website_theme_install
-#: selection:theme.ir.ui.view,inherit_id:0
+#: model:ir.model.fields.selection,name:website_theme_install.selection__theme_ir_ui_view__inherit_id__theme_ir_ui_view
 msgid "theme.ir.ui.view"
-msgstr ""
+msgstr "theme.ir.ui.view"
 
 #. module: website_theme_install
 #: model_terms:ir.ui.view,arch_db:website_theme_install.customize_modal

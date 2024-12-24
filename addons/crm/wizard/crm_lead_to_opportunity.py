@@ -40,7 +40,7 @@ class Lead2OpportunityPartner(models.TransientModel):
                 result['user_id'] = lead.user_id.id
             if lead.team_id:
                 result['team_id'] = lead.team_id.id
-            if not partner_id and not lead.contact_name:
+            if not partner_id and not lead.contact_name and not result.get('action'):
                 result['action'] = 'nothing'
         return result
 
@@ -95,8 +95,12 @@ class Lead2OpportunityPartner(models.TransientModel):
         leads = self.env['crm.lead'].browse(vals.get('lead_ids'))
         for lead in leads:
             self_def_user = self.with_context(default_user_id=self.user_id.id)
-            partner_id = self_def_user._create_partner(
-                lead.id, self.action, vals.get('partner_id') or lead.partner_id.id)
+
+            partner_id = False
+            if self.action != 'nothing':
+                partner_id = self_def_user._create_partner(
+                    lead.id, self.action, vals.get('partner_id') or lead.partner_id.id)
+
             res = lead.convert_opportunity(partner_id, [], False)
         user_ids = vals.get('user_ids')
 

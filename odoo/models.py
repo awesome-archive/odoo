@@ -33,14 +33,15 @@ import operator
 import pytz
 import re
 import uuid
-from collections import defaultdict, MutableMapping, OrderedDict
+from collections import defaultdict, OrderedDict
+from collections.abc import MutableMapping
 from contextlib import closing
 from inspect import getmembers, currentframe
 from operator import attrgetter, itemgetter
 
 import babel.dates
 import dateutil.relativedelta
-import psycopg2
+import psycopg2, psycopg2.extensions
 from lxml import etree
 from lxml.builder import E
 from psycopg2.extensions import AsIs
@@ -219,6 +220,19 @@ def origin_ids(ids):
     return ((id_ or id_.origin) for id_ in ids if (id_ or getattr(id_, "origin", None)))
 
 
+def expand_ids(id0, ids):
+    """ Return an iterator of unique ids from the concatenation of ``[id0]`` and
+        ``ids``, and of the same kind (all real or all new).
+    """
+    yield id0
+    seen = {id0}
+    kind = bool(id0)
+    for id_ in ids:
+        if id_ not in seen and bool(id_) == kind:
+            yield id_
+            seen.add(id_)
+
+
 IdType = (int, str, NewId)
 
 
@@ -237,9 +251,9 @@ VALID_AGGREGATE_FUNCTIONS = {
 
 
 class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
-    """ Base class for Odoo models.
+    """Base class for Odoo models.
 
-    Odoo models are created by inheriting:
+    Odoo models are created by inheriting one of the following:
 
     *   :class:`Model` for regular database-persisted models
 
@@ -261,35 +275,88 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
     explicit representation: a record is represented as a recordset of one
     record.
 
-    To create a class that should not be instantiated, the _register class
-    attribute may be set to False.
+    To create a class that should not be instantiated,
+    the :attr:`~odoo.models.BaseModel._register` attribute may be set to False.
     """
-    _auto = False               # don't create any database backend
-    _register = False           # not visible in ORM registry
-    _abstract = True            # whether model is abstract
-    _transient = False          # whether model is transient
 
-    _name = None                # the model name
-    _description = None         # the model's informal name
-    _custom = False             # should be True for custom models only
+    _auto = False
+    """Whether a database table should be created (default: ``True``).
+    If set to ``False``, override :meth:`~odoo.models.BaseModel.init`
+    to create the database table.
 
-    _inherit = None             # Python-inherited models ('model' or ['model'])
-    _inherits = {}              # inherited models {'parent_model': 'm2o_field'}
+    .. tip:: To create a model without any table, inherit
+            from :class:`~odoo.models.AbstractModel`.
+    """
+    _register = False           #: not visible in ORM registry
+    _abstract = True            #: whether model is abstract
+    _transient = False          #: whether model is transient
 
-    _table = None               # SQL table name used by model
-    _sequence = None            # SQL sequence to use for ID field
-    _sql_constraints = []       # SQL constraints [(name, sql_def, message)]
+    _name = None                #: the model name (in dot-notation, module namespace)
+    _description = None         #: the model's informal name
+    _custom = False             #: should be True for custom models only
 
-    _rec_name = None            # field to use for labeling records
-    _order = 'id'               # default order for searching results
-    _parent_name = 'parent_id'  # the many2one field used as parent field
-    _parent_store = False       # set to True to compute parent_path field
-    _date_name = 'date'         # field to use for default calendar view
-    _fold_name = 'fold'         # field to determine folded groups in kanban views
+    _inherit = None
+    """Python-inherited models:
 
-    _needaction = False         # whether the model supports "need actions" (see mail)
-    _translate = True           # False disables translations export for this model
+    :type: str or list(str)
+
+    .. note::
+
+        * If :attr:`._name` is set, name(s) of parent models to inherit from
+        * If :attr:`._name` is unset, name of a single model to extend in-place
+    """
+    _inherits = {}
+    """dictionary {'parent_model': 'm2o_field'} mapping the _name of the parent business
+    objects to the names of the corresponding foreign key fields to use::
+
+      _inherits = {
+          'a.model': 'a_field_id',
+          'b.model': 'b_field_id'
+      }
+
+    implements composition-based inheritance: the new model exposes all
+    the fields of the inherited models but stores none of them:
+    the values themselves remain stored on the linked record.
+
+    .. warning::
+
+      if multiple fields with the same name are defined in the
+      :attr:`~odoo.models.Model._inherits`-ed models, the inherited field will
+      correspond to the last one (in the inherits list order).
+    """
+    _table = None               #: SQL table name used by model if :attr:`_auto`
+    _sequence = None            #: SQL sequence to use for ID field
+    _sql_constraints = []       #: SQL constraints [(name, sql_def, message)]
+
+    _rec_name = None            #: field to use for labeling records, default: ``name``
+    _order = 'id'               #: default order field for searching results
+    _parent_name = 'parent_id'  #: the many2one field used as parent field
+    _parent_store = False
+    """set to True to compute parent_path field.
+
+    Alongside a :attr:`~.parent_path` field, sets up an indexed storage
+    of the tree structure of records, to enable faster hierarchical queries
+    on the records of the current model using the ``child_of`` and
+    ``parent_of`` domain operators.
+    """
+    _date_name = 'date'         #: field to use for default calendar view
+    _fold_name = 'fold'         #: field to determine folded groups in kanban views
+
+    _needaction = False         # whether the model supports "need actions" (Old API)
+    _translate = True           # False disables translations export for this model (Old API)
     _check_company_auto = False
+    """On write and create, call ``_check_company`` to ensure companies
+    consistency on the relational fields having ``check_company=True``
+    as attribute.
+    """
+
+    _depends = {}
+    """dependencies of models backed up by SQL views
+    ``{model_name: field_names}``, where ``field_names`` is an iterable.
+    This is only used to determine the changes to flush to database before
+    executing ``search()`` or ``read_group()``. It won't be used for cache
+    invalidation or recomputing fields.
+    """
 
     # default values for _transient_vacuum()
     _transient_check_count = 0
@@ -555,6 +622,7 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
         cls._sequence = None
         cls._log_access = cls._auto
         cls._inherits = {}
+        cls._depends = {}
         cls._sql_constraints = {}
 
         for base in reversed(cls.__bases__):
@@ -569,6 +637,9 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
                 cls._log_access = getattr(base, '_log_access', cls._log_access)
 
             cls._inherits.update(base._inherits)
+
+            for mname, fnames in base._depends.items():
+                cls._depends.setdefault(mname, []).extend(fnames)
 
             for cons in base._sql_constraints:
                 cls._sql_constraints[cons[0]] = cons
@@ -626,10 +697,16 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
         cls = type(self)
         methods = defaultdict(list)
         for attr, func in getmembers(cls, is_onchange):
+            missing = []
             for name in func._onchange:
                 if name not in cls._fields:
-                    _logger.warning("@onchange%r parameters must be field names", func._onchange)
+                    missing.append(name)
                 methods[name].append(func)
+            if missing:
+                _logger.warning(
+                    "@api.onchange%r parameters must be field names -> not valid: %s",
+                    func._onchange, missing
+                )
 
         # add onchange methods to implement "change_default" on fields
         def onchange_default(field, self):
@@ -711,19 +788,27 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
             for r in missing
         )
         fields = ['module', 'model', 'name', 'res_id']
-        cr.copy_from(io.StringIO(
-            u'\n'.join(
-                u"%s\t%s\t%s\t%d" % (
-                    modname,
-                    record._name,
-                    xids[record.id][1],
-                    record.id,
-                )
-                for record in missing
-            )),
-            table='ir_model_data',
-            columns=fields,
-        )
+
+        # disable eventual async callback / support for the extent of
+        # the COPY FROM, as these are apparently incompatible
+        callback = psycopg2.extensions.get_wait_callback()
+        psycopg2.extensions.set_wait_callback(None)
+        try:
+            cr.copy_from(io.StringIO(
+                u'\n'.join(
+                    u"%s\t%s\t%s\t%d" % (
+                        modname,
+                        record._name,
+                        xids[record.id][1],
+                        record.id,
+                    )
+                    for record in missing
+                )),
+                table='ir_model_data',
+                columns=fields,
+            )
+        finally:
+            psycopg2.extensions.set_wait_callback(callback)
         self.env['ir.model.data'].invalidate_cache(fnames=fields)
 
         return (
@@ -792,7 +877,7 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
                         # a comma-separated list of xids in a single cell
                         if import_compatible and field.type == 'many2many' and len(path) > 1 and path[1] == 'id':
                             xml_ids = [xid for _, xid in value.__ensure_xml_id()]
-                            current[i] = ','.join(xml_ids) or False
+                            current[i] = ','.join(xml_ids)
                             continue
 
                         # recursively export the fields that follow name; use
@@ -803,12 +888,12 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
                         if lines2:
                             # merge first line with record's main line
                             for j, val in enumerate(lines2[0]):
-                                if val or isinstance(val, bool):
+                                if val or isinstance(val, (int, float)):
                                     current[j] = val
                             # append the other lines at the end
                             lines += lines2[1:]
                         else:
-                            current[i] = False
+                            current[i] = ''
 
         # if any xid should be exported, only do so at toplevel
         if _is_toplevel_call and any(f[-1] == 'id' for f in fields):
@@ -861,6 +946,8 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
         :type data: list(list(str))
         :returns: {ids: list(int)|False, messages: [Message][, lastrow: int]}
         """
+        self.flush()
+
         # determine values of mode, current_module and noupdate
         mode = self._context.get('mode', 'init')
         current_module = self._context.get('module', '__import__')
@@ -895,6 +982,7 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
             batch.clear()
             batch_xml_ids.clear()
 
+            unknown_msg = _(u"Unknown database error: '%s'")
             try:
                 cr.execute('SAVEPOINT model_load_save')
             except psycopg2.InternalError as e:
@@ -902,44 +990,49 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
                 # already logged
                 if not any(message['type'] == 'error' for message in messages):
                     info = data_list[0]['info']
-                    messages.append(dict(info, type='error', message=u"Unknown database error: '%s'" % e))
+                    messages.append(dict(info, type='error', message=unknown_msg % e))
                 return
 
             # try to create in batch
             try:
-                recs = self._load_records(data_list, mode == 'update')
-                ids.extend(recs.ids)
-                cr.execute('RELEASE SAVEPOINT model_load_save')
+                with cr.savepoint():
+                    recs = self._load_records(data_list, mode == 'update')
+                    ids.extend(recs.ids)
                 return
             except Exception:
-                cr.execute('ROLLBACK TO SAVEPOINT model_load_save')
+                pass
 
+            errors = 0
             # try again, this time record by record
-            for rec_data in data_list:
+            for i, rec_data in enumerate(data_list, 1):
                 try:
-                    cr.execute('SAVEPOINT model_load_save')
-                    rec = self._load_records([rec_data], mode == 'update')
-                    ids.append(rec.id)
-                    cr.execute('RELEASE SAVEPOINT model_load_save')
+                    with cr.savepoint():
+                        rec = self._load_records([rec_data], mode == 'update')
+                        ids.append(rec.id)
                 except psycopg2.Warning as e:
                     info = rec_data['info']
                     messages.append(dict(info, type='warning', message=str(e)))
-                    cr.execute('ROLLBACK TO SAVEPOINT model_load_save')
                 except psycopg2.Error as e:
                     info = rec_data['info']
                     messages.append(dict(info, type='error', **PGERROR_TO_OE[e.pgcode](self, fg, info, e)))
                     # Failed to write, log to messages, rollback savepoint (to
                     # avoid broken transaction) and keep going
-                    cr.execute('ROLLBACK TO SAVEPOINT model_load_save')
+                    errors += 1
                 except Exception as e:
-                    _logger.exception("Error while loading record")
+                    _logger.debug("Error while loading record", exc_info=True)
                     info = rec_data['info']
                     message = (_(u'Unknown error during import:') + u' %s: %s' % (type(e), e))
                     moreinfo = _('Resolve other errors first')
                     messages.append(dict(info, type='error', message=message, moreinfo=moreinfo))
                     # Failed for some reason, perhaps due to invalid data supplied,
                     # rollback savepoint and keep going
-                    cr.execute('ROLLBACK TO SAVEPOINT model_load_save')
+                    errors += 1
+                if errors >= 10 and (errors >= i / 10):
+                    messages.append({
+                        'type': 'warning',
+                        'message': _(u"Found more than 10 errors and more than one error per 10 records, interrupted to avoid showing too many errors.")
+                    })
+                    break
 
         # make 'flush' available to the methods below, in the case where XMLID
         # resolution fails, for instance
@@ -1080,7 +1173,7 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
             exc_vals = dict(base, record=record, field=field_names[field])
             record = dict(base, type=type, record=record, field=field,
                           message=str(exception.args[0]) % exc_vals)
-            if len(exception.args) > 1 and exception.args[1]:
+            if len(exception.args) > 1 and isinstance(exception.args[1], dict):
                 record.update(exception.args[1])
             log(record)
 
@@ -1108,10 +1201,15 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
 
             yield dbid, xid, converted, dict(extras, record=stream.index)
 
-    def _validate_fields(self, field_names):
+    def _validate_fields(self, field_names, excluded_names=()):
+        """ Invoke the constraint methods for which at least one field name is
+        in ``field_names`` and none is in ``excluded_names``.
+        """
         field_names = set(field_names)
+        excluded_names = set(excluded_names)
         for check in self._constraint_methods:
-            if not field_names.isdisjoint(check._constrains):
+            if (not field_names.isdisjoint(check._constrains)
+                    and excluded_names.isdisjoint(check._constrains)):
                 check(self)
 
     @api.model
@@ -1443,14 +1541,15 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
 
         Get the detailed composition of the requested view like fields, model, view architecture
 
-        :param view_id: id of the view or None
-        :param view_type: type of the view to return if view_id is None ('form', 'tree', ...)
-        :param toolbar: true to include contextual actions
+        :param int view_id: id of the view or None
+        :param str view_type: type of the view to return if view_id is None ('form', 'tree', ...)
+        :param bool toolbar: true to include contextual actions
         :param submenu: deprecated
-        :return: dictionary describing the composition of the requested view (including inherited views and extensions)
+        :return: composition of the requested view (including inherited views and extensions)
+        :rtype: dict
         :raise AttributeError:
-                            * if the inherited view has unknown position to work with other than 'before', 'after', 'inside', 'replace'
-                            * if some tag other than 'position' is found in parent view
+                * if the inherited view has unknown position to work with other than 'before', 'after', 'inside', 'replace'
+                * if some tag other than 'position' is found in parent view
         :raise Invalid ArchitectureError: if there is view type other than form, tree, calendar, search etc defined on the structure
         """
         View = self.env['ir.ui.view']
@@ -1657,26 +1756,40 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
             _logger.warning("Cannot execute name_search, no _rec_name defined on %s", self._name)
         elif not (name == '' and operator == 'ilike'):
             args += [(self._rec_name, operator, name)]
-        access_rights_uid = name_get_uid or self._uid
-        ids = self._search(args, limit=limit, access_rights_uid=access_rights_uid)
+        ids = self._search(args, limit=limit, access_rights_uid=name_get_uid)
         recs = self.browse(ids)
-        return lazy_name_get(recs.with_user(access_rights_uid))
+        return lazy_name_get(recs.with_user(name_get_uid))
 
     @api.model
     def _add_missing_default_values(self, values):
         # avoid overriding inherited values when parent is set
-        avoid_models = {
-            parent_model
-            for parent_model, parent_field in self._inherits.items()
-            if parent_field in values
-        }
+        avoid_models = set()
+
+        def collect_models_to_avoid(model):
+            for parent_mname, parent_fname in model._inherits.items():
+                if parent_fname in values:
+                    avoid_models.add(parent_mname)
+                else:
+                    # manage the case where an ancestor parent field is set
+                    collect_models_to_avoid(self.env[parent_mname])
+
+        collect_models_to_avoid(self)
+
+        def avoid(field):
+            # check whether the field is inherited from one of avoid_models
+            if avoid_models:
+                while field.inherited:
+                    field = field.related_field
+                    if field.model_name in avoid_models:
+                        return True
+            return False
 
         # compute missing fields
         missing_defaults = {
             name
             for name, field in self._fields.items()
             if name not in values
-            if not (field.inherited and field.related_field.model_name in avoid_models)
+            if not avoid(field)
         }
 
         if not missing_defaults:
@@ -1890,6 +2003,8 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
             elif order_field in aggregated_fields:
                 order_split[0] = '"%s"' % order_field
                 orderby_terms.append(' '.join(order_split))
+            elif order_field not in self._fields:
+                raise ValueError("Invalid field %r on model %r" % (order_field, self._name))
             else:
                 # Cannot order by a field that will not appear in the results (needs to be grouped or aggregated)
                 _logger.warn('%s: read_group order by `%s` ignored, cannot sort on empty columns (not grouped/aggregated)',
@@ -1904,7 +2019,10 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
             field name, type, time information, qualified name, ...
         """
         split = gb.split(':')
-        field_type = self._fields[split[0]].type
+        field = self._fields.get(split[0])
+        if not field:
+            raise ValueError("Invalid field %r on model %r" % (split[0], self._name))
+        field_type = field.type
         gb_function = split[1] if len(split) == 2 else None
         temporal = field_type in ('date', 'datetime')
         tz_convert = field_type == 'datetime' and self._context.get('tz') in pytz.all_timezones
@@ -2003,6 +2121,8 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
                     if gb['tz_convert']:
                         tzinfo = range_start.tzinfo
                         range_start = range_start.astimezone(pytz.utc)
+                        # take into account possible hour change between start and end
+                        range_end = tzinfo.localize(range_end.replace(tzinfo=None))
                         range_end = range_end.astimezone(pytz.utc)
 
                     range_start = range_start.strftime(fmt)
@@ -2037,10 +2157,10 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
 
     @api.model
     def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
-        """
-        Get the list of records in list view grouped by the given ``groupby`` fields
+        """Get the list of records in list view grouped by the given ``groupby`` fields.
 
-        :param domain: list specifying search criteria [['field_name', 'operator', 'value'], ...]
+        :param list domain: :ref:`A search domain <reference/orm/domains>`. Use an empty
+                     list to match all records.
         :param list fields: list of fields present in the list view specified on the object.
                 Each element is either 'field' (field name, using the default aggregation),
                 or 'field:agg' (aggregate field with aggregation function 'agg'),
@@ -2106,9 +2226,11 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
 
         self._apply_ir_rules(query, 'read')
         for gb in groupby_fields:
-            assert gb in self._fields, "Unknown field %r in 'groupby'" % gb
+            if gb not in self._fields:
+                raise UserError(_("Unknown field %r in 'groupby'") % gb)
             gb_field = self._fields[gb].base_field
-            assert gb_field.store and gb_field.column_type, "Fields in 'groupby' must be regular database-persisted fields (no function or related fields), or function fields with store=True"
+            if not (gb_field.store and gb_field.column_type):
+                raise UserError(_("Fields in 'groupby' must be database-persisted fields (no computed fields)"))
 
         aggregated_fields = []
         select_terms = []
@@ -2116,6 +2238,9 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
 
         for fspec in fields:
             if fspec == 'sequence':
+                continue
+            if fspec == '__count':
+                # the web client sometimes adds this pseudo-field in the list
                 continue
 
             match = regex_field_agg.match(fspec)
@@ -2126,7 +2251,9 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
             if func:
                 # we have either 'name:func' or 'name:func(fname)'
                 fname = fname or name
-                field = self._fields[fname]
+                field = self._fields.get(fname)
+                if not field:
+                    raise ValueError("Invalid field %r on model %r" % (fname, self._name))
                 if not (field.base_field.store and field.base_field.column_type):
                     raise UserError(_("Cannot aggregate field %r.") % fname)
                 if func not in VALID_AGGREGATE_FUNCTIONS:
@@ -2134,7 +2261,9 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
             else:
                 # we have 'name', retrieve the aggregator on the field
                 field = self._fields.get(name)
-                if not (field and field.base_field.store and
+                if not field:
+                    raise ValueError("Invalid field %r on model %r" % (name, self._name))
+                if not (field.base_field.store and
                         field.base_field.column_type and field.group_operator):
                     continue
                 func, fname = field.group_operator, name
@@ -2408,15 +2537,17 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
                     continue            # don't update custom fields
                 new = field.update_db(self, columns)
                 if new and field.compute:
-                    fields_to_compute.append(field)
+                    fields_to_compute.append(field.name)
 
             if fields_to_compute:
                 @self.pool.post_init
                 def mark_fields_to_compute():
-                    recs = self.with_context(active_test=False).search([])
+                    recs = self.with_context(active_test=False).search([], order='id')
+                    if not recs:
+                        return
                     for field in fields_to_compute:
-                        _logger.info("Storing computed values of %s", field)
-                        self.env.add_to_compute(field, recs)
+                        _logger.info("Storing computed values of %s.%s", recs._name, field)
+                        self.env.add_to_compute(recs._fields[field], recs)
 
         if self._auto:
             self._add_sql_constraints()
@@ -2450,22 +2581,20 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
         cr = self._cr
         foreign_key_re = re.compile(r'\s*foreign\s+key\b.*', re.I)
 
-        def process(key, definition):
+        for (key, definition, message) in self._sql_constraints:
             conname = '%s_%s' % (self._table, key)
             current_definition = tools.constraint_definition(cr, self._table, conname)
-            if not current_definition:
-                # constraint does not exists
-                tools.add_constraint(cr, self._table, conname, definition)
-            elif current_definition != definition:
+            if current_definition == definition:
+                continue
+
+            if current_definition:
                 # constraint exists but its definition may have changed
                 tools.drop_constraint(cr, self._table, conname)
-                tools.add_constraint(cr, self._table, conname, definition)
 
-        for (key, definition, _) in self._sql_constraints:
             if foreign_key_re.match(definition):
-                self.pool.post_init(process, key, definition)
+                self.pool.post_init(tools.add_constraint, cr, self._table, conname, definition)
             else:
-                process(key, definition)
+                self.pool.post_constraint(tools.add_constraint, cr, self._table, conname, definition)
 
     def _execute_sql(self):
         """ Execute the SQL code from the _sql attribute (if any)."""
@@ -2526,6 +2655,7 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
                 if field.ondelete.lower() not in ('cascade', 'restrict'):
                     field.ondelete = 'cascade'
                 self._inherits[field.comodel_name] = field.name
+                self.pool[field.comodel_name]._inherits_children.add(self._name)
 
     @api.model
     def _prepare_setup(self):
@@ -2604,7 +2734,7 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
                 "Invalid rec_name %s for model %s" % (cls._rec_name, cls._name)
         elif 'name' in cls._fields:
             cls._rec_name = 'name'
-        elif 'x_name' in cls._fields:
+        elif cls._custom and 'x_name' in cls._fields:
             cls._rec_name = 'x_name'
 
     @api.model
@@ -2618,7 +2748,7 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
             try:
                 field.setup_full(self)
             except Exception:
-                if not self.pool.loaded and field.base_field.manual:
+                if field.base_field.manual:
                     # Something goes wrong when setup a manual field.
                     # This can happen with related fields using another manual many2one field
                     # that hasn't been loaded because the comodel does not exist yet.
@@ -2817,7 +2947,9 @@ Fields:
         # fetch stored fields from the database to the cache
         stored_fields = set()
         for name in fields:
-            field = self._fields[name]
+            field = self._fields.get(name)
+            if not field:
+                raise ValueError("Invalid field %r on model %r" % (name, self._name))
             if field.store:
                 stored_fields.add(name)
             elif field.compute:
@@ -2900,14 +3032,6 @@ Fields:
             else:
                 _logger.warning("%s.read() with unknown field '%s'", self._name, name)
 
-        env = self.env
-        cr, user, context, su = env.args
-
-        # make a query object for selecting ids, and apply security rules to it
-        param_ids = object()
-        query = Query(['"%s"' % self._table], ['"%s".id IN %%s' % self._table], [param_ids])
-        self._apply_ir_rules(query, 'read')
-
         # determine the fields that are stored as columns in tables; ignore 'id'
         fields_pre = [
             field
@@ -2917,30 +3041,42 @@ Fields:
             if not (field.inherited and callable(field.base_field.translate))
         ]
 
-        # the query may involve several tables: we need fully-qualified names
-        def qualify(field):
-            col = field.name
-            res = self._inherits_join_calc(self._table, field.name, query)
-            if field.type == 'binary' and (context.get('bin_size') or context.get('bin_size_' + col)):
-                # PG 9.2 introduces conflicting pg_size_pretty(numeric) -> need ::cast
-                res = 'pg_size_pretty(length(%s)::bigint)' % res
-            return '%s as "%s"' % (res, col)
+        if fields_pre:
+            env = self.env
+            cr, user, context, su = env.args
 
-        # selected fields are: 'id' followed by fields_pre
-        qual_names = [qualify(name) for name in [self._fields['id']] + fields_pre]
+            # make a query object for selecting ids, and apply security rules to it
+            param_ids = object()
+            query = Query(['"%s"' % self._table], ['"%s".id IN %%s' % self._table], [param_ids])
+            self._apply_ir_rules(query, 'read')
 
-        # determine the actual query to execute
-        from_clause, where_clause, params = query.get_sql()
-        query_str = "SELECT %s FROM %s WHERE %s" % (",".join(qual_names), from_clause, where_clause)
+            # the query may involve several tables: we need fully-qualified names
+            def qualify(field):
+                col = field.name
+                res = self._inherits_join_calc(self._table, field.name, query)
+                if field.type == 'binary' and (context.get('bin_size') or context.get('bin_size_' + col)):
+                    # PG 9.2 introduces conflicting pg_size_pretty(numeric) -> need ::cast
+                    res = 'pg_size_pretty(length(%s)::bigint)' % res
+                return '%s as "%s"' % (res, col)
 
-        # fetch one list of record values per field
-        param_pos = params.index(param_ids)
+            # selected fields are: 'id' followed by fields_pre
+            qual_names = [qualify(name) for name in [self._fields['id']] + fields_pre]
 
-        result = []
-        for sub_ids in cr.split_for_in_conditions(self.ids):
-            params[param_pos] = tuple(sub_ids)
-            cr.execute(query_str, params)
-            result += cr.fetchall()
+            # determine the actual query to execute
+            from_clause, where_clause, params = query.get_sql()
+            query_str = "SELECT %s FROM %s WHERE %s" % (",".join(qual_names), from_clause, where_clause)
+
+            # fetch one list of record values per field
+            param_pos = params.index(param_ids)
+
+            result = []
+            for sub_ids in cr.split_for_in_conditions(self.ids):
+                params[param_pos] = tuple(sub_ids)
+                cr.execute(query_str, params)
+                result += cr.fetchall()
+        else:
+            self.check_access_rule('read')
+            result = [(id_,) for id_ in self.ids]
 
         fetched = self.browse()
         if result:
@@ -2983,31 +3119,29 @@ Fields:
                 raise self.env['ir.rule']._make_access_error('read', forbidden)
 
     def get_metadata(self):
-        """
-        Returns some metadata about the given records.
+        """Return some metadata about the given records.
 
         :return: list of ownership dictionaries for each requested record
         :rtype: list of dictionaries with the following keys:
 
-                    * id: object id
-                    * create_uid: user who created the record
-                    * create_date: date when the record was created
-                    * write_uid: last user who changed the record
-                    * write_date: date of the last change to the record
-                    * xmlid: XML ID to use to refer to this record (if there is one), in format ``module.name``
-                    * noupdate: A boolean telling if the record will be updated or not
+            * id: object id
+            * create_uid: user who created the record
+            * create_date: date when the record was created
+            * write_uid: last user who changed the record
+            * write_date: date of the last change to the record
+            * xmlid: XML ID to use to refer to this record (if there is one), in format ``module.name``
+            * noupdate: A boolean telling if the record will be updated or not
         """
 
         IrModelData = self.env['ir.model.data'].sudo()
         if self._log_access:
-            res = self.sudo().read(LOG_ACCESS_COLUMNS)
+            res = self.read(LOG_ACCESS_COLUMNS)
         else:
             res = [{'id': x} for x in self.ids]
         xml_data = dict((x['res_id'], x) for x in IrModelData.search_read([('model', '=', self._name),
                                                                            ('res_id', 'in', self.ids)],
                                                                           ['res_id', 'noupdate', 'module', 'name'],
-                                                                          order='id',
-                                                                          limit=1))
+                                                                          order='id DESC'))
         for r in res:
             value = xml_data.get(r['id'], {})
             r['xmlid'] = '%(module)s.%(name)s' % value if value else False
@@ -3051,7 +3185,19 @@ Fields:
                 raise ValidationError(_('A document was modified since you last viewed it (%s:%d)') % (self._description, res[0]))
 
     def _check_company(self, fnames=None):
-        """ Check the companies of the values of the given field names. """
+        """ Check the companies of the values of the given field names.
+
+        :param list fnames: names of relational fields to check
+        :raises UserError: if the `company_id` of the value of any field is not
+            in `[False, self.company_id]` (or `self` if
+            :class:`~odoo.addons.base.models.res_company`).
+
+        For :class:`~odoo.addons.base.models.res_users` relational fields,
+        verifies record company is in `company_ids` fields.
+
+        User with main company A, having access to company A and B, could be
+        assigned or linked to records in company B.
+        """
         if fnames is None:
             fnames = self._fields
 
@@ -3069,21 +3215,19 @@ Fields:
         if not (regular_fields or property_fields):
             return
 
-        inconsistent_fields = set()
-        inconsistent_recs = self.browse()
+        inconsistencies = []
         for record in self:
             company = record.company_id if record._name != 'res.company' else record
             # The first part of the check verifies that all records linked via relation fields are compatible
             # with the company of the origin document, i.e. `self.account_id.company_id == self.company_id`
             for name in regular_fields:
+                corecord = record.sudo()[name]
                 # Special case with `res.users` since an user can belong to multiple companies.
-                if record[name]._name == 'res.users' and record[name].company_ids:
-                    if not (company <= record[name].company_ids):
-                        inconsistent_fields.add(name)
-                        inconsistent_recs |= record
-                elif not (record[name].company_id <= company):
-                    inconsistent_fields.add(name)
-                    inconsistent_recs |= record
+                if corecord._name == 'res.users' and corecord.company_ids:
+                    if not (company <= corecord.company_ids):
+                        inconsistencies.append((record, name, corecord))
+                elif not (corecord.company_id <= company):
+                    inconsistencies.append((record, name, corecord))
             # The second part of the check (for property / company-dependent fields) verifies that the records
             # linked via those relation fields are compatible with the company that owns the property value, i.e.
             # the company for which the value is being assigned, i.e:
@@ -3094,26 +3238,31 @@ Fields:
                 company = self.env.company
             for name in property_fields:
                 # Special case with `res.users` since an user can belong to multiple companies.
-                if record[name]._name == 'res.users' and record[name].company_ids:
-                    if not (company <= record[name].company_ids):
-                        inconsistent_fields.add(name)
-                        inconsistent_recs |= record
-                elif not (record[name].company_id <= company):
-                    inconsistent_fields.add(name)
-                    inconsistent_recs |= record
+                corecord = record.sudo()[name]
+                if corecord._name == 'res.users' and corecord.company_ids:
+                    if not (company <= corecord.company_ids):
+                        inconsistencies.append((record, name, corecord))
+                elif not (corecord.company_id <= company):
+                    inconsistencies.append((record, name, corecord))
 
-        if inconsistent_fields:
-            message = _("""Some records are incompatible with the company of the %(document_descr)s.
-
-Incompatibilities:
-Fields: %(fields)s
-Record ids: %(records)s
-""")
-            raise UserError(message % {
-                'document_descr': self.env['ir.model']._get(self._name).name,
-                'fields': ', '.join(sorted(inconsistent_fields)),
-                'records': ', '.join([str(a) for a in inconsistent_recs.ids[:6]]),
-            })
+        if inconsistencies:
+            lines = [_("Incompatible companies on records:")]
+            company_msg = _("- Record is company %(company)r and %(field)r (%(fname)s: %(values)s) belongs to another company.")
+            record_msg = _("- %(record)r belongs to company %(company)r and %(field)r (%(fname)s: %(values)s) belongs to another company.")
+            for record, name, corecords in inconsistencies[:5]:
+                if record._name == 'res.company':
+                    msg, company = company_msg, record
+                else:
+                    msg, company = record_msg, record.company_id
+                field = self.env['ir.model.fields']._get(self._name, name)
+                lines.append(msg % {
+                    'record': record.display_name,
+                    'company': company.display_name,
+                    'field': field.field_description,
+                    'fname': field.name,
+                    'values': ", ".join(repr(rec.display_name) for rec in corecords),
+                })
+            raise UserError("\n".join(lines))
 
     @api.model
     def check_access_rights(self, operation, raise_exception=True):
@@ -3204,7 +3353,7 @@ Record ids: %(records)s
 
     def _filter_access_rules_python(self, operation):
         dom = self.env['ir.rule']._compute_domain(self._name, operation)
-        return self.filtered_domain(dom or [])
+        return self.sudo().filtered_domain(dom or [])
 
     def unlink(self):
         """ unlink()
@@ -3220,26 +3369,19 @@ Record ids: %(records)s
             return True
 
         self.check_access_rights('unlink')
+        self.check_access_rule('unlink')
         self._check_concurrency()
 
         # mark fields that depend on 'self' to recompute them after 'self' has
         # been deleted (like updating a sum of lines after deleting one line)
         self.flush()
-        self.modified(self._fields)
+        self.modified(self._fields, before=True)
 
-        # Check if the records are used as default properties.
-        refs = ['%s,%s' % (self._name, i) for i in self.ids]
-        if self.env['ir.property'].search([('res_id', '=', False), ('value_reference', 'in', refs)]):
-            raise UserError(_('Unable to delete this document because it is used as a default property'))
-
-        # Delete the records' properties.
         with self.env.norecompute():
-            self.check_access_rule('unlink')
-            self.env['ir.property'].search([('res_id', 'in', refs)]).sudo().unlink()
-
             cr = self._cr
             Data = self.env['ir.model.data'].sudo().with_context({})
             Defaults = self.env['ir.default'].sudo()
+            Property = self.env['ir.property'].sudo()
             Attachment = self.env['ir.attachment'].sudo()
             ir_model_data_unlink = Data
             ir_attachment_unlink = Attachment
@@ -3252,6 +3394,14 @@ Record ids: %(records)s
                 self.env.remove_to_compute(field, self)
 
             for sub_ids in cr.split_for_in_conditions(self.ids):
+                # Check if the records are used as default properties.
+                refs = ['%s,%s' % (self._name, i) for i in sub_ids]
+                if Property.search([('res_id', '=', False), ('value_reference', 'in', refs)], limit=1):
+                    raise UserError(_('Unable to delete this document because it is used as a default property'))
+
+                # Delete the records' properties.
+                Property.search([('res_id', 'in', refs)]).unlink()
+
                 query = "DELETE FROM %s WHERE id IN %%s" % self._table
                 cr.execute(query, (sub_ids,))
 
@@ -3310,7 +3460,7 @@ Record ids: %(records)s
 
         :raise AccessError: * if user has no write rights on the requested object
                             * if user tries to bypass access rules for write on the requested object
-        :raise ValidateError: if user tries to enter invalid value for a field that is not in selection
+        :raise ValidationError: if user tries to enter invalid value for a field that is not in selection
         :raise UserError: if a loop would be created in a hierarchy of objects a result of the operation (such as setting an object as its own parent)
 
         * For numeric fields (:class:`~odoo.fields.Integer`,
@@ -3345,34 +3495,28 @@ Record ids: %(records)s
           triplet is a command to execute on the set of records. Not all
           commands apply in all situations. Possible commands are:
 
-          ``(0, _, values)``
+          ``(0, 0, values)``
               adds a new record created from the provided ``value`` dict.
           ``(1, id, values)``
               updates an existing record of id ``id`` with the values in
               ``values``. Can not be used in :meth:`~.create`.
-          ``(2, id, _)``
+          ``(2, id, 0)``
               removes the record of id ``id`` from the set, then deletes it
               (from the database). Can not be used in :meth:`~.create`.
-          ``(3, id, _)``
+          ``(3, id, 0)``
               removes the record of id ``id`` from the set, but does not
-              delete it. Can not be used on
-              :class:`~odoo.fields.One2many`. Can not be used in
+              delete it. Can not be used in
               :meth:`~.create`.
-          ``(4, id, _)``
-              adds an existing record of id ``id`` to the set. Can not be
-              used on :class:`~odoo.fields.One2many`.
-          ``(5, _, _)``
+          ``(4, id, 0)``
+              adds an existing record of id ``id`` to the set.
+          ``(5, 0, 0)``
               removes all records from the set, equivalent to using the
-              command ``3`` on every record explicitly. Can not be used on
-              :class:`~odoo.fields.One2many`. Can not be used in
+              command ``3`` on every record explicitly. Can not be used in
               :meth:`~.create`.
-          ``(6, _, ids)``
+          ``(6, 0, ids)``
               replaces all existing records in the set by the ``ids`` list,
               equivalent to using the command ``5`` followed by a command
               ``4`` for each ``id`` in ``ids``.
-
-          .. note:: Values marked as ``_`` in the list above are ignored and
-                    can be anything, generally ``0`` or ``False``.
         """
         if not self:
             return True
@@ -3394,23 +3538,68 @@ Record ids: %(records)s
         protected = set()
         check_company = False
         for fname in vals:
-            field = self._fields[fname]
+            field = self._fields.get(fname)
+            if not field:
+                raise ValueError("Invalid field %r on model %r" % (fname, self._name))
             if field.inverse:
+                if field.type in ('one2many', 'many2many'):
+                    # The written value is a list of commands that must applied
+                    # on the field's current value. Because the field is
+                    # protected while being written, the field's current value
+                    # will not be computed and default to an empty recordset. So
+                    # make sure the field's value is in cache before writing, in
+                    # order to avoid an inconsistent update.
+                    self[fname]
                 determine_inverses[field.inverse].append(field)
                 # DLE P150: `test_cancel_propagation`, `test_manufacturing_3_steps`, `test_manufacturing_flow`
                 # TODO: check whether still necessary
                 records_to_inverse[field] = self.filtered('id')
             if field.relational or self._field_inverses[field]:
                 relational_names.append(fname)
-            if field.compute and not field.readonly:
-                protected.update(self._field_computed.get(field, [field]))
+            if field.inverse or (field.compute and not field.readonly):
+                if field.store or field.type not in ('one2many', 'many2many'):
+                    # Protect the field from being recomputed while being
+                    # inversed. In the case of non-stored x2many fields, the
+                    # field's value may contain unexpeced new records (created
+                    # by command 0). Those new records are necessary for
+                    # inversing the field, but should no longer appear if the
+                    # field is recomputed afterwards. Not protecting the field
+                    # will automatically invalidate the field from the cache,
+                    # forcing its value to be recomputed once dependencies are
+                    # up-to-date.
+                    protected.update(self._field_computed.get(field, [field]))
             if fname == 'company_id' or (field.relational and field.check_company):
                 check_company = True
 
+        # force the computation of fields that are computed with some assigned
+        # fields, but are not assigned themselves
+        to_compute = [field.name
+                      for field in protected
+                      if field.compute and field.name not in vals]
+        if to_compute:
+            self.recompute(to_compute, self)
+
         # protect fields being written against recomputation
         with env.protecting(protected, self):
-            # determine records depending on values
-            self.modified(relational_names)
+            # Determine records depending on values. When modifying a relational
+            # field, you have to recompute what depends on the field's values
+            # before and after modification.  This is because the modification
+            # has an impact on the "data path" between a computed field and its
+            # dependency.  Note that this double call to modified() is only
+            # necessary for relational fields.
+            #
+            # It is best explained with a simple example: consider two sales
+            # orders SO1 and SO2.  The computed total amount on sales orders
+            # indirectly depends on the many2one field 'order_id' linking lines
+            # to their sales order.  Now consider the following code:
+            #
+            #   line = so1.line_ids[0]      # pick a line from SO1
+            #   line.order_id = so2         # move the line to SO2
+            #
+            # In this situation, the total amount must be recomputed on *both*
+            # sales order: the line's order before the modification, and the
+            # line's order after the modification.
+            self.modified(relational_names, before=True)
 
             real_recs = self.filtered('id')
 
@@ -3455,7 +3644,7 @@ Record ids: %(records)s
 
             # validate non-inversed fields first
             inverse_fields = [f.name for fs in determine_inverses.values() for f in fs]
-            real_recs._validate_fields(set(vals) - set(inverse_fields))
+            real_recs._validate_fields(vals, inverse_fields)
 
             for fields in determine_inverses.values():
                 # inverse records that are not being computed
@@ -3556,7 +3745,7 @@ Record ids: %(records)s
         :return: the created records
         :raise AccessError: * if user has no create rights on the requested object
                             * if user tries to bypass access rules for create on the requested object
-        :raise ValidateError: if user tries to enter invalid value for a field that is not in selection
+        :raise ValidationError: if user tries to enter invalid value for a field that is not in selection
         :raise UserError: if a loop would be created in a hierarchy of objects a result of the operation (such as setting an object as its own parent)
         """
         if not vals_list:
@@ -3590,8 +3779,7 @@ Record ids: %(records)s
                     continue
                 field = self._fields.get(key)
                 if not field:
-                    _logger.warning("%s.create() with unknown fields: %s", self._name, key)
-                    continue
+                    raise ValueError("Invalid field %r on model %r" % (key, self._name))
                 if field.company_dependent:
                     irprop_def = self.env['ir.property'].get(key, self._name)
                     cached_def = field.convert_to_cache(irprop_def, self)
@@ -3671,7 +3859,7 @@ Record ids: %(records)s
 
         # check Python constraints for non-stored inversed fields
         for data in data_list:
-            data['record']._validate_fields(set(data['inversed']) - set(data['stored']))
+            data['record']._validate_fields(data['inversed'], data['stored'])
 
         if self._check_company_auto:
             records._check_company()
@@ -3713,7 +3901,27 @@ Record ids: %(records)s
                 else:
                     other_fields.add(field)
 
-            # insert a row with the given columns
+            # Insert rows one by one
+            # - as records don't all specify the same columns, code building batch-insert query
+            #   was very complex
+            # - and the gains were low, so not worth spending so much complexity
+            #
+            # It also seems that we have to be careful with INSERTs in batch, because they have the
+            # same problem as SELECTs:
+            # If we inject a lot of data in a single query, we fall into pathological perfs in
+            # terms of SQL parser and the execution of the query itself.
+            # In SELECT queries, we inject max 1000 ids (integers) when we can, because we know
+            # that this limit is well managed by PostgreSQL.
+            # In INSERT queries, we inject integers (small) and larger data (TEXT blocks for
+            # example).
+            # 
+            # The problem then becomes: how to "estimate" the right size of the batch to have
+            # good performance?
+            #
+            # This requires extensive testing, and it was prefered not to introduce INSERTs in
+            # batch, to avoid regressions as much as possible.
+            #
+            # That said, we haven't closed the door completely.
             query = "INSERT INTO {} ({}) VALUES ({}) RETURNING id".format(
                 quote(self._table),
                 ", ".join(quote(name) for name, fmt, val in columns),
@@ -3876,11 +4084,15 @@ Record ids: %(records)s
             FROM {0} node
             WHERE node.id IN %s
             AND child.parent_path LIKE concat(node.parent_path, '%%')
-            RETURNING child.id
+            RETURNING child.id, child.parent_path
         """
         cr.execute(query.format(self._table), [prefix, tuple(self.ids)])
-        modified_ids = {row[0] for row in cr.fetchall()}
-        self.browse(modified_ids).modified(['parent_path'])
+
+        # update the cache of updated nodes, and determine what to recompute
+        updated = dict(cr.fetchall())
+        records = self.browse(updated)
+        self.env.cache.update(records, self._fields['parent_path'], updated.values())
+        records.modified(['parent_path'])
 
     def _load_records_write(self, values):
         self.write(values)
@@ -3933,6 +4145,19 @@ Record ids: %(records)s
                 to_create.append(data)
                 continue
             d_id, d_module, d_name, d_model, d_res_id, d_noupdate, r_id = row
+            if self._name != d_model:
+                _logger.warning((
+                    "For external id %s "
+                    "when trying to create/update a record of model %s "
+                    "found record of different model %s (%s)"
+                    "\nUpdating record %s of target model %s"),
+                    xml_id, self._name, d_model, d_id, d_id, self._name
+                )
+                raise ValidationError(
+                    f"For external id {xml_id} "
+                    f"when trying to create/update a record of model {self._name} "
+                    f"found record of different model {d_model} ({d_id})"
+                )
             record = self.browse(d_res_id)
             if update and d_noupdate:
                 data['record'] = record
@@ -4146,7 +4371,7 @@ Record ids: %(records)s
 
             field = self._fields.get(order_field)
             if not field:
-                raise ValueError(_("Sorting field %s not found on model %s") % (order_field, self._name))
+                raise ValueError("Invalid field %r on model %r" % (order_field, self._name))
 
             if order_field == 'id':
                 order_by_elements.append('"%s"."%s" %s' % (alias, order_field, order_direction))
@@ -4187,8 +4412,14 @@ Record ids: %(records)s
         return order_by_clause and (' ORDER BY %s ' % order_by_clause) or ''
 
     @api.model
-    def _flush_search(self, domain, fields=None, order=None):
+    def _flush_search(self, domain, fields=None, order=None, seen=None):
         """ Flush all the fields appearing in `domain`, `fields` and `order`. """
+        if seen is None:
+            seen = set()
+        elif self._name in seen:
+            return
+        seen.add(self._name)
+
         to_flush = defaultdict(set)             # {model_name: field_names}
         if fields:
             to_flush[self._name].update(fields)
@@ -4220,7 +4451,7 @@ Record ids: %(records)s
                             to_flush[model._name].add(f)
                             if rfield.type in ('many2one', 'one2many', 'many2many'):
                                 model = self.env[rfield.comodel_name]
-                                if rfield.type == 'one2many':
+                                if rfield.type == 'one2many' and rfield.inverse_name:
                                     to_flush[rfield.comodel_name].add(rfield.inverse_name)
                 if field.comodel_name:
                     model_name = field.comodel_name
@@ -4234,10 +4465,23 @@ Record ids: %(records)s
         order_spec = order or self._order
         for order_part in order_spec.split(','):
             order_field = order_part.split()[0]
-            to_flush[self._name].add(order_field)
+            field = self._fields.get(order_field)
+            if field is not None:
+                to_flush[self._name].add(order_field)
+                if field.relational:
+                    self.env[field.comodel_name]._flush_search([], seen=seen)
 
         if 'active' in self:
             to_flush[self._name].add('active')
+
+        # flush model dependencies (recursively)
+        if self._depends:
+            models = [self]
+            while models:
+                model = models.pop()
+                for model_name, field_names in model._depends.items():
+                    to_flush[model_name].update(field_names)
+                    models.append(self.env[model_name])
 
         for model_name, field_names in to_flush.items():
             self.env[model_name].flush(field_names)
@@ -4467,7 +4711,7 @@ Record ids: %(records)s
         """
         ids, new_ids = [], []
         for i in self._ids:
-            (ids if isinstance(i, int) else new_ids).append(i)
+            (new_ids if isinstance(i, NewId) else ids).append(i)
         if not ids:
             return self
         query = """SELECT id FROM "%s" WHERE id IN %%s""" % self._table
@@ -4493,12 +4737,14 @@ Record ids: %(records)s
         query = 'SELECT "%s" FROM "%s" WHERE id = %%s' % (parent, self._table)
         for id in self.ids:
             current_id = id
+            seen_ids = {current_id}
             while current_id:
                 cr.execute(query, (current_id,))
                 result = cr.fetchone()
                 current_id = result[0] if result else None
-                if current_id == id:
+                if current_id in seen_ids:
                     return False
+                seen_ids.add(current_id)
         return True
 
     def _check_m2m_recursion(self, field_name):
@@ -4553,11 +4799,14 @@ Record ids: %(records)s
                      { 'id': ['module.ext_id', 'module.ext_id_bis'],
                        'id2': [] }
         """
-        result = {record.id: [] for record in self}
+        result = defaultdict(list)
         domain = [('model', '=', self._name), ('res_id', 'in', self.ids)]
         for data in self.env['ir.model.data'].sudo().search_read(domain, ['module', 'name', 'res_id'], order='id'):
             result[data['res_id']].append('%(module)s.%(name)s' % data)
-        return result
+        return {
+            record.id: result[record._origin.id]
+            for record in self
+        }
 
     def get_external_id(self):
         """Retrieve the External ID of any database record, if there
@@ -4704,17 +4953,20 @@ Record ids: %(records)s
 
     @api.model
     def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None):
-        """
-        Performs a ``search()`` followed by a ``read()``.
+        """Perform a :meth:`search` followed by a :meth:`read`.
 
-        :param domain: Search domain, see ``args`` parameter in ``search()``. Defaults to an empty domain that will match all records.
-        :param fields: List of fields to read, see ``fields`` parameter in ``read()``. Defaults to all fields.
-        :param offset: Number of records to skip, see ``offset`` parameter in ``search()``. Defaults to 0.
-        :param limit: Maximum number of records to return, see ``limit`` parameter in ``search()``. Defaults to no limit.
-        :param order: Columns to sort result, see ``order`` parameter in ``search()``. Defaults to no sort.
+        :param domain: Search domain, see ``args`` parameter in :meth:`search`.
+            Defaults to an empty domain that will match all records.
+        :param fields: List of fields to read, see ``fields`` parameter in :meth:`read`.
+            Defaults to all fields.
+        :param int offset: Number of records to skip, see ``offset`` parameter in :meth:`search`.
+            Defaults to 0.
+        :param int limit: Maximum number of records to return, see ``limit`` parameter in :meth:`search`.
+            Defaults to no limit.
+        :param order: Columns to sort result, see ``order`` parameter in :meth:`search`.
+            Defaults to no sort.
         :return: List of dictionaries containing the asked fields.
-        :rtype: List of dictionaries.
-
+        :rtype: list(dict).
         """
         records = self.search(domain or [], offset=offset, limit=limit, order=order)
         if not records:
@@ -4762,6 +5014,10 @@ Record ids: %(records)s
 
     def _register_hook(self):
         """ stuff to do right after the registry is built """
+        pass
+
+    def _unregister_hook(self):
+        """ Clean up what `~._register_hook` has done. """
         pass
 
     @classmethod
@@ -4836,7 +5092,14 @@ Record ids: %(records)s
         Returns a recordset for the ids provided as parameter in the current
         environment.
 
-        Can take no ids, a single id or an iterable of ids.
+        .. code-block:: python
+
+            self.browse([7, 18, 12])
+            res.partner(7, 18, 12)
+
+        :param ids: id(s)
+        :type ids: int or list(int) or None
+        :return: recordset
         """
         if not ids:
             ids = ()
@@ -4865,8 +5128,9 @@ Record ids: %(records)s
     #
 
     def ensure_one(self):
-        """ Verifies that the current recorset holds a single record. Raises
-        an exception otherwise.
+        """Verify that the current recorset holds a single record.
+
+        :raise odoo.exceptions.ValueError: ``len(self) != 1``
         """
         try:
             # unpack to ensure there is only one value is faster than len when true and
@@ -4877,16 +5141,16 @@ Record ids: %(records)s
             raise ValueError("Expected singleton: %s" % self)
 
     def with_env(self, env):
-        """ Returns a new version of this recordset attached to the provided
-        environment
+        """Return a new version of this recordset attached to the provided environment.
+
+        :param env:
+        :type env: :class:`~odoo.api.Environment`
 
         .. warning::
             The new environment will not benefit from the current
             environment's data cache, so later data access may incur extra
             delays while re-fetching from the database.
             The returned recordset has the same prefetch object as ``self``.
-
-        :type env: :class:`~odoo.api.Environment`
         """
         return self._browse(env, self._ids, self._prefetch_ids)
 
@@ -4897,7 +5161,7 @@ Record ids: %(records)s
         disabled, depending on `flag`. The superuser mode does not change the
         current user, and simply bypasses access rights checks.
 
-        .. note::
+        .. warning::
 
             Using ``sudo`` could cause data access to cross the
             boundaries of record rules, possibly mixing records that
@@ -4929,6 +5193,8 @@ Record ids: %(records)s
         non-superuser mode, unless `user` is the superuser (by convention, the
         superuser is always in superuser mode.)
         """
+        if not user:
+            return self
         return self.with_env(self.env(user=user, su=False))
 
     def with_context(self, *args, **kwargs):
@@ -4951,9 +5217,9 @@ Record ids: %(records)s
 
             The returned recordset has the same prefetch object as ``self``.
         """
-        if args and 'allowed_company_ids' not in args[0] and 'allowed_company_ids' in self._context:
-            args[0]['allowed_company_ids'] = self._context.get('allowed_company_ids') 
         context = dict(args[0] if args else self._context, **kwargs)
+        if 'allowed_company_ids' not in context and 'allowed_company_ids' in self._context:
+            context['allowed_company_ids'] = self._context.get('allowed_company_ids')
         return self.with_env(self.env(context=context))
 
     def with_prefetch(self, prefetch_ids=None):
@@ -4978,7 +5244,10 @@ Record ids: %(records)s
         self.ensure_one()
         cache = self.env.cache
         fields = self._fields
-        field_values = [(fields[name], value) for name, value in values.items()]
+        try:
+            field_values = [(fields[name], value) for name, value in values.items()]
+        except KeyError as e:
+            raise ValueError("Invalid field %r on model %r" % (e.args[0], self._name))
 
         # convert monetary fields last in order to ensure proper rounding
         for field, value in sorted(field_values, key=is_monetary):
@@ -5040,12 +5309,32 @@ Record ids: %(records)s
             return vals if isinstance(vals, BaseModel) else []
 
     def mapped(self, func):
-        """ Apply ``func`` on all records in ``self``, and return the result as a
-            list or a recordset (if ``func`` return recordsets). In the latter
-            case, the order of the returned recordset is arbitrary.
+        """Apply ``func`` on all records in ``self``, and return the result as a
+        list or a recordset (if ``func`` return recordsets). In the latter
+        case, the order of the returned recordset is arbitrary.
 
-            :param func: a function or a dot-separated sequence of field names
-                (string); any falsy value simply returns the recordset ``self``
+        :param func: a function or a dot-separated sequence of field names
+        :type func: callable or str
+        :return: self if func is falsy, result of func applied to all ``self`` records.
+        :rtype: list or recordset
+
+        .. code-block:: python3
+
+            # returns a list of summing two fields for each record in the set
+            records.mapped(lambda r: r.field1 + r.field2)
+
+        The provided function can be a string to get field values:
+
+        .. code-block:: python3
+
+            # returns a list of names
+            records.mapped('name')
+
+            # returns a recordset of partners
+            records.mapped('partner_id')
+
+            # returns the union of all partner banks, with duplicates removed
+            records.mapped('partner_id.bank_ids')
         """
         if not func:
             return self                 # support for an empty path of fields
@@ -5072,10 +5361,19 @@ Record ids: %(records)s
         return recs
 
     def filtered(self, func):
-        """ Select the records in ``self`` such that ``func(rec)`` is true, and
-            return them as a recordset.
+        """Return the records in ``self`` satisfying ``func``.
 
-            :param func: a function or a dot-separated sequence of field names
+        :param func: a function or a dot-separated sequence of field names
+        :type func: callable or str
+        :return: recordset of records satisfying func, may be empty.
+
+        .. code-block:: python3
+
+            # only keep records whose company is the current user's
+            records.filtered(lambda r: r.company_id == user.company_id)
+
+            # only keep records whose partner is a company
+            records.filtered("partner_id.is_company")
         """
         if isinstance(func, str):
             name = func
@@ -5098,17 +5396,25 @@ Record ids: %(records)s
                 result.append(self.browse())
             else:
                 (key, comparator, value) = d
+                if comparator in ('child_of', 'parent_of'):
+                    result.append(self.search([('id', 'in', self.ids), d]))
+                    continue
                 if key.endswith('.id'):
                     key = key[:-3]
-                if key == 'id': key=''
+                if key == 'id':
+                    key = ''
+                # determine the field with the final type for values
+                field = None
+                if key:
+                    model = self.browse()
+                    for fname in key.split('.'):
+                        field = model._fields[fname]
+                        model = model[fname]
                 if comparator in ('like', 'ilike', '=like', '=ilike', 'not ilike', 'not like'):
                     value_esc = value.replace('_', '?').replace('%', '*').replace('[', '?')
-                records = self.browse()
+                records_ids = OrderedSet()
                 for rec in self:
                     data = rec.mapped(key)
-                    if comparator in ('child_of', 'parent_of'):
-                        value = data.search([(data._parent_name, comparator, value)]).ids
-                        comparator = 'in'
                     if isinstance(data, BaseModel):
                         v = value
                         if (isinstance(value, list) or isinstance(value, tuple)) and len(value):
@@ -5117,10 +5423,14 @@ Record ids: %(records)s
                             data = data.mapped('display_name')
                         else:
                             data = data and data.ids or [False]
-                    else:
-                        data = [
-                            (isinstance(x, datetime.date) and x.strftime('%Y-%m-%d %H:%M:%S')) or
-                            x for x in data]
+                    elif field and field.type in ('date', 'datetime'):
+                        # convert all date and datetime values to datetime
+                        normalize = Datetime.to_datetime
+                        if isinstance(value, (list, tuple)):
+                            value = [normalize(v) for v in value]
+                        else:
+                            value = normalize(value)
+                        data = [normalize(d) for d in data]
                     if comparator in ('in', 'not in'):
                         if not (isinstance(value, list) or isinstance(value, tuple)):
                             value = [value]
@@ -5130,50 +5440,60 @@ Record ids: %(records)s
                     elif comparator == 'in':
                         ok = any(map(lambda x: x in data, value))
                     elif comparator == '<':
-                        ok = any(map(lambda x: x < value, data))
+                        ok = any(map(lambda x: x is not None and x < value, data))
                     elif comparator == '>':
-                        ok = any(map(lambda x: x > value, data))
+                        ok = any(map(lambda x: x is not None and x > value, data))
                     elif comparator == '<=':
-                        ok = any(map(lambda x: x <= value, data))
+                        ok = any(map(lambda x: x is not None and x <= value, data))
                     elif comparator == '>=':
-                        ok = any(map(lambda x: x >= value, data))
+                        ok = any(map(lambda x: x is not None and x >= value, data))
                     elif comparator in ('!=', '<>'):
                         ok = value not in data
                     elif comparator == 'not in':
                         ok = all(map(lambda x: x not in data, value))
                     elif comparator == 'not ilike':
+                        data = [(x or "") for x in data]
                         ok = all(map(lambda x: value.lower() not in x.lower(), data))
                     elif comparator == 'ilike':
-                        data = [x.lower() for x in data]
+                        data = [(x or "").lower() for x in data]
                         ok = bool(fnmatch.filter(data, '*'+(value_esc or '').lower()+'*'))
                     elif comparator == 'not like':
+                        data = [(x or "") for x in data]
                         ok = all(map(lambda x: value not in x, data))
                     elif comparator == 'like':
+                        data = [(x or "") for x in data]
                         ok = bool(fnmatch.filter(data, value and '*'+value_esc+'*'))
                     elif comparator == '=?':
                         ok = (value in data) or not value
                     elif comparator in ('=like'):
+                        data = [(x or "") for x in data]
                         ok = bool(fnmatch.filter(data, value_esc))
                     elif comparator in ('=ilike'):
-                        data = [x.lower() for x in data]
+                        data = [(x or "").lower() for x in data]
                         ok = bool(fnmatch.filter(data, value and value_esc.lower()))
                     else:
                         raise ValueError
-                    if ok: records |= rec
-                result.append(records)
+                    if ok:
+                       records_ids.add(rec.id)
+                result.append(self.browse(records_ids))
         while len(result)>1:
             result.append(result.pop() & result.pop())
         return result[0]
 
 
     def sorted(self, key=None, reverse=False):
-        """ Return the recordset ``self`` ordered by ``key``.
+        """Return the recordset ``self`` ordered by ``key``.
 
-            :param key: either a function of one argument that returns a
-                comparison key for each record, or a field name, or ``None``, in
-                which case records are ordered according the default model's order
+        :param key: either a function of one argument that returns a
+            comparison key for each record, or a field name, or ``None``, in
+            which case records are ordered according the default model's order
+        :type key: callable or str or None
+        :param bool reverse: if ``True``, return the result in reverse order
 
-            :param reverse: if ``True``, return the result in reverse order
+        .. code-block:: python3
+
+            # sort records by name
+            records.sorted(key=lambda r: r.name)
         """
         if key is None:
             recs = self.search([('id', 'in', self.ids)])
@@ -5190,9 +5510,13 @@ Record ids: %(records)s
 
     @api.model
     def flush(self, fnames=None, records=None):
-        """ Process all the pending recomputations (or at least the given field
-            names `fnames` if present) and flush the pending updates to the
-            database.
+        """ Process all the pending computations (on all models), and flush all
+        the pending updates to the database.
+
+        :param fnames (list<str>): list of field names to flush.  If given,
+            limit the processing to the given fields of the current model.
+        :param records (Model): if given (together with ``fnames``), limit the
+            processing to the given records.
         """
         def process(model, id_vals):
             # group record ids by vals, to update in batch when possible
@@ -5250,6 +5574,12 @@ Record ids: %(records)s
                     id_vals = self.env.all.towrite.pop(model_name)
                     process(self.env[model_name], id_vals)
 
+            # missing for one2many fields, flush their inverse
+            for fname in fnames:
+                field = self._fields[fname]
+                if field.type == 'one2many' and field.inverse_name:
+                    self.env[field.comodel_name].flush([field.inverse_name])
+
     #
     # New records - represent records that do not exist in the database yet;
     # they are used to perform onchanges.
@@ -5299,8 +5629,13 @@ Record ids: %(records)s
 
     def __iter__(self):
         """ Return an iterator over ``self``. """
-        for id in self._ids:
-            yield self._browse(self.env, (id,), self._prefetch_ids)
+        if len(self._ids) > PREFETCH_MAX and self._prefetch_ids is self._ids:
+            for ids in self.env.cr.split_for_in_conditions(self._ids):
+                for id_ in ids:
+                    yield self._browse(self.env, (id_,), ids)
+        else:
+            for id in self._ids:
+                yield self._browse(self.env, (id,), self._prefetch_ids)
 
     def __contains__(self, item):
         """ Test whether ``item`` (record or field name) is an element of ``self``.
@@ -5450,21 +5785,20 @@ Record ids: %(records)s
         """ Return the cache of ``self``, mapping field names to values. """
         return RecordCache(self)
 
-    @api.model
     def _in_cache_without(self, field, limit=PREFETCH_MAX):
         """ Return records to prefetch that have no value in cache for ``field``
             (:class:`Field` instance), including ``self``.
             Return at most ``limit`` records.
         """
-        recs = self.browse(self._prefetch_ids)
-        ids = [self.id]
-        for record_id in self.env.cache.get_missing_ids(recs - self, field):
-            if not record_id:
-                # Do not prefetch `NewId`
-                continue
-            ids.append(record_id)
-            if limit and limit <= len(ids):
-                break
+        ids = expand_ids(self.id, self._prefetch_ids)
+        ids = self.env.cache.get_missing_ids(self.browse(ids), field)
+        if limit:
+            ids = itertools.islice(ids, limit)
+        # Those records are aimed at being either fetched, or computed.  But the
+        # method '_fetch_field' is not correct with new records: it considers
+        # them as forbidden records, and clears their cache!  On the other hand,
+        # compute methods are not invoked with a mix of real and new records for
+        # the sake of code simplicity.
         return self.browse(ids)
 
     @api.model
@@ -5496,17 +5830,18 @@ Record ids: %(records)s
                [(invf, None) for f in fields for invf in self._field_inverses[f]]
         self.env.cache.invalidate(spec)
 
-    def modified(self, fnames, create=False):
-        """ Notify that fields have been modified on ``self``. This invalidates
-            the cache, and prepares the recomputation of stored function fields
-            (new-style fields only).
+    def modified(self, fnames, create=False, before=False):
+        """ Notify that fields will be or have been modified on ``self``. This
+        invalidates the cache where necessary, and prepares the recomputation of
+        dependent stored fields.
 
-            :param fnames: iterable of field names that have been modified on
-                records ``self``
-            :param create: whether modified is called in the context of record creation
+        :param fnames: iterable of field names modified on records ``self``
+        :param create: whether called in the context of record creation
+        :param before: whether called before modifying records ``self``
         """
         if not self or not fnames:
             return
+
         if len(fnames) == 1:
             tree = self._field_triggers.get(self._fields[next(iter(fnames))])
         else:
@@ -5516,34 +5851,58 @@ Record ids: %(records)s
                 node = self._field_triggers.get(self._fields[fname])
                 if node:
                     trigger_tree_merge(tree, node)
-        if tree:
-            self.sudo().with_context(active_test=False)._modified_triggers(tree, create)
 
-    def _modified_triggers(self, tree, create=False):
-        """ Process a tree of field triggers on ``self``. """
-        if not self:
-            return
-        for key, val in tree.items():
-            if key is None:
-                # val is a list of fields to mark as todo
-                for field in val:
-                    records = self - self.env.protected(field)
-                    if not records:
-                        continue
+        if tree:
+            # determine what to compute (through an iterator)
+            tocompute = self.sudo().with_context(active_test=False)._modified_triggers(tree, create)
+
+            # When called after modification, one should traverse backwards
+            # dependencies by taking into account all fields already known to be
+            # recomputed.  In that case, we mark fieds to compute as soon as
+            # possible.
+            #
+            # When called before modification, one should mark fields to compute
+            # after having inversed all dependencies.  This is because we
+            # determine what currently depends on self, and it should not be
+            # recomputed before the modification!
+            if before:
+                tocompute = list(tocompute)
+
+            # process what to compute
+            for field, records, create in tocompute:
+                records -= self.env.protected(field)
+                if not records:
+                    continue
+                if field.compute and field.store:
+                    if field.recursive:
+                        recursively_marked = self.env.not_to_compute(field, records)
+                    self.env.add_to_compute(field, records)
+                else:
                     # Dont force the recomputation of compute fields which are
                     # not stored as this is not really necessary.
-                    recursive = not create and field.recursive
-                    if field.compute and field.store:
-                        if recursive:
-                            added = self.env.not_to_compute(field, records)
-                        self.env.add_to_compute(field, records)
-                    else:
-                        if recursive:
-                            added = self & self.env.cache.get_records(self, field)
-                        self.env.cache.invalidate([(field, records._ids)])
-                    # recursively trigger recomputation of field's dependents
-                    if recursive:
-                        added.modified([field.name])
+                    if field.recursive:
+                        recursively_marked = records & self.env.cache.get_records(records, field)
+                    self.env.cache.invalidate([(field, records._ids)])
+                # recursively trigger recomputation of field's dependents
+                if field.recursive:
+                    recursively_marked.modified([field.name], create)
+
+    def _modified_triggers(self, tree, create=False):
+        """ Return an iterator traversing a tree of field triggers on ``self``,
+        traversing backwards field dependencies along the way, and yielding
+        tuple ``(field, records, created)`` to recompute.
+        """
+        if not self:
+            return
+
+        # first yield what to compute
+        for field in tree.get(None, ()):
+            yield field, self, create
+
+        # then traverse dependencies backwards, and proceed recursively
+        for key, val in tree.items():
+            if key is None:
+                continue
             elif create and key.type in ('many2one', 'many2one_reference'):
                 # upon creation, no other record has a reference to self
                 continue
@@ -5556,8 +5915,11 @@ Record ids: %(records)s
                         if invf.type == 'many2one_reference':
                             rec_ids = set()
                             for rec in self:
-                                if rec[invf.model_field] == key.model_name:
-                                    rec_ids.add(rec[invf.name])
+                                try:
+                                    if rec[invf.model_field] == key.model_name:
+                                        rec_ids.add(rec[invf.name])
+                                except MissingError:
+                                    continue
                             records = model.browse(rec_ids)
                         else:
                             try:
@@ -5567,6 +5929,9 @@ Record ids: %(records)s
 
                         # TODO: find a better fix
                         if key.model_name == records._name:
+                            if not any(self._ids):
+                                # if self are new, records should be new as well
+                                records = records.browse(it and NewId(it) for it in records._ids)
                             break
                 else:
                     new_records = self.filtered(lambda r: not r.id)
@@ -5577,7 +5942,7 @@ Record ids: %(records)s
                     if new_records:
                         cache_records = self.env.cache.get_records(model, key)
                         records |= cache_records.filtered(lambda r: set(r[key.name]._ids) & set(self._ids))
-                records._modified_triggers(val)
+                yield from records._modified_triggers(val)
 
     @api.model
     def recompute(self, fnames=None, records=None):
@@ -5590,6 +5955,9 @@ Record ids: %(records)s
             if not recs:
                 return
             if field.compute and field.store:
+                # do not force recomputation on new records; those will be
+                # recomputed by accessing the field on the records
+                recs = recs.filtered('id')
                 try:
                     recs.mapped(field.name)
                 except MissingError:
@@ -5598,16 +5966,16 @@ Record ids: %(records)s
                     # mark the field as computed on missing records, otherwise
                     # they remain forever in the todo list, and lead to an
                     # infinite loop...
-                    self.env.remove_to_compute(field, recs - existing)
+                    for f in recs._field_computed[field]:
+                        self.env.remove_to_compute(f, recs - existing)
             else:
                 self.env.cache.invalidate([(field, recs._ids)])
                 self.env.remove_to_compute(field, recs)
 
         if fnames is None:
             # recompute everything
-            fields_to_compute = self.env.fields_to_compute()
-            while fields_to_compute:
-                process(next(iter(fields_to_compute)))
+            for field in list(self.env.fields_to_compute()):
+                process(field)
         else:
             fields = [self._fields[fname] for fname in fnames]
 
@@ -5796,6 +6164,14 @@ Record ids: %(records)s
                     else:
                         # x2many fields: serialize value as commands
                         result[name] = commands = [(5,)]
+                        # The purpose of the following line is to enable the prefetching.
+                        # In the loop below, line._prefetch_ids actually depends on the
+                        # value of record[name] in cache (see prefetch_ids on x2many
+                        # fields).  But the cache has been invalidated before calling
+                        # diff(), therefore evaluating line._prefetch_ids with an empty
+                        # cache simply returns nothing, which discards the prefetching
+                        # optimization!
+                        record[name]
                         for line_snapshot in self[name]:
                             line = line_snapshot['<record>']
                             line = line._origin or line
@@ -5818,20 +6194,34 @@ Record ids: %(records)s
 
         nametree = PrefixTree(self.browse(), field_onchange)
 
-        # prefetch x2many lines without data (for the initial snapshot)
+        # prefetch x2many lines: this speeds up the initial snapshot by avoiding
+        # to compute fields on new records as much as possible, as that can be
+        # costly and is not necessary at all
         for name, subnames in nametree.items():
             if subnames and values.get(name):
-                # retrieve all ids in commands
+                # retrieve all line ids in commands
                 line_ids = set()
                 for cmd in values[name]:
                     if cmd[0] in (1, 4):
                         line_ids.add(cmd[1])
                     elif cmd[0] == 6:
                         line_ids.update(cmd[2])
-                # build corresponding new lines, and prefetch fields
-                new_lines = self[name].browse(NewId(id_) for id_ in line_ids)
-                for subname in subnames:
-                    new_lines.mapped(subname)
+                # prefetch stored fields on lines
+                lines = self[name].browse(line_ids)
+                fnames = [subname
+                          for subname in subnames
+                          if lines._fields[subname].base_field.store]
+                lines._read(fnames)
+                # copy the cache of lines to their corresponding new records;
+                # this avoids computing computed stored fields on new_lines
+                new_lines = lines.browse(map(NewId, line_ids))
+                cache = self.env.cache
+                for fname in fnames:
+                    field = lines._fields[fname]
+                    cache.update(new_lines, field, [
+                        field.convert_to_cache(value, new_line, validate=False)
+                        for value, new_line in zip(cache.get_values(lines, field), new_lines)
+                    ])
 
         # Isolate changed values, to handle inconsistent data sent from the
         # client side: when a form view contains two one2many fields that
@@ -5928,9 +6318,9 @@ Record ids: %(records)s
 
         return result
 
-collections.Set.register(BaseModel)
+collections.abc.Set.register(BaseModel)
 # not exactly true as BaseModel doesn't have __reversed__, index or count
-collections.Sequence.register(BaseModel)
+collections.abc.Sequence.register(BaseModel)
 
 class RecordCache(MutableMapping):
     """ A mapping from field names to values, to read and update the cache of a record. """
@@ -5988,11 +6378,11 @@ class Model(AbstractModel):
 
 class TransientModel(Model):
     """ Model super-class for transient records, meant to be temporarily
-    persisted, and regularly vacuum-cleaned.
+    persistent, and regularly vacuum-cleaned.
 
     A TransientModel has a simplified access rights management, all users can
-    create new records, and may only access the records they created. The super-
-    user has unrestricted access to all TransientModel records.
+    create new records, and may only access the records they created. The
+    superuser has unrestricted access to all TransientModel records.
     """
     _auto = True                # automatically create database backend
     _register = False           # not visible in ORM registry, meant to be python-inherited only
@@ -6024,8 +6414,8 @@ def convert_pgerror_not_null(model, fields, info, e):
 def convert_pgerror_unique(model, fields, info, e):
     # new cursor since we're probably in an error handler in a blown
     # transaction which may not have been rollbacked/cleaned yet
-    with closing(model.env.registry.cursor()) as cr:
-        cr.execute("""
+    with closing(model.env.registry.cursor()) as cr_tmp:
+        cr_tmp.execute("""
             SELECT
                 conname AS "constraint name",
                 t.relname AS "table name",
@@ -6038,7 +6428,7 @@ def convert_pgerror_unique(model, fields, info, e):
             JOIN pg_class t ON t.oid = conrelid
             WHERE conname = %s
         """, [e.diag.constraint_name])
-        constraint, table, ufields = cr.fetchone() or (None, None, None)
+        constraint, table, ufields = cr_tmp.fetchone() or (None, None, None)
     # if the unique constraint is on an expression or on an other table
     if not ufields or model._table != table:
         return {'message': tools.ustr(e)}
@@ -6082,4 +6472,4 @@ def lazy_name_get(self):
 
 # keep those imports here to avoid dependency cycle errors
 from .osv import expression
-from .fields import Field
+from .fields import Field, Datetime

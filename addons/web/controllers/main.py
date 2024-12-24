@@ -35,7 +35,7 @@ import odoo
 import odoo.modules.registry
 from odoo.api import call_kw, Environment
 from odoo.modules import get_module_path, get_resource_path
-from odoo.tools import image_process, topological_sort, html_escape, pycompat, ustr, apply_inheritance_specs
+from odoo.tools import image_process, topological_sort, html_escape, pycompat, ustr, apply_inheritance_specs, lazy_property, float_repr
 from odoo.tools.mimetypes import guess_mimetype
 from odoo.tools.translate import _
 from odoo.tools.misc import str2bool, xlsxwriter, file_open
@@ -64,6 +64,37 @@ DBNAME_PATTERN = '^[a-zA-Z0-9][a-zA-Z0-9_.-]+$'
 
 COMMENT_PATTERN = r'Modified by [\s\w\-.]+ from [\s\w\-.]+'
 
+
+def none_values_filtered(func):
+    @functools.wraps(func)
+    def wrap(iterable):
+        return func(v for v in iterable if v is not None)
+    return wrap
+
+def allow_empty_iterable(func):
+    """
+    Some functions do not accept empty iterables (e.g. max, min with no default value)
+    This returns the function `func` such that it returns None if the iterable
+    is empty instead of raising a ValueError.
+    """
+    @functools.wraps(func)
+    def wrap(iterable):
+        iterator = iter(iterable)
+        try:
+            value = next(iterator)
+            return func(itertools.chain([value], iterator))
+        except StopIteration:
+            return None
+    return wrap
+
+OPERATOR_MAPPING = {
+    'max': none_values_filtered(allow_empty_iterable(max)),
+    'min': none_values_filtered(allow_empty_iterable(min)),
+    'sum': sum,
+    'bool_and': all,
+    'bool_or': any,
+}
+
 #----------------------------------------------------------
 # Odoo Web helpers
 #----------------------------------------------------------
@@ -72,6 +103,7 @@ db_list = http.db_list
 
 db_monodb = http.db_monodb
 
+def clean(name): return name.replace('\x3c', '')
 def serialize_exception(f):
     @functools.wraps(f)
     def wrap(*args, **kwargs):
@@ -97,9 +129,8 @@ def redirect_with_hash(*args, **kw):
     return http.redirect_with_hash(*args, **kw)
 
 def abort_and_redirect(url):
-    r = request.httprequest
     response = werkzeug.utils.redirect(url, 302)
-    response = r.app.get_response(r, response, explicit_session=False)
+    response = http.root.get_response(request.httprequest, response, explicit_session=False)
     werkzeug.exceptions.abort(response)
 
 def ensure_db(redirect='/web/database/selector'):
@@ -576,6 +607,10 @@ class HomeStaticTemplateHelpers(object):
     def get_qweb_templates(cls, addons, db=None, debug=False):
         return cls(addons, db, debug=debug)._get_qweb_templates()[0]
 
+# Shared parameters for all login/signup flows
+SIGN_UP_REQUEST_PARAMS = {'db', 'login', 'debug', 'token', 'message', 'error', 'scope', 'mode',
+                          'redirect', 'redirect_hostname', 'email', 'name', 'partner_id',
+                          'password', 'confirm_password', 'city', 'country_id', 'lang'}
 
 class GroupsTreeNode:
     """
@@ -584,17 +619,75 @@ class GroupsTreeNode:
     build a leaf. The entire tree is built by inserting all leaves.
     """
 
-    def __init__(self, model, fields, groupby, root=None):
+    def __init__(self, model, fields, groupby, groupby_type, root=None):
         self._model = model
-        self._fields = fields
+        self._export_field_names = fields  # exported field names (e.g. 'journal_id', 'account_id/name', ...)
         self._groupby = groupby
+        self._groupby_type = groupby_type
 
         self.count = 0  # Total number of records in the subtree
-        self.aggregated_values = Counter()  # Fields aggregated values {field_name: aggregated value}
         self.children = OrderedDict()
         self.data = []  # Only leaf nodes have data
+
         if root:
             self.insert_leaf(root)
+
+    def _get_aggregate(self, field_name, data, group_operator):
+        # When exporting one2many fields, multiple data lines might be exported for one record.
+        # Blank cells of additionnal lines are filled with an empty string. This could lead to '' being
+        # aggregated with an integer or float.
+        data = (value for value in data if value != '')
+
+        if group_operator == 'avg':
+            return self._get_avg_aggregate(field_name, data)
+
+        aggregate_func = OPERATOR_MAPPING.get(group_operator)
+        if not aggregate_func:
+            _logger.warning("Unsupported export of group_operator '%s' for field %s on model %s" % (group_operator, field_name, self._model._name))
+            return
+
+        if self.data:
+            return aggregate_func(data)
+        return aggregate_func((child.aggregated_values.get(field_name) for child in self.children.values()))
+
+    def _get_avg_aggregate(self, field_name, data):
+        aggregate_func = OPERATOR_MAPPING.get('sum')
+        if self.data:
+            return aggregate_func(data) / self.count
+        children_sums = (child.aggregated_values.get(field_name) * child.count for child in self.children.values())
+        return aggregate_func(children_sums) / self.count
+
+    def _get_aggregated_field_names(self):
+        """ Return field names of exported field having a group operator """
+        aggregated_field_names = []
+        for field_name in self._export_field_names:
+            if field_name == '.id':
+                field_name = 'id'
+            if '/' in field_name:
+                # Currently no support of aggregated value for nested record fields
+                # e.g. line_ids/analytic_line_ids/amount
+                continue
+            field = self._model._fields[field_name]
+            if field.group_operator:
+                aggregated_field_names.append(field_name)
+        return aggregated_field_names
+
+    # Lazy property to memoize aggregated values of children nodes to avoid useless recomputations
+    @lazy_property
+    def aggregated_values(self):
+
+        aggregated_values = {}
+
+        # Transpose the data matrix to group all values of each field in one iterable
+        field_values = zip(*self.data)
+        for field_name in self._export_field_names:
+            field_data = self.data and next(field_values) or []
+
+            if field_name in self._get_aggregated_field_names():
+                field = self._model._fields[field_name]
+                aggregated_values[field_name] = self._get_aggregate(field_name, field_data, field.group_operator)
+
+        return aggregated_values
 
     def child(self, key):
         """
@@ -605,7 +698,7 @@ class GroupsTreeNode:
         :return: the child node
         """
         if key not in self.children:
-            self.children[key] = GroupsTreeNode(self._model, self._fields, self._groupby)
+            self.children[key] = GroupsTreeNode(self._model, self._export_field_names, self._groupby, self._groupby_type)
         return self.children[key]
 
     def insert_leaf(self, group):
@@ -613,17 +706,9 @@ class GroupsTreeNode:
         Build a leaf from `group` and insert it in the tree.
         :param group: dict as returned by `read_group(lazy=False)`
         """
-        # Pop every known key in the group dict (__domain, __count and grouped values)
-        # Remaining keys are aggregated fields.
-        leaf_path = [group.pop(groupby_field) for groupby_field in self._groupby]
+        leaf_path = [group.get(groupby_field) for groupby_field in self._groupby]
         domain = group.pop('__domain')
         count = group.pop('__count')
-        aggregated_values = group
-
-        keys = list(aggregated_values)
-        for key in keys:
-            if not isinstance(aggregated_values[key], (int, float)):
-                del aggregated_values[key]
 
         records = self._model.search(domain, offset=0, limit=False, order=False)
 
@@ -636,9 +721,8 @@ class GroupsTreeNode:
             node = node.child(node_key)
             # Update count value and aggregated value.
             node.count += count
-            node.aggregated_values += Counter(aggregated_values)
 
-        node.data = records.export_data(self._fields).get('datas',[])
+        node.data = records.export_data(self._export_field_names).get('datas',[])
 
 
 class ExportXlsxWriter:
@@ -710,7 +794,9 @@ class GroupExportXlsxWriter(ExportXlsxWriter):
         self.fields = fields
 
     def write_group(self, row, column, group_name, group, group_depth=0):
-        group_name = group_name if isinstance(group_name, str) else group_name and group_name[1] or _("Undefined")
+        group_name = group_name[1] if isinstance(group_name, tuple) and len(group_name) > 1 else group_name
+        if group._groupby_type[group_depth] != 'boolean':
+            group_name = group_name or _("Undefined")
         row, column = self._write_group_header(row, column, group_name, group, group_depth)
 
         # Recursively write sub-groups
@@ -732,9 +818,26 @@ class GroupExportXlsxWriter(ExportXlsxWriter):
 
         label = '%s%s (%s)' % ('    ' * group_depth, label, group.count)
         self.write(row, column, label, self.header_bold_style)
+        if any(f.get('type') == 'monetary' for f in self.fields[1:]):
+
+            decimal_places = [res['decimal_places'] for res in group._model.env['res.currency'].search_read([], ['decimal_places'])]
+            decimal_places = max(decimal_places) if decimal_places else 2
         for field in self.fields[1:]: # No aggregates allowed in the first column because of the group title
             column += 1
-            self.write(row, column, aggregates.get(field['name'], ''), self.header_bold_style)
+            aggregated_value = aggregates.get(field['name'])
+            # Float fields may not be displayed properly because of float
+            # representation issue with non stored fields or with values
+            # that, even stored, cannot be rounded properly and it is not
+            # acceptable to display useless digits (i.e. monetary)
+            #
+            # non stored field ->  we force 2 digits
+            # stored monetary -> we force max digits of installed currencies
+            if isinstance(aggregated_value, float):
+                if field.get('type') == 'monetary':
+                    aggregated_value = float_repr(aggregated_value, decimal_places)
+                elif not field.get('store'):
+                    aggregated_value = float_repr(aggregated_value, 2)
+            self.write(row, column, str(aggregated_value if aggregated_value is not None else ''), self.header_bold_style)
         return row + 1, 0
 
 
@@ -790,7 +893,7 @@ class Home(http.Controller):
     def _login_redirect(self, uid, redirect=None):
         return redirect if redirect else '/web'
 
-    @http.route('/web/login', type='http', auth="none", sitemap=False)
+    @http.route('/web/login', type='http', auth="none")
     def web_login(self, redirect=None, **kw):
         ensure_db()
         request.params['login_success'] = False
@@ -800,7 +903,7 @@ class Home(http.Controller):
         if not request.uid:
             request.uid = odoo.SUPERUSER_ID
 
-        values = request.params.copy()
+        values = {k: v for k, v in request.params.items() if k in SIGN_UP_REQUEST_PARAMS}
         try:
             values['databases'] = http.db_list()
         except odoo.exceptions.AccessDenied:
@@ -967,7 +1070,7 @@ class Proxy(http.Controller):
             from werkzeug.wrappers import BaseResponse
             base_url = request.httprequest.base_url
             query_string = request.httprequest.query_string
-            client = Client(request.httprequest.app, BaseResponse)
+            client = Client(http.root, BaseResponse)
             headers = {'X-Openerp-Session-Id': request.session.sid}
             return client.post('/' + path, base_url=base_url, query_string=query_string,
                                headers=headers, data=data)
@@ -1022,6 +1125,7 @@ class Database(http.Controller):
             if not re.match(DBNAME_PATTERN, new_name):
                 raise Exception(_('Invalid database name. Only alphanumerical characters, underscore, hyphen and dot are allowed.'))
             dispatch_rpc('db', 'duplicate_database', [master_pwd, name, new_name])
+            request._cr = None  # duplicating a database leads to an unusable cursor
             return http.local_redirect('/web/database/manager')
         except Exception as e:
             error = "Database duplication error: %s" % (str(e) or repr(e))
@@ -1364,11 +1468,18 @@ class Binary(http.Controller):
         if status in [301, 304] or (status != 200 and download):
             return request.env['ir.http']._response_by_status(status, headers, image_base64)
         if not image_base64:
+            # Since we set a placeholder for any missing image, the status must be 200. In case one
+            # wants to configure a specific 404 page (e.g. though nginx), a 404 status will cause
+            # troubles.
+            status = 200
             image_base64 = base64.b64encode(self.placeholder(image=placeholder))
             if not (width or height):
                 width, height = odoo.tools.image_guess_size_from_field_name(field)
 
-        image_base64 = image_process(image_base64, size=(int(width), int(height)), crop=crop, quality=int(quality))
+        try:
+            image_base64 = image_process(image_base64, size=(int(width), int(height)), crop=crop, quality=int(quality))
+        except Exception:
+            return request.not_found()
 
         content = base64.b64decode(image_base64)
         headers = http.set_safe_image_headers(headers, content)
@@ -1397,10 +1508,10 @@ class Binary(http.Controller):
         try:
             data = ufile.read()
             args = [len(data), ufile.filename,
-                    ufile.content_type, base64.b64encode(data)]
+                    ufile.content_type, pycompat.to_text(base64.b64encode(data))]
         except Exception as e:
             args = [False, str(e)]
-        return out % (json.dumps(callback), json.dumps(args))
+        return out % (json.dumps(clean(callback)), json.dumps(args))
 
     @http.route('/web/binary/upload_attachment', type='http', auth="user")
     @serialize_exception
@@ -1423,7 +1534,7 @@ class Binary(http.Controller):
             try:
                 attachment = Model.create({
                     'name': filename,
-                    'datas': base64.encodestring(ufile.read()),
+                    'datas': base64.encodebytes(ufile.read()),
                     'res_model': model,
                     'res_id': int(id)
                 })
@@ -1433,12 +1544,12 @@ class Binary(http.Controller):
                 _logger.exception("Fail to upload attachment %s" % ufile.filename)
             else:
                 args.append({
-                    'filename': filename,
+                    'filename': clean(filename),
                     'mimetype': ufile.content_type,
                     'id': attachment.id,
                     'size': attachment.file_size
                 })
-        return out % (json.dumps(callback), json.dumps(args))
+        return out % (json.dumps(clean(callback)), json.dumps(args))
 
     @http.route([
         '/web/binary/company_logo',
@@ -1592,7 +1703,8 @@ class Export(http.Controller):
         fields = self.fields_get(model)
         if import_compat:
             if parent_field_type in ['many2one', 'many2many']:
-                fields = {'id': fields['id'], 'name': fields['name']}
+                rec_name = request.env[model]._rec_name_fallback()
+                fields = {'id': fields['id'], rec_name: fields[rec_name]}
         else:
             fields['.id'] = {**fields['id']}
 
@@ -1740,21 +1852,25 @@ class ExportFormat(object):
         model, fields, ids, domain, import_compat = \
             operator.itemgetter('model', 'fields', 'ids', 'domain', 'import_compat')(params)
 
+        Model = request.env[model].with_context(**params.get('context', {}))
+        if not Model._is_an_ordinary_table():
+            fields = [field for field in fields if field['name'] != 'id']
+
         field_names = [f['name'] for f in fields]
         if import_compat:
             columns_headers = field_names
         else:
             columns_headers = [val['label'].strip() for val in fields]
 
-        Model = request.env[model].with_context(**params.get('context', {}))
         groupby = params.get('groupby')
         if not import_compat and groupby:
+            groupby_type = [Model._fields[x.split(':')[0]].type for x in groupby]
             domain = [('id', 'in', ids)] if ids else domain
-            groups_data = Model.read_group(domain, field_names, groupby, lazy=False)
+            groups_data = Model.read_group(domain, [x if x != '.id' else 'id' for x in field_names], groupby, lazy=False)
 
             # read_group(lazy=False) returns a dict only for final groups (with actual data),
             # not for intermediary groups. The full group tree must be re-constructed.
-            tree = GroupsTreeNode(Model, field_names, groupby)
+            tree = GroupsTreeNode(Model, field_names, groupby, groupby_type)
             for leaf in groups_data:
                 tree.insert_leaf(leaf)
 
@@ -1763,11 +1879,9 @@ class ExportFormat(object):
             Model = Model.with_context(import_compat=import_compat)
             records = Model.browse(ids) if ids else Model.search(domain, offset=0, limit=False, order=False)
 
-            if not Model._is_an_ordinary_table():
-                fields = [field for field in fields if field['name'] != 'id']
-
             export_data = records.export_data(field_names).get('datas',[])
             response_data = self.from_data(columns_headers, export_data)
+
         return request.make_response(response_data,
             headers=[('Content-Disposition',
                             content_disposition(self.filename(model))),
@@ -1835,31 +1949,11 @@ class ExcelExport(ExportFormat, http.Controller):
         with ExportXlsxWriter(fields, len(rows)) as xlsx_writer:
             for row_index, row in enumerate(rows):
                 for cell_index, cell_value in enumerate(row):
+                    if isinstance(cell_value, (list, tuple)):
+                        cell_value = pycompat.to_text(cell_value)
                     xlsx_writer.write_cell(row_index + 1, cell_index, cell_value)
 
         return xlsx_writer.value
-
-class Apps(http.Controller):
-    @http.route('/apps/<app>', auth='user')
-    def get_app_url(self, req, app):
-        try:
-            record = request.env.ref('base.open_module_tree')
-            action = record.read(['name', 'type', 'res_model', 'view_mode', 'view_type', 'context', 'views', 'domain'])[0]
-            action['target'] = 'current'
-        except ValueError:
-            action = False
-        try:
-            app_id = request.env.ref('base.module_%s' % app).id
-        except ValueError:
-            app_id = False
-
-        if action and app_id:
-            action['res_id'] = app_id
-            action['view_mode'] = 'form'
-            action['views'] = [(False, u'form')]
-
-        sakey = Session().save_session_action(action)
-        return werkzeug.utils.redirect('/web#sa={0}'.format(sakey))
 
 
 class ReportController(http.Controller):
@@ -1904,9 +1998,9 @@ class ReportController(http.Controller):
     # Misc. route utils
     #------------------------------------------------------
     @http.route(['/report/barcode', '/report/barcode/<type>/<path:value>'], type='http', auth="public")
-    def report_barcode(self, type, value, width=600, height=100, humanreadable=0, quiet=1):
+    def report_barcode(self, type, value, **kwargs):
         """Contoller able to render barcode images thanks to reportlab.
-        Samples:
+        Samples::
             <img t-att-src="'/report/barcode/QR/%s' % o.name"/>
             <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' %
                 ('QR', o.name, 200, 200)"/>
@@ -1914,14 +2008,17 @@ class ReportController(http.Controller):
         :param type: Accepted types: 'Codabar', 'Code11', 'Code128', 'EAN13', 'EAN8', 'Extended39',
         'Extended93', 'FIM', 'I2of5', 'MSI', 'POSTNET', 'QR', 'Standard39', 'Standard93',
         'UPCA', 'USPS_4State'
+        :param width: Pixel width of the barcode
+        :param height: Pixel height of the barcode
         :param humanreadable: Accepted values: 0 (default) or 1. 1 will insert the readable value
         at the bottom of the output image
         :param quiet: Accepted values: 0 (default) or 1. 1 will display white
         margins on left and right.
+        :param barLevel: QR code Error Correction Levels. Default is 'L'.
+        ref: https://hg.reportlab.com/hg-public/reportlab/file/830157489e00/src/reportlab/graphics/barcode/qr.py#l101
         """
         try:
-            barcode = request.env['ir.actions.report'].barcode(type, value, width=width,
-                height=height, humanreadable=humanreadable, quiet=quiet)
+            barcode = request.env['ir.actions.report'].barcode(type, value, **kwargs)
         except (ValueError, AttributeError):
             raise werkzeug.exceptions.HTTPException(description='Cannot convert into barcode.')
 

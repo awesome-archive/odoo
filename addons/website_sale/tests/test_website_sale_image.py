@@ -229,3 +229,92 @@ class TestWebsiteSaleImage(odoo.tests.HttpCase):
         self.assertEqual(images[1].image_1920, red_image)
         self.assertEqual(images[2].image_1920, image_gif)
         self.assertEqual(images[3].image_1920, image_svg)
+
+        # CASE: When uploading a product variant image
+        # we don't want the default_product_tmpl_id from the context to be applied if we have a product_variant_id set
+        # we want the default_product_tmpl_id from the context to be applied if we don't have a product_variant_id set
+
+        additionnal_context = {'default_product_tmpl_id': template.id}
+
+        product = self.env['product.product'].create({
+            'product_tmpl_id': template.id,
+        })
+
+        product_image = self.env['product.image'].with_context(**additionnal_context).create([{
+            'name': 'Template image',
+            'image_1920': red_image,
+        }, {
+            'name': 'Variant image',
+            'image_1920': blue_image,
+            'product_variant_id': product.id,
+        }])
+
+        template_image = product_image.filtered(lambda i: i.name == 'Template image')
+        variant_image = product_image.filtered(lambda i: i.name == 'Variant image')
+
+        self.assertEqual(template_image.product_tmpl_id.id, template.id)
+        self.assertFalse(template_image.product_variant_id.id)
+        self.assertFalse(variant_image.product_tmpl_id.id)
+        self.assertEqual(variant_image.product_variant_id.id, product.id)
+
+    def test_02_image_holder(self):
+        f = io.BytesIO()
+        Image.new('RGB', (800, 500), '#FF0000').save(f, 'JPEG')
+        f.seek(0)
+        image = base64.b64encode(f.read())
+
+        # create the color attribute
+        product_attribute = self.env['product.attribute'].create({
+            'name': 'Beautiful Color',
+            'display_type': 'color',
+        })
+
+        # create the color attribute values
+        attr_values = self.env['product.attribute.value'].create([{
+            'name': 'Red',
+            'attribute_id': product_attribute.id,
+            'sequence': 1,
+        }, {
+            'name': 'Green',
+            'attribute_id': product_attribute.id,
+            'sequence': 2,
+        }, {
+            'name': 'Blue',
+            'attribute_id': product_attribute.id,
+            'sequence': 3,
+        }])
+
+        # create the template, without creating the variants
+        template = self.env['product.template'].with_context(create_product_product=True).create({
+            'name': 'Test subject',
+        })
+
+        # when there are no variants, the image must be obtained from the template
+        self.assertEqual(template, template._get_image_holder())
+
+        # set the color attribute and values on the template
+        line = self.env['product.template.attribute.line'].create([{
+            'attribute_id': product_attribute.id,
+            'product_tmpl_id': template.id,
+            'value_ids': [(6, 0, attr_values.ids)]
+        }])
+        value_red = line.product_template_value_ids[0]
+        product_red = template._get_variant_for_combination(value_red)
+        product_red.image_variant_1920 = image
+
+        value_green = line.product_template_value_ids[1]
+        product_green = template._get_variant_for_combination(value_green)
+        product_green.image_variant_1920 = image
+
+        # when there are no template image but there are variants, the image must be obtained from the first variant
+        self.assertEqual(product_red, template._get_image_holder())
+
+        product_red.toggle_active()
+
+        # but when some variants are not available, the image must be obtained from the first available variant
+        self.assertEqual(product_green, template._get_image_holder())
+
+        template.image_1920 = image
+
+        # when there is a template image, the image must be obtained from the template
+        self.assertEqual(template, template._get_image_holder())

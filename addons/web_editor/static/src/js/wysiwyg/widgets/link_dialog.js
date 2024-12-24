@@ -4,6 +4,9 @@ odoo.define('wysiwyg.widgets.LinkDialog', function (require) {
 var core = require('web.core');
 var Dialog = require('wysiwyg.widgets.Dialog');
 
+var dom = $.summernote.core.dom;
+var range = $.summernote.core.range;
+
 var _t = core._t;
 
 /**
@@ -23,7 +26,7 @@ var LinkDialog = Dialog.extend({
     /**
      * @constructor
      */
-    init: function (parent, options, linkInfo) {
+    init: function (parent, options, editable, linkInfo) {
         var self = this;
         this.options = options || {};
 
@@ -38,9 +41,95 @@ var LinkDialog = Dialog.extend({
             },
         });
 
+        this.editable = editable;
         this.data = linkInfo || {};
-        this.needLabel = linkInfo.needLabel;
-        this.data.iniClassName = linkInfo.className || '';
+
+        this.data.className = "";
+        this.data.iniClassName = "";
+
+        var r = this.data.range;
+        this.needLabel = !r || (r.sc === r.ec && r.so === r.eo);
+
+        if (this.data.range) {
+            this.data.iniClassName = $(this.data.range.sc).filter("a").attr("class") || "";
+            this.data.className = this.data.iniClassName.replace(/(^|\s+)btn(-[a-z0-9_-]*)?/gi, ' ');
+
+            var is_link = this.data.range.isOnAnchor();
+
+            var sc = r.sc;
+            var so = r.so;
+            var ec = r.ec;
+            var eo = r.eo;
+
+            var nodes;
+            if (!is_link) {
+                if (sc.tagName) {
+                    sc = dom.firstChild(so ? sc.childNodes[so] : sc);
+                    so = 0;
+                } else if (so !== sc.textContent.length) {
+                    if (sc === ec) {
+                        ec = sc = sc.splitText(so);
+                        eo -= so;
+                    } else {
+                        sc = sc.splitText(so);
+                    }
+                    so = 0;
+                }
+                if (ec.tagName) {
+                    ec = dom.lastChild(eo ? ec.childNodes[eo-1] : ec);
+                    eo = ec.textContent.length;
+                } else if (eo !== ec.textContent.length) {
+                    ec.splitText(eo);
+                }
+
+                nodes = dom.listBetween(sc, ec);
+
+                // browsers can't target a picture or void node
+                if (dom.isVoid(sc) || dom.isImg(sc)) {
+                    so = dom.listPrev(sc).length-1;
+                    sc = sc.parentNode;
+                }
+                if (dom.isBR(ec)) {
+                    eo = dom.listPrev(ec).length-1;
+                    ec = ec.parentNode;
+                } else if (dom.isVoid(ec) || dom.isImg(sc)) {
+                    eo = dom.listPrev(ec).length;
+                    ec = ec.parentNode;
+                }
+
+                this.data.range = range.create(sc, so, ec, eo);
+                $(editable).data("range", this.data.range);
+                this.data.range.select();
+            } else {
+                nodes = dom.ancestor(sc, dom.isAnchor).childNodes;
+            }
+
+            if (dom.isImg(sc) && nodes.indexOf(sc) === -1) {
+                nodes.push(sc);
+            }
+            if (nodes.length > 1 || dom.ancestor(nodes[0], dom.isImg)) {
+                var text = "";
+                this.data.images = [];
+                for (var i=0; i<nodes.length; i++) {
+                    if (dom.ancestor(nodes[i], dom.isImg)) {
+                        this.data.images.push(dom.ancestor(nodes[i], dom.isImg));
+                        text += '[IMG]';
+                    } else if (!is_link && nodes[i].nodeType === 1) {
+                        // just use text nodes from listBetween
+                    } else if (!is_link && i===0) {
+                        text += nodes[i].textContent.slice(so, Infinity);
+                    } else if (!is_link && i===nodes.length-1) {
+                        text += nodes[i].textContent.slice(0, eo);
+                    } else {
+                        text += nodes[i].textContent;
+                    }
+                }
+                this.data.text = text;
+            }
+        }
+
+        this.data.text = this.data.text.replace(/[ \t\r\n]+/g, ' ');
+
         var allBtnClassSuffixes = /(^|\s+)btn(-[a-z0-9_-]*)?/gi;
         var allBtnShapes = /\s*(rounded-circle|flat)\s*/gi;
         this.data.className = this.data.iniClassName
@@ -57,7 +146,17 @@ var LinkDialog = Dialog.extend({
         if (this.data.iniClassName) {
             this.$('input[name="link_style_color"], select[name="link_style_size"] > option, select[name="link_style_shape"] > option').each(function () {
                 var $option = $(this);
-                if ($option.val() && self.data.iniClassName.match(new RegExp('(^|btn-| |btn-outline-)' + $option.val()))) {
+                var value = $option.val();
+                if (!value) {
+                    return;
+                }
+                var subValues = value.split(',');
+                var active = true;
+                for (var i = 0; i < subValues.length; i++) {
+                    var classPrefix = new RegExp('(^|btn-| |btn-outline-)' + subValues[i]);
+                    active = active && classPrefix.test(self.data.iniClassName);
+                }
+                if (active) {
                     if ($option.is("input")) {
                         $option.prop("checked", true);
                     } else {
@@ -77,6 +176,9 @@ var LinkDialog = Dialog.extend({
         // Hide the duplicate color buttons (most of the times, primary = alpha
         // and secondary = beta for example but this may depend on the theme)
         this.opened().then(function () {
+            if (self.__showDuplicateColorButtons) {
+                return;
+            }
             var colors = [];
             _.each(self.$('.o_link_dialog_color .o_btn_preview'), function (btn) {
                 var $btn = $(btn);

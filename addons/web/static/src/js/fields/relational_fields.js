@@ -388,6 +388,7 @@ var FieldMany2One = AbstractField.extend({
             res_model: this.field.relation,
             domain: this.record.getDomain({fieldName: this.name}),
             context: _.extend({}, this.record.getContext(this.recordParams), context || {}),
+            _createContext: this._createContext.bind(this),
             dynamicFilters: dynamicFilters || [],
             title: (view === 'search' ? _t("Search: ") : _t("Create: ")) + this.string,
             initial_ids: ids,
@@ -901,7 +902,12 @@ var ListFieldMany2One = FieldMany2One.extend({
         this.m2oDialogFocused = false;
     },
     /**
-     * In list views, we don't want to try to trigger a fieldChange when the field
+     * In case the focus is lost from a mousedown, we want to prevent the click occuring on the
+     * following mouseup since it might trigger some unwanted list functions.
+     * If it's not the case, we want to remove the added handler on the next mousedown.
+     * @see list_editable_renderer._onWindowClicked()
+     *
+     * Also, in list views, we don't want to try to trigger a fieldChange when the field
      * is being emptied. Instead, it will be triggered as the user leaves the field
      * while it is empty.
      *
@@ -909,6 +915,19 @@ var ListFieldMany2One = FieldMany2One.extend({
      * @private
      */
     _onInputFocusout: function () {
+        if (this.can_create && this.floating) {
+            // In case the focus out is due to a mousedown, we want to prevent the next click
+            var attachedEvents = ['click', 'mousedown'];
+            var stopNextClick = (function (ev) {
+                ev.stopPropagation();
+                attachedEvents.forEach(function (eventName) {
+                    window.removeEventListener(eventName, stopNextClick, true);
+                });
+            }).bind(this);
+            attachedEvents.forEach(function (eventName) {
+                window.addEventListener(eventName, stopNextClick, true);
+            });
+        }
         this._super.apply(this, arguments);
         if (!this.m2oDialogFocused && this.$input.val() === "" && this.mustSetValue) {
             this.reinitialize(false);
@@ -1090,9 +1109,9 @@ var FieldX2Many = AbstractField.extend({
             // 'UPDATE' commands with no data can be ignored: they occur in
             // one2manys when the record is updated from a dialog and in this
             // case, we can re-render the whole subview.
-            if (command.operation === 'UPDATE' && command.data) {
+            if (command && command.operation === 'UPDATE' && command.data) {
                 var state = record.data[this.name];
-                var fieldNames = state.getFieldNames();
+                var fieldNames = state.getFieldNames({ viewType: 'list' });
                 this._reset(record, ev);
                 return this.renderer.confirmUpdate(state, command.id, fieldNames, ev.initialEvent);
             }
@@ -1696,7 +1715,7 @@ var FieldOne2Many = FieldX2Many.extend({
         var self = this;
         return this._super.apply(this, arguments).then(function () {
             if (ev && ev.target === self && ev.data.changes && self.view.arch.tag === 'tree') {
-                if (ev.data.changes[self.name].operation === 'CREATE') {
+                if (ev.data.changes[self.name] && ev.data.changes[self.name].operation === 'CREATE') {
                     var index = 0;
                     if (self.editable !== 'top') {
                         index = self.value.data.length - 1;
@@ -2174,6 +2193,7 @@ var FieldMany2ManyTags = AbstractField.extend({
     fieldsToFetch: {
         display_name: {type: 'char'},
     },
+    limit: 1000,
 
     /**
      * @constructor
@@ -2422,6 +2442,10 @@ var FormFieldMany2ManyTags = FieldMany2ManyTags.extend({
      */
     _onOpenColorPicker: function (ev) {
         ev.preventDefault();
+        if (this.nodeOptions.no_edit_color) {
+            ev.stopPropagation();
+            return;
+        }
         var tagID = $(ev.currentTarget).parent().data('id');
         var tagColor = $(ev.currentTarget).parent().data('color');
         var tag = _.findWhere(this.value.data, { res_id: tagID });
@@ -2498,7 +2522,11 @@ var KanbanFieldMany2ManyTags = FieldMany2ManyTags.extend({
      */
     _render: function () {
         var self = this;
-        this.$el.empty().addClass('o_field_many2manytags o_kanban_tags');
+
+        if (this.$el) {
+            this.$el.empty().addClass('o_field_many2manytags o_kanban_tags');
+        }
+
         _.each(this.value.data, function (m2m) {
             if (self.colorField in m2m.data && !m2m.data[self.colorField]) {
                 // When a color field is specified and that color is the default
@@ -2524,6 +2552,9 @@ var FieldMany2ManyCheckBoxes = AbstractField.extend({
     }),
     specialData: "_fetchSpecialRelation",
     supportedFieldTypes: ['many2many'],
+    // set an arbitrary high limit to ensure that all data returned by the server
+    // are processed by the BasicModel (otherwise it would be 40)
+    limit: 100000,
     init: function () {
         this._super.apply(this, arguments);
         this.m2mValues = this.record.specialData[this.name];
@@ -2544,17 +2575,27 @@ var FieldMany2ManyCheckBoxes = AbstractField.extend({
     /**
      * @private
      */
-    _render: function () {
+    _renderCheckboxes: function () {
         var self = this;
-        this._super.apply(this, arguments);
+        this.m2mValues = this.record.specialData[this.name];
+        this.$el.html(qweb.render(this.template, {widget: this}));
         _.each(this.value.res_ids, function (id) {
             self.$('input[data-record-id="' + id + '"]').prop('checked', true);
         });
     },
     /**
+     * @override
+     * @private
+     */
+    _renderEdit: function () {
+        this._renderCheckboxes();
+    },
+    /**
+     * @override
      * @private
      */
     _renderReadonly: function () {
+        this._renderCheckboxes();
         this.$("input").prop("disabled", true);
     },
 
@@ -2566,9 +2607,20 @@ var FieldMany2ManyCheckBoxes = AbstractField.extend({
      * @private
      */
     _onChange: function () {
+        // Get the list of selected ids
         var ids = _.map(this.$('input:checked'), function (input) {
             return $(input).data("record-id");
         });
+        // The number of displayed checkboxes is limited to 100 (name_search
+        // limit, server-side), to prevent extreme cases where thousands of
+        // records are fetched/displayed. If not all values are displayed, it may
+        // happen that some values that are in the relation aren't available in the
+        // widget. In this case, when the user (un)selects a value, we don't
+        // want to remove those non displayed values from the relation. For that
+        // reason, we manually add those values to the list of ids.
+        const displayedIds = this.m2mValues.map(v => v[0]);
+        const idsInRelation = this.value.res_ids;
+        ids = ids.concat(idsInRelation.filter(a => !displayedIds.includes(a)));
         this._setValue({
             operation: 'REPLACE_WITH',
             ids: ids,
@@ -2598,7 +2650,11 @@ var FieldStatus = AbstractField.extend({
         // Retro-compatibility: clickable used to be defined in the field attrs
         // instead of options.
         // If not set, the statusbar is not clickable.
-        this.isClickable = !!this.attrs.clickable || !!this.nodeOptions.clickable;
+        try {
+            this.isClickable = !!JSON.parse(this.attrs.clickable);
+        } catch (_) {
+            this.isClickable = !!this.nodeOptions.clickable;
+        }
     },
 
     //--------------------------------------------------------------------------
@@ -2698,7 +2754,7 @@ var FieldSelection = AbstractField.extend({
      * @returns {jQuery}
      */
     getFocusableElement: function () {
-        return this.$el.is('select') ? this.$el : $();
+        return this.$el && this.$el.is('select') ? this.$el : $();
     },
     /**
      * @override
@@ -2837,6 +2893,27 @@ var FieldRadio = FieldSelection.extend({
         return true;
     },
 
+    /**
+     * Returns the currently-checked radio button, or the first one if no radio
+     * button is checked.
+     *
+     * @override
+     */
+    getFocusableElement: function () {
+        var checked = this.$("[checked='true']");
+        return checked.length ? checked : this.$("[data-index='0']");
+    },
+
+    /**
+     * Associates the 'for' attribute to the radiogroup, instead of the selected
+     * radio button.
+     *
+     * @param {string} id
+     */
+    setIDForLabel: function (id) {
+        this.$el.attr('id', id);
+    },
+
     //--------------------------------------------------------------------------
     // Private
     //--------------------------------------------------------------------------
@@ -2854,11 +2931,14 @@ var FieldRadio = FieldSelection.extend({
             currentValue = this.value;
         }
         this.$el.empty();
+        this.$el.attr('role', 'radiogroup')
+            .attr('aria-label', this.string);
         _.each(this.values, function (value, index) {
             self.$el.append(qweb.render('FieldRadio.button', {
                 checked: value[0] === currentValue,
                 id: self.unique_id + '_' + value[0],
                 index: index,
+                name: self.unique_id,
                 value: value,
             }));
         });

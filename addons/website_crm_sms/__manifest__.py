@@ -2,7 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 {
     'name': 'Send SMS to Visitor with leads',
-    'category': 'Website',
+    'category': 'Website/Website',
     'sequence': 54,
     'summary': 'Allows to send sms to website visitor that have lead',
     'version': '1.0',
@@ -11,4 +11,5 @@
     'data': [],
     'installable': True,
     'auto_install': True,
+    'license': 'LGPL-3',
 }

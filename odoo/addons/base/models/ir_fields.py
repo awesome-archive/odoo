@@ -31,7 +31,6 @@ class ImportWarning(Warning):
 class ConversionNotFound(ValueError):
     pass
 
-
 class IrFieldsConverter(models.AbstractModel):
     _name = 'ir.fields.converter'
     _description = 'Fields Converter'
@@ -84,6 +83,8 @@ class IrFieldsConverter(models.AbstractModel):
                             # uniform handling
                             w = ImportWarning(w)
                         log(field, w)
+                except (UnicodeEncodeError, UnicodeDecodeError) as e:
+                    log(field, ValueError(str(e)))
                 except ValueError as e:
                     log(field, e)
             return converted
@@ -321,6 +322,8 @@ class IrFieldsConverter(models.AbstractModel):
         RelatedModel = self.env[field.comodel_name]
         if subfield == '.id':
             field_type = _(u"database id")
+            if isinstance(value, str) and not self._str_to_boolean(model, field, value)[0]:
+                return False, field_type, warnings
             try: tentative_id = int(value)
             except ValueError: tentative_id = value
             try:
@@ -335,6 +338,8 @@ class IrFieldsConverter(models.AbstractModel):
                     {'moreinfo': action})
         elif subfield == 'id':
             field_type = _(u"external id")
+            if not self._str_to_boolean(model, field, value)[0]:
+                return False, field_type, warnings
             if '.' in value:
                 xmlid = value
             else:
@@ -343,6 +348,8 @@ class IrFieldsConverter(models.AbstractModel):
             id = self.env['ir.model.data'].xmlid_to_res_id(xmlid, raise_if_not_found=False) or None
         elif subfield is None:
             field_type = _(u"name")
+            if value == '':
+                return False, field_type, warnings
             flush()
             ids = RelatedModel.name_search(name=value, operator='=')
             if ids:
@@ -411,6 +418,10 @@ class IrFieldsConverter(models.AbstractModel):
         return id, w1 + w2
 
     @api.model
+    def _str_to_many2one_reference(self, model, field, value):
+        return self._str_to_integer(model, field, value)
+
+    @api.model
     def _str_to_many2many(self, model, field, value):
         [record] = value
 
@@ -429,6 +440,13 @@ class IrFieldsConverter(models.AbstractModel):
 
     @api.model
     def _str_to_one2many(self, model, field, records):
+        name_create_enabled_fields = self._context.get('name_create_enabled_fields') or {}
+        prefix = field.name + '/'
+        relative_name_create_enabled_fields = {
+            k[len(prefix):]: v
+            for k, v in name_create_enabled_fields.items()
+            if k.startswith(prefix)
+        }
         commands = []
         warnings = []
 
@@ -447,7 +465,7 @@ class IrFieldsConverter(models.AbstractModel):
                 raise e
             warnings.append(e)
 
-        convert = self.for_model(self.env[field.comodel_name])
+        convert = self.with_context(name_create_enabled_fields=relative_name_create_enabled_fields).for_model(self.env[field.comodel_name])
 
         for record in records:
             id = None

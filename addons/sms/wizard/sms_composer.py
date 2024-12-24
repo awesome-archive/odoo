@@ -7,6 +7,7 @@ from odoo import api, fields, models, _
 from odoo.addons.phone_validation.tools import phone_validation
 from odoo.exceptions import UserError
 from odoo.tools.safe_eval import safe_eval
+from odoo.tools import html2plaintext
 
 
 class SendSMS(models.TransientModel):
@@ -35,10 +36,10 @@ class SendSMS(models.TransientModel):
         if not result.get('active_domain'):
             result['active_domain'] = repr(self.env.context.get('active_domain', []))
         if not result.get('res_id'):
-            if not result.get('res_ids'):
+            if not result.get('res_ids') and self.env.context.get('active_id'):
                 result['res_id'] = self.env.context.get('active_id')
         if not result.get('res_ids'):
-            if not result.get('res_id'):
+            if not result.get('res_id') and self.env.context.get('active_ids'):
                 result['res_ids'] = repr(self.env.context.get('active_ids'))
 
         if result['res_model']:
@@ -86,7 +87,10 @@ class SendSMS(models.TransientModel):
     @api.depends('res_model', 'res_ids', 'active_domain')
     def _compute_recipients_count(self):
         self.res_ids_count = len(literal_eval(self.res_ids)) if self.res_ids else 0
-        self.active_domain_count = self.env[self.res_model].search_count(safe_eval(self.active_domain or '[]'))
+        if self.res_model:
+            self.active_domain_count = self.env[self.res_model].search_count(safe_eval(self.active_domain or '[]'))
+        else:
+            self.active_domain_count = 0
 
     @api.depends('partner_ids', 'res_model', 'res_id', 'res_ids', 'use_active_domain', 'composition_mode', 'number_field_name', 'sanitized_numbers')
     def _compute_recipients(self):
@@ -176,9 +180,12 @@ class SendSMS(models.TransientModel):
         subtype_id = self.env['ir.model.data'].xmlid_to_res_id('mail.mt_note')
 
         messages = self.env['mail.message']
+        all_bodies = self._prepare_body_values(records)
+
         for record in records:
-            messages |= record._message_sms(
-                self.body, subtype_id=subtype_id,
+            messages += record._message_sms(
+                all_bodies[record.id],
+                subtype_id=subtype_id,
                 partner_ids=self.partner_ids.ids or False,
                 number_field=self.number_field_name,
                 sms_numbers=self.sanitized_numbers.split(',') if self.sanitized_numbers else None)
@@ -273,7 +280,7 @@ class SendSMS(models.TransientModel):
     def _prepare_log_body_values(self, sms_records_values):
         result = {}
         for record_id, sms_values in sms_records_values.items():
-            result[record_id] = sms_values['body']
+            result[record_id] = html2plaintext(sms_values['body'])
         return result
 
     def _prepare_mass_log_values(self, records, sms_records_values):
@@ -310,5 +317,5 @@ class SendSMS(models.TransientModel):
         elif self.res_id:
             records = self.env[self.res_model].browse(self.res_id)
         else:
-            records = self.env[self.res_model].browse(literal_eval(self.res_ids))
+            records = self.env[self.res_model].browse(literal_eval(self.res_ids or '[]'))
         return records

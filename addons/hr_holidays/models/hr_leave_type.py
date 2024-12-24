@@ -118,8 +118,10 @@ class HolidaysType(models.Model):
                 holiday_type.valid = True
 
     def _search_valid(self, operator, value):
-        dt = self._context.get('default_date_from') or fields.Date.context_today(self)
+        dt = self._context.get('default_date_from', False)
 
+        if not dt:
+            return []
         signs = ['>=', '<='] if operator == '=' else ['<=', '>=']
 
         return ['|', ('validity_stop', operator, False), '&',
@@ -179,24 +181,36 @@ class HolidaysType(models.Model):
 
         return [('id', 'in', valid_leave_types.ids)]
 
+    # YTI TODO: Remove me in master
     def get_days(self, employee_id):
-        # need to use `dict` constructor to create a dict per id
-        result = dict((id, dict(max_leaves=0, leaves_taken=0, remaining_leaves=0, virtual_remaining_leaves=0)) for id in self.ids)
+        return self.get_employees_days([employee_id])[employee_id]
+
+    def get_employees_days(self, employee_ids):
+        result = {
+            employee_id: {
+                leave_type.id: {
+                    'max_leaves': 0,
+                    'leaves_taken': 0,
+                    'remaining_leaves': 0,
+                    'virtual_remaining_leaves': 0,
+                } for leave_type in self
+            } for employee_id in employee_ids
+        }
 
         requests = self.env['hr.leave'].search([
-            ('employee_id', '=', employee_id),
+            ('employee_id', 'in', employee_ids),
             ('state', 'in', ['confirm', 'validate1', 'validate']),
             ('holiday_status_id', 'in', self.ids)
         ])
 
         allocations = self.env['hr.leave.allocation'].search([
-            ('employee_id', '=', employee_id),
+            ('employee_id', 'in', employee_ids),
             ('state', 'in', ['confirm', 'validate1', 'validate']),
             ('holiday_status_id', 'in', self.ids)
         ])
 
         for request in requests:
-            status_dict = result[request.holiday_status_id.id]
+            status_dict = result[request.employee_id.id][request.holiday_status_id.id]
             status_dict['virtual_remaining_leaves'] -= (request.number_of_hours_display
                                                     if request.leave_type_request_unit == 'hour'
                                                     else request.number_of_days)
@@ -209,7 +223,7 @@ class HolidaysType(models.Model):
                                                 else request.number_of_days)
 
         for allocation in allocations.sudo():
-            status_dict = result[allocation.holiday_status_id.id]
+            status_dict = result[allocation.employee_id.id][allocation.holiday_status_id.id]
             if allocation.state == 'validate':
                 # note: add only validated allocation even for the virtual
                 # count; otherwise pending then refused allocation allow
@@ -223,7 +237,6 @@ class HolidaysType(models.Model):
                 status_dict['remaining_leaves'] += (allocation.number_of_hours_display
                                                   if allocation.type_request_unit == 'hour'
                                                   else allocation.number_of_days)
-
         return result
 
     @api.model
@@ -244,7 +257,7 @@ class HolidaysType(models.Model):
         elif 'default_employee_id' in self._context:
             employee_id = self._context['default_employee_id']
         else:
-            employee_id = self.env['hr.employee'].search([('user_id', '=', self.env.user.id), ('company_id', '=', self.env.company.id)], limit=1).id
+            employee_id = self.env.user.employee_id.id
         return employee_id
 
     def _compute_leaves(self):
@@ -252,7 +265,7 @@ class HolidaysType(models.Model):
         employee_id = self._get_contextual_employee_id()
 
         if employee_id:
-            data_days = self.get_days(employee_id)
+            data_days = self.get_employees_days([employee_id])[employee_id]
 
         for holiday_status in self:
             result = data_days.get(holiday_status.id, {})
@@ -324,11 +337,11 @@ class HolidaysType(models.Model):
         to the method.
         """
         employee_id = self._get_contextual_employee_id()
-        leave_ids = super(HolidaysType, self)._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)
-        if not count and not order and employee_id:
-            leaves = self.browse(leave_ids)
-
-            return leaves.sorted(key=self._model_sorting_key, reverse=True).ids
+        post_sort = (not count and not order and employee_id)
+        leave_ids = super(HolidaysType, self)._search(args, offset=offset, limit=(None if post_sort else limit), order=order, count=count, access_rights_uid=access_rights_uid)
+        leaves = self.browse(leave_ids)
+        if post_sort:
+            return leaves.sorted(key=self._model_sorting_key, reverse=True).ids[:limit or None]
         return leave_ids
 
     def action_see_days_allocated(self):

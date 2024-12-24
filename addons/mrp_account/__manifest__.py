@@ -22,9 +22,11 @@ If the automated inventory valuation is active, the necessary accounting entries
     "init_xml" : [],
     "demo_xml" : [],
     "data": [
+        'security/ir.model.access.csv',
         "views/product_views.xml",
         "views/mrp_production_views.xml",
     ],
     'installable': True,
     'auto_install': True,
+    'license': 'LGPL-3',
 }

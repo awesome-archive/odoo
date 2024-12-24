@@ -30,7 +30,7 @@ class WebsiteVisitor(models.Model):
     _order = 'last_connection_datetime DESC'
 
     name = fields.Char('Name')
-    access_token = fields.Char(required=True, default=lambda x: uuid.uuid4().hex, index=True, copy=False, groups='base.group_website_publisher')
+    access_token = fields.Char(required=True, default=lambda x: uuid.uuid4().hex, index=False, copy=False, groups='base.group_website_publisher')
     active = fields.Boolean('Active', default=True)
     website_id = fields.Many2one('website', "Website", readonly=True)
     partner_id = fields.Many2one('res.partner', string="Linked Partner", help="Partner of the last logged in user.")
@@ -48,7 +48,7 @@ class WebsiteVisitor(models.Model):
     visit_count = fields.Integer('Number of visits', default=1, readonly=True, help="A new visit is considered if last connection was more than 8 hours ago.")
     website_track_ids = fields.One2many('website.track', 'visitor_id', string='Visited Pages History', readonly=True)
     visitor_page_count = fields.Integer('Page Views', compute="_compute_page_statistics", help="Total number of visits on tracked pages")
-    page_ids = fields.Many2many('website.page', string="Visited Pages", compute="_compute_page_statistics")
+    page_ids = fields.Many2many('website.page', string="Visited Pages", compute="_compute_page_statistics", search="_search_page_ids")
     page_count = fields.Integer('# Visited Pages', compute="_compute_page_statistics", help="Total number of tracked page visited")
     last_visited_page_id = fields.Many2one('website.page', string="Last Visited Page", compute="_compute_last_visited_page_id")
 
@@ -65,21 +65,24 @@ class WebsiteVisitor(models.Model):
 
     @api.depends('name')
     def name_get(self):
-        return [(
-            record.id,
-            (record.name or _('Website Visitor #%s') % record.id)
-        ) for record in self]
+        res = []
+        for record in self:
+            res.append((
+                record.id,
+                record.name or _('Website Visitor #%s') % record.id
+            ))
+        return res
 
-    @api.depends('partner_id.email_normalized', 'partner_id.mobile')
+    @api.depends('partner_id.email_normalized', 'partner_id.mobile', 'partner_id.phone')
     def _compute_email_phone(self):
         results = self.env['res.partner'].search_read(
             [('id', 'in', self.partner_id.ids)],
-            ['id', 'email_normalized', 'mobile'],
+            ['id', 'email_normalized', 'mobile', 'phone'],
         )
         mapped_data = {
             result['id']: {
                 'email_normalized': result['email_normalized'],
-                'mobile': result['mobile']
+                'mobile': result['mobile'] if result['mobile'] else result['phone']
             } for result in results
         }
 
@@ -106,6 +109,11 @@ class WebsiteVisitor(models.Model):
             visitor.visitor_page_count = visitor_info['visitor_page_count']
             visitor.page_count = visitor_info['page_count']
 
+    def _search_page_ids(self, operator, value):
+        if operator not in ('like', 'ilike', 'not like', 'not ilike', '=like', '=ilike', '=', '!='):
+            raise ValueError(_('This operator is not supported'))
+        return [('website_track_ids.page_id.name', operator, value)]
+
     @api.depends('website_track_ids.page_id')
     def _compute_last_visited_page_id(self):
         results = self.env['website.track'].read_group([('visitor_id', 'in', self.ids)],
@@ -117,13 +125,9 @@ class WebsiteVisitor(models.Model):
 
     @api.depends('last_connection_datetime')
     def _compute_time_statistics(self):
-        results = self.env['website.visitor'].search_read([('id', 'in', self.ids)], ['id', 'last_connection_datetime'])
-        mapped_data = {result['id']: result['last_connection_datetime'] for result in results}
-
         for visitor in self:
-            last_connection_date = mapped_data[visitor.id]
-            visitor.time_since_last_action = _format_time_ago(self.env, (datetime.now() - last_connection_date))
-            visitor.is_connected = (datetime.now() - last_connection_date) < timedelta(minutes=5)
+            visitor.time_since_last_action = _format_time_ago(self.env, (datetime.now() - visitor.last_connection_datetime))
+            visitor.is_connected = (datetime.now() - visitor.last_connection_datetime) < timedelta(minutes=5)
 
     def _prepare_visitor_send_mail_values(self):
         if self.partner_id.email:
@@ -159,7 +163,7 @@ class WebsiteVisitor(models.Model):
             'context': ctx,
         }
 
-    def _get_visitor_from_request(self):
+    def _get_visitor_from_request(self, force_create=False):
         """ Return the visitor as sudo from the request if there is a visitor_uuid cookie.
             It is possible that the partner has changed or has disconnected.
             In that case the cookie is still referencing the old visitor and need to be replaced
@@ -167,35 +171,35 @@ class WebsiteVisitor(models.Model):
 
         # This function can be called in json with mobile app.
         # In case of mobile app, no uid is set on the jsonRequest env.
-        if not request or not request.env.uid:
+        # In case of multi db, _env is None on request, and request.env unbound.
+        if not request:
             return None
         Visitor = self.env['website.visitor'].sudo()
         visitor = Visitor
         access_token = request.httprequest.cookies.get('visitor_uuid')
         if access_token:
             visitor = Visitor.with_context(active_test=False).search([('access_token', '=', access_token)])
+            # Prefetch access_token and other fields. Since access_token has a restricted group and we access
+            # a non restricted field (partner_id) first it is not fetched and will require an additional query to be retrieved.
+            visitor.access_token
 
-        if not request.env.user._is_public():
-            partner_id = request.env.user.partner_id
-            if not visitor or visitor.partner_id != partner_id:
+        if not self.env.user._is_public():
+            partner_id = self.env.user.partner_id
+            if not visitor or visitor.partner_id and visitor.partner_id != partner_id:
                 # Partner and no cookie or wrong cookie
                 visitor = Visitor.with_context(active_test=False).search([('partner_id', '=', partner_id.id)])
         elif visitor and visitor.partner_id:
             # Cookie associated to a Partner
             visitor = Visitor
-        return visitor
 
-    def _get_visitor_from_request_or_create(self):
-        """ Return a tuple (visitor, response), see _get_visitor_from_request
-            If there is no visitor creates it and ensure the consistancy of the cookie. """
-        visitor_sudo = self._get_visitor_from_request()
-        if not visitor_sudo:
-            visitor_sudo = self._create_visitor()
-        return visitor_sudo
+        if force_create and not visitor:
+            visitor = self._create_visitor()
+
+        return visitor
 
     def _handle_webpage_dispatch(self, response, website_page):
         # get visitor. Done here to avoid having to do it multiple times in case of override.
-        visitor_sudo = self._get_visitor_from_request_or_create()
+        visitor_sudo = self._get_visitor_from_request(force_create=True)
         if request.httprequest.cookies.get('visitor_uuid', '') != visitor_sudo.access_token:
             expiration_date = datetime.now() + timedelta(days=365)
             response.set_cookie('visitor_uuid', visitor_sudo.access_token, expires=expiration_date)
@@ -252,18 +256,20 @@ class WebsiteVisitor(models.Model):
 
     def _update_visitor_last_visit(self):
         """ We need to do this part here to avoid concurrent updates error. """
-        with registry(self.env.cr.dbname).cursor() as cr:
-            date_now = datetime.now()
-            query = "UPDATE website_visitor SET "
-            if self.last_connection_datetime < (date_now - timedelta(hours=8)):
-                query += "visit_count = visit_count + 1,"
-            query += """
-                active = True,
-                last_connection_datetime = %s
-                WHERE id = %s
-            """
-            try:
-                cr.execute(query, (date_now, self.id), log_exceptions=False)
-                cr.commit()
-            except Exception:
-                cr.rollback()
+        try:
+            with self.env.cr.savepoint():
+                query_lock = "SELECT * FROM website_visitor where id = %s FOR NO KEY UPDATE NOWAIT"
+                self.env.cr.execute(query_lock, (self.id,), log_exceptions=False)
+
+                date_now = datetime.now()
+                query = "UPDATE website_visitor SET "
+                if self.last_connection_datetime < (date_now - timedelta(hours=8)):
+                    query += "visit_count = visit_count + 1,"
+                query += """
+                    active = True,
+                    last_connection_datetime = %s
+                    WHERE id = %s
+                """
+                self.env.cr.execute(query, (date_now, self.id), log_exceptions=False)
+        except Exception:
+            pass

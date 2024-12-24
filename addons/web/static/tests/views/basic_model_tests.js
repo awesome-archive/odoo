@@ -2,9 +2,11 @@ odoo.define('web.basic_model_tests', function (require) {
     "use strict";
 
     var BasicModel = require('web.BasicModel');
+    var FormView = require('web.FormView');
     var testUtils = require('web.test_utils');
 
     var createModel = testUtils.createModel;
+    var createView = testUtils.createView;
 
     QUnit.module('Views', {
         beforeEach: function () {
@@ -30,7 +32,8 @@ odoo.define('web.basic_model_tests', function (require) {
                 },
                 product: {
                     fields: {
-                        name: { string: "Product Name", type: "char" }
+                        name: { string: "Product Name", type: "char" },
+                        category: { string: "Category M2M", type: 'many2many', relation: 'partner_type' },
                     },
                     records: [
                         { id: 37, display_name: "xphone" },
@@ -61,6 +64,92 @@ odoo.define('web.basic_model_tests', function (require) {
         },
     }, function () {
         QUnit.module('BasicModel');
+
+        QUnit.test('context is given when using a resequence', async function (assert) {
+            assert.expect(2);
+            delete this.params["res_id"];
+            this.data.product.fields.sequence = {string: "Sequence", type: "integer"};
+
+            const model = createModel({
+                Model: BasicModel,
+                data: this.data,
+                mockRPC: function (route, args) {
+                    if (route === '/web/dataset/resequence') {
+                        assert.deepEqual(args.context, { active_field: 2 },
+                            "context should be correct after a resequence");
+                    }
+                    else if (args.method === "read") {
+                        assert.deepEqual(args.kwargs.context, { active_field: 2 },
+                            "context should be correct after a 'read' RPC");
+                    }
+                    return this._super.apply(this, arguments);
+                },
+            });
+            const params = _.extend(this.params, {
+                context: { active_field: 2 },
+                groupedBy: ['product_id'],
+                fieldNames: ['foo'],
+            });
+    
+            model.load(params)
+                .then(function (stateID) {
+                    return model.resequence('product', [41, 37], stateID);
+                })
+                .then(function () {
+                    model.destroy();
+                });
+        });
+
+        QUnit.test('can process x2many commands', async function (assert) {
+            assert.expect(5);
+
+            const form = await createView({
+                View: FormView,
+                model: 'partner',
+                data: this.data,
+                arch: `
+                    <form>
+                        <field name="product_ids"/>
+                    </form>
+                `,
+                archs: {
+                    'product,false,list': `
+                        <tree>
+                            <field name="display_name"/>
+                        </tree>
+                    `,
+                    'product,false,kanban': `
+                        <kanban>
+                            <templates><t t-name="kanban-box">
+                                <div><field name="display_name"/></div>
+                            </t></templates>
+                        </kanban>
+                    `,
+                },
+                viewOptions: {
+                    mode: 'edit',
+                },
+                mockRPC(route, args) {
+                    assert.step(args.method);
+                    if (args.method === 'default_get' && args.model === 'partner') {
+                        return Promise.resolve({
+                            product_ids: [
+                                [0, 0, {category: []}],
+                            ]
+                        });
+                    }
+                    return this._super.apply(this, arguments);
+                },
+            });
+
+            assert.verifySteps([
+                'load_views',
+                'default_get',
+            ]);
+            assert.containsOnce(form, '.o_field_x2many_list', 'should have rendered a x2many list');
+            assert.containsOnce(form, '.o_field_x2many_list_row_add', 'should have rendered a x2many add row on list');
+            form.destroy();
+        });
 
         QUnit.test('can load a record', async function (assert) {
             assert.expect(7);
@@ -1813,6 +1902,33 @@ odoo.define('web.basic_model_tests', function (require) {
             assert.strictEqual(record.fields.status.selection.length, 3,
                 "should have 3 keys for selection");
             assert.strictEqual(rpcCount, 0, "makeRecord should have done 0 rpc");
+            model.destroy();
+        });
+
+        QUnit.test('call makeRecord with a reference field', async function (assert) {
+            assert.expect(2);
+            let rpcCount = 0;
+
+            const model = createModel({
+                Model: BasicModel,
+                data: this.data,
+                mockRPC: function (route, args) {
+                    rpcCount++;
+                    return this._super(route, args);
+                },
+            });
+
+            const field = this.data.partner.fields.reference;
+            const recordID = await model.makeRecord('coucou', [{
+                name: 'reference',
+                type: 'reference',
+                selection: field.selection,
+                value: 'product,37',
+            }]);
+            const record = model.get(recordID);
+            assert.deepEqual(record.data.reference.data, { id: 37, display_name: 'xphone' });
+            assert.strictEqual(rpcCount, 1);
+
             model.destroy();
         });
 

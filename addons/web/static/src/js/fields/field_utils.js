@@ -23,6 +23,8 @@ var utils = require('web.utils');
 
 var _t = core._t;
 
+const NBSP = "\u00a0";
+
 //------------------------------------------------------------------------------
 // Formatting
 //------------------------------------------------------------------------------
@@ -252,7 +254,7 @@ function formatInteger(value, field, options) {
  * return an empty string.  Note that it accepts two types of input parameters:
  * an array, in that case we assume that the many2one value is of the form
  * [id, nameget], and we return the nameget, or it can be an object, and in that
- * case, we assume that it is a record from a BasicModel.
+ * case, we assume that it is a record datapoint from a BasicModel.
  *
  * @param {Array|Object|false} value
  * @param {Object} [field]
@@ -262,7 +264,18 @@ function formatInteger(value, field, options) {
  * @returns {string}
  */
 function formatMany2one(value, field, options) {
-    value = value && (_.isArray(value) ? value[1] : value.data.display_name) || '';
+    if (!value) {
+        value = '';
+    } else if (_.isArray(value)) {
+        // value is a pair [id, nameget]
+        value = value[1];
+    } else {
+        // value is a datapoint, so we read its display_name field, which
+        // may in turn be a datapoint (if the name field is a many2one)
+        while (value.data) {
+            value = value.data.display_name || '';
+        }
+    }
     if (options && options.escape) {
         value = _.escape(value);
     }
@@ -342,9 +355,9 @@ function formatMonetary(value, field, options) {
         return formatted_value;
     }
     if (currency.position === "after") {
-        return formatted_value += '&nbsp;' + currency.symbol;
+        return formatted_value += NBSP + currency.symbol;
     } else {
-        return currency.symbol + '&nbsp;' + formatted_value;
+        return currency.symbol + NBSP + formatted_value;
     }
 }
 /**
@@ -540,12 +553,8 @@ function parseFloat(value) {
  * @throws {Error} if no float is found or if parameter does not respect monetary condition
  */
 function parseMonetary(value, field, options) {
-    var values = value.split('&nbsp;');
-    if (values.length === 1) {
+    if (!value.includes(NBSP) && !value.includes('&nbsp;')) {
         return parseFloat(value);
-    }
-    else if (values.length !== 2) {
-        throw new Error(_.str.sprintf(core._t("'%s' is not a correct monetary field"), value));
     }
     options = options || {};
     var currency = options.currency;
@@ -557,7 +566,21 @@ function parseMonetary(value, field, options) {
         }
         currency = session.get_currency(currency_id);
     }
-    return parseFloat(values[0] === currency.symbol ? values[1] : values[0]);
+    if (!currency) {
+        return parseFloat(value);
+    }
+    if (!value.includes(currency.symbol)) {
+        throw new Error(_.str.sprintf(core._t("'%s' is not a correct monetary field"), value));
+    }
+    if (currency.position === 'before') {
+        return parseFloat(value
+            .replace(`${ currency.symbol }${ NBSP }`, '')
+            .replace(`${ currency.symbol }&nbsp;`, ''));
+    } else {
+        return parseFloat(value
+            .replace(`${ NBSP }${ currency.symbol }`, '')
+            .replace(`&nbsp;${ currency.symbol }`, ''));
+    }
 }
 
 /**
@@ -683,6 +706,7 @@ return {
         integer: parseInteger,
         many2many: _.identity, // todo
         many2one: parseMany2one,
+        many2one_reference: parseInteger,
         monetary: parseMonetary,
         one2many: _.identity,
         percentage: parsePercentage,

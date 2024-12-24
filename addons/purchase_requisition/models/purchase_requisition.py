@@ -71,10 +71,16 @@ class PurchaseRequisition(models.Model):
 
     @api.depends('state')
     def _set_state(self):
-        self.state_blanket_order = self.state
+        for requisition in self:
+            requisition.state_blanket_order = requisition.state
 
     @api.onchange('vendor_id')
     def _onchange_vendor(self):
+        if not self.vendor_id:
+            self.currency_id = self.env.company.currency_id.id
+        else:
+            self.currency_id = self.vendor_id.property_purchase_currency_id.id or self.env.company.currency_id.id
+
         requisitions = self.env['purchase.requisition'].search([
             ('vendor_id', '=', self.vendor_id.id),
             ('state', '=', 'ongoing'),
@@ -201,7 +207,9 @@ class PurchaseRequisitionLine(models.Model):
     def write(self, vals):
         res = super(PurchaseRequisitionLine, self).write(vals)
         if 'price_unit' in vals:
-            if vals['price_unit'] <= 0.0:
+            if vals['price_unit'] <= 0.0 and any(
+                    requisition.state not in ['draft', 'cancel', 'done'] and
+                    requisition.is_quantity_copy == 'none' for requisition in self.mapped('requisition_id')):
                 raise UserError(_('You cannot confirm the blanket order without price.'))
             # If the price is updated, we have to update the related SupplierInfo
             self.supplier_info_ids.write({'price': vals['price_unit']})
@@ -227,6 +235,7 @@ class PurchaseRequisitionLine(models.Model):
 
     @api.depends('requisition_id.purchase_ids.state')
     def _compute_ordered_qty(self):
+        line_found = set()
         for line in self:
             total = 0.0
             for po in line.requisition_id.purchase_ids.filtered(lambda purchase_order: purchase_order.state in ['purchase', 'done']):
@@ -235,7 +244,11 @@ class PurchaseRequisitionLine(models.Model):
                         total += po_line.product_uom._compute_quantity(po_line.product_qty, line.product_uom_id)
                     else:
                         total += po_line.product_qty
-            line.qty_ordered = total
+            if line.product_id not in line_found :
+                line.qty_ordered = total
+                line_found.add(line.product_id)
+            else:
+                line.qty_ordered = 0
 
     @api.onchange('product_id')
     def _onchange_product_id(self):

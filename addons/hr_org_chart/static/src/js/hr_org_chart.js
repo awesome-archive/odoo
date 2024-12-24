@@ -106,7 +106,7 @@ var FieldOrgChart = AbstractField.extend({
                             '.o_employee_redirect', _.bind(self._onEmployeeRedirect, self));
                         return $title;
                     },
-                    container: 'body',
+                    container: this,
                     placement: 'left',
                     trigger: 'focus',
                     content: function () {
@@ -178,10 +178,15 @@ var FieldOrgChart = AbstractField.extend({
                     args: [employee_id],
                 }).then(function(action) {
                     action = _.extend(action, {
+                        'name': _t('Team'),
                         'view_mode': 'kanban,list,form',
                         'views':  [[false, 'kanban'], [false, 'list'], [false, 'form']],
                         'domain': domain,
+                        'context': {
+                            'default_parent_id': employee_id,
+                        }
                     });
+                    delete action['res_id'];
                     return self.do_action(action); 
                 });
             });

@@ -1,3 +1,13 @@
+.o_mail_thread_loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.o_mail_thread_loading_icon {
+    margin-right: 5px;
+}
+
 .o_mail_thread, .o_mail_activity {
     .o_thread_show_more {
         text-align: center;
@@ -150,10 +160,9 @@
             min-width: 0;
             max-width: 100%;
             word-wrap: break-word;
-            > pre {
+            .o_thread_message_content > pre {
                 white-space: pre-wrap;
                 word-break: break-word;
-                text-align: justify;
             }
 
             .o_mail_note_title {

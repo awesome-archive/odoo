@@ -352,7 +352,10 @@ var ListRenderer = BasicRenderer.extend({
                 if (!formatFunc) {
                     formatFunc = field_utils.format[field.type];
                 }
-                var formattedValue = formatFunc(value, field, { escape: true });
+                var formattedValue = formatFunc(value, field, {
+                    escape: true,
+                    digits: column.attrs.digits ? JSON.parse(column.attrs.digits) : undefined,
+                });
                 $cell.addClass('o_list_number').attr('title', help).html(formattedValue);
             }
             return $cell;
@@ -434,17 +437,22 @@ var ListRenderer = BasicRenderer.extend({
             var $el = this._renderFieldWidget(node, record, _.pick(options, 'mode'));
             return $td.append($el);
         }
+        this._handleAttributes($td, node);
         var name = node.attrs.name;
         var field = this.state.fields[name];
         var value = record.data[name];
-        var formattedValue = field_utils.format[field.type](value, field, {
-            data: record.data,
+        var formatter = field_utils.format[field.type];
+        var formatOptions = {
             escape: true,
+            data: record.data,
             isPassword: 'password' in node.attrs,
             digits: node.attrs.digits && JSON.parse(node.attrs.digits),
-        });
-        this._handleAttributes($td, node);
-        var title = field.type !== 'boolean' ? formattedValue : '';
+        };
+        var formattedValue = formatter(value, field, formatOptions);
+        var title = '';
+        if (field.type !== 'boolean') {
+            title = formatter(value, field, _.extend(formatOptions, {escape: false}));
+        }
         return $td.html(formattedValue).attr('title', title);
     },
     /**
@@ -457,7 +465,9 @@ var ListRenderer = BasicRenderer.extend({
      */
     _renderButton: function (record, node) {
         var self = this;
-        var $button = viewUtils.renderButtonFromNode(node, {
+        var nodeWithoutWidth = Object.assign({}, node);
+        delete nodeWithoutWidth.attrs.width;
+        var $button = viewUtils.renderButtonFromNode(nodeWithoutWidth, {
             extraClass: node.attrs.icon ? 'o_icon_button' : undefined,
             textAsTitle: !!node.attrs.icon,
         });
@@ -759,13 +769,17 @@ var ListRenderer = BasicRenderer.extend({
      * @returns {jQueryElement} a <th> element
      */
     _renderHeaderCell: function (node) {
-        var name = node.attrs.name;
+        const { icon, name, string } = node.attrs;
         var order = this.state.orderedBy;
         var isNodeSorted = order[0] && order[0].name === name;
         var field = this.state.fields[name];
         var $th = $('<th>');
         if (name) {
             $th.attr('data-name', name);
+        } else if (string) {
+            $th.attr('data-string', string);
+        } else if (icon) {
+            $th.attr('data-icon', icon);
         }
         if (node.attrs.editOnly) {
             $th.addClass('oe_edit_only');
@@ -776,7 +790,7 @@ var ListRenderer = BasicRenderer.extend({
         if (!field) {
             return $th;
         }
-        var description = node.attrs.string || field.string;
+        var description = string || field.string;
         if (node.attrs.widget) {
             $th.addClass(' o_' + node.attrs.widget + '_cell');
             if (this.state.fieldsInfo.list[name].Widget.prototype.noLabel) {
@@ -859,11 +873,20 @@ var ListRenderer = BasicRenderer.extend({
             'href': "#",
             'role': "button",
             'data-toggle': "dropdown",
+            'data-display': "static",
             'aria-expanded': false,
+            'aria-label': _t('Optional columns'),
         });
         $a.appendTo($optionalColumnsDropdown);
+
+        // Set the expansion direction of the dropdown
+        // The button is located at the end of the list headers
+        // We want the dropdown to expand towards the list rather than away from it
+        // https://getbootstrap.com/docs/4.0/components/dropdowns/#menu-alignment
+        var direction = _t.database.parameters.direction;
+        var dropdownMenuClass = direction === 'rtl' ? 'dropdown-menu-left' : 'dropdown-menu-right';
         var $dropdown = $("<div>", {
-            class: 'dropdown-menu dropdown-menu-right o_optional_columns_dropdown',
+            class: 'dropdown-menu o_optional_columns_dropdown ' + dropdownMenuClass,
             role: 'menu',
         });
         this.optionalColumns.forEach(function (col) {
@@ -871,6 +894,7 @@ var ListRenderer = BasicRenderer.extend({
                 (config.isDebug() ? (' (' + col.attrs.name + ')') : '');
             var $checkbox = dom.renderCheckbox({
                 text: txt,
+                role: "menuitemcheckbox",
                 prop: {
                     name: col.attrs.name,
                     checked: _.contains(self.optionalColumnsEnabled, col.attrs.name),
@@ -1077,6 +1101,11 @@ var ListRenderer = BasicRenderer.extend({
     _onToggleOptionalColumn: function (ev) {
         var self = this;
         ev.stopPropagation();
+        // when the input's label is clicked, the click event is also raised on the
+        // input itself (https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label),
+        // so this handler is executed twice (except if the rendering is quick enough,
+        // as when we render, we empty the HTML)
+        ev.preventDefault();
         var input = ev.currentTarget.querySelector('input');
         var fieldIndex = this.optionalColumnsEnabled.indexOf(input.name);
         if (fieldIndex >= 0) {
@@ -1108,6 +1137,13 @@ var ListRenderer = BasicRenderer.extend({
         // default, which is why we need to toggle the dropdown manually.
         ev.stopPropagation();
         this.$('.o_optional_columns .dropdown-toggle').dropdown('toggle');
+        // Explicitly set left of the optional column dropdown as it is pushed inside
+        // this.$el, so we need to position it at the end of top left corner in case of
+        // rtl language direction.
+        if (_t.database.parameters.direction === 'rtl') {
+            var left = this.$('.o_optional_columns .o_optional_columns_dropdown').width();
+            this.$('.o_optional_columns').css("left", left);
+        }
     },
     /**
      * Manages the keyboard events on the list. If the list is not editable, when the user navigates to

@@ -63,6 +63,9 @@ class SaleOrder(models.Model):
             request.session.pop('error_promo_code')
         return error
 
+    def _get_coupon_program_domain(self):
+        return [('website_id', 'in', [False, self.website_id.id])]
+
     def _cart_update(self, product_id=None, line_id=None, add_qty=0, set_qty=0, **kwargs):
         res = super(SaleOrder, self)._cart_update(product_id=product_id, line_id=line_id, add_qty=add_qty, set_qty=set_qty, **kwargs)
         self.recompute_coupon_lines()
@@ -70,7 +73,7 @@ class SaleOrder(models.Model):
 
     def _get_free_shipping_lines(self):
         self.ensure_one()
-        free_shipping_prgs_ids = self.no_code_promo_program_ids.filtered(lambda p: p.reward_type == 'free_shipping')
+        free_shipping_prgs_ids = self._get_applied_programs_with_rewards_on_current_order().filtered(lambda p: p.reward_type == 'free_shipping')
         if not free_shipping_prgs_ids:
             return self.env['sale.order.line']
         free_shipping_product_ids = free_shipping_prgs_ids.mapped('discount_line_product_id')
